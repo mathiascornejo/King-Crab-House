@@ -1,0 +1,1731 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>King Crab House Stock</title>
+<style>
+  /* Apple system colors (light / dark), grouped-background layout */
+  :root {
+    color-scheme: light dark;
+    --bg:#f2f2f7; --card:#fff; --fill:rgba(118,118,128,.12); --label:#000; --label2:rgba(60,60,67,.78); /* darker than Apple's .6 so small grey text meets 4.5:1 */
+    --sep:rgba(60,60,67,.29); --bar:rgba(249,249,249,.8);
+    --green:#34c759; --orange:#ff9500; --red:#ff3b30; --blue:#007aff; --blue-fill:#0066d6; /* deeper blue behind white text for 4.5:1 */ --green-text:#248a3d; --red-text:#d70015; /* readable on white */
+  }
+  @media (prefers-color-scheme: dark) { :root {
+    --bg:#000; --card:#1c1c1e; --fill:rgba(118,118,128,.24); --label:#fff; --label2:rgba(235,235,245,.6);
+    --sep:rgba(84,84,88,.65); --bar:rgba(22,22,24,.8);
+    --green:#30d158; --orange:#ff9f0a; --red:#ff453a; --blue:#0a84ff; --green-text:#30d158; --red-text:#ff453a;
+  } }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; } /* .login/.segmented set display, which would otherwise override hidden */
+  body { margin:0; background:var(--bg); color:var(--label); font:17px/1.3 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; -webkit-font-smoothing:antialiased; }
+  .bar { position:sticky; top:0; z-index:1; background:var(--bar); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); border-bottom:.5px solid var(--sep); }
+  .bar-inner, main { max-width:980px; margin:0 auto; padding-left:16px; padding-right:16px; }
+  .bar-inner { padding-top:12px; padding-bottom:10px; }
+  .title-row { display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+  h1 { margin:0; font-size:34px; font-weight:700; letter-spacing:.012em; }
+  #status { color:var(--label2); font-size:13px; }
+  .segmented { display:flex; margin-top:12px; padding:2px; border-radius:9px; background:var(--fill); max-width:640px; }
+  .segmented a, .segmented button { flex:1; border:0; background:none; font-family:inherit; cursor:pointer; text-align:center; padding:6px 0; border-radius:7px; color:var(--label); text-decoration:none; font-size:13px; font-weight:500; transition:background .2s, box-shadow .2s; }
+  .segmented a[aria-current], .segmented button[aria-pressed="true"] { background:var(--card); font-weight:600; box-shadow:0 3px 8px rgba(0,0,0,.12), 0 3px 1px rgba(0,0,0,.04); }
+  .segmented a:focus-visible, .segmented button:focus-visible, input:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  main { padding-top:8px; padding-bottom:48px; }
+  h2 { margin:24px 16px 8px; font-size:13px; font-weight:400; text-transform:uppercase; color:var(--label2); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(156px, 1fr)); gap:12px; }
+  @media (max-width:500px) { h1 { font-size:28px; } .title-row { flex-direction:column; gap:2px; } .tile { min-height:116px; } .count { font-size:40px; } }
+  .tile { background:var(--card); border-radius:20px; padding:16px 18px 18px; display:flex; flex-direction:column; gap:6px; min-height:132px;
+    border:0; color:inherit; font:inherit; text-align:left; cursor:pointer; transition:transform .15s, box-shadow .15s; }
+  .tile:hover { box-shadow:0 4px 16px rgba(0,0,0,.08); }
+  .tile:active { transform:scale(.97); }
+  .tile:focus-visible, .sheet button:focus-visible, .step:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  .tile h3 { margin:0; font-size:15px; font-weight:600; }
+  .tile { container-type:inline-size; }
+  .count { margin-top:auto; font:700 clamp(26px, 20cqw, 40px)/1 ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
+  .count small { font:500 15px/1 -apple-system, system-ui, sans-serif; color:var(--label2); margin-left:4px; letter-spacing:0; }
+  .ok .count { color:var(--green); } .low .count { color:var(--orange); } .out .count { color:var(--red); }
+  .list { background:var(--card); border-radius:10px; margin:0; padding:0; list-style:none; overflow:hidden; }
+  .list li { display:flex; align-items:center; gap:8px; min-height:44px; padding:0 16px; position:relative; }
+  .list li + li::before { content:""; position:absolute; top:0; left:16px; right:0; border-top:.5px solid var(--sep); }
+  .list li { min-height:56px; }
+  .list label { flex:1; padding:11px 0; cursor:text; }
+  .editor { display:flex; align-items:center; gap:6px; }
+  .list input { width:88px; height:36px; border:1.5px solid transparent; background:var(--fill); color:var(--label); font:inherit; font-weight:600; text-align:center; padding:0 8px; border-radius:10px; font-variant-numeric:tabular-nums; -moz-appearance:textfield; cursor:text; transition:border-color .15s, background .15s; }
+  .list input::-webkit-inner-spin-button, .list input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+  .list input:hover { border-color:var(--sep); }
+  .list input:focus { outline:none; border-color:var(--blue); background:var(--card); }
+  .step { width:36px; height:36px; border:0; border-radius:50%; background:var(--fill); color:var(--blue); font:500 22px/1 -apple-system, system-ui, sans-serif; cursor:pointer; display:grid; place-items:center; padding:0; }
+  .step:active { background:var(--sep); }
+  .unit { color:var(--label2); width:34px; font-size:15px; }
+
+  /* meal detail sheet: bottom sheet on phones, centered card on wider screens */
+  .sheet { border:0; padding:0; background:var(--bg); color:var(--label); width:min(520px, 100%); max-height:85vh; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+  .sheet::backdrop { background:rgba(0,0,0,.4); }
+  .sheet[open] { animation:rise .25s ease-out; }
+  @keyframes rise { from { transform:translateY(24px); opacity:0; } }
+  .sheet-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px 4px; position:sticky; top:0; background:var(--bg); }
+  .sheet-head h3 { margin:0; font-size:17px; font-weight:600; }
+  .sheet-head button { border:0; background:none; color:var(--blue); font:600 17px -apple-system, system-ui, sans-serif; cursor:pointer; padding:6px 0; }
+  .sheet-body { padding:0 16px 24px; overflow:auto; }
+  .sheet .count { display:block; margin:8px 0 0; }
+  .detail { background:var(--card); border-radius:10px; overflow:hidden; }
+  .detail table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; font-size:15px; }
+  .detail th { font-size:12px; font-weight:500; color:var(--label2); text-transform:uppercase; text-align:right; padding:10px 12px 6px; }
+  .detail th:first-child, .detail td:first-child { text-align:left; padding-left:16px; }
+  .detail td { text-align:right; padding:11px 12px; border-top:.5px solid var(--sep); white-space:nowrap; }
+  .detail td:first-child { white-space:normal; }
+  .detail td:last-child, .detail th:last-child { padding-right:16px; }
+  .detail .u { color:var(--label2); font-size:13px; }
+  .detail .makes { font-weight:600; }
+  .detail .limiting .makes { color:var(--red); }
+  @media (max-width:500px) { .detail table { font-size:14px; } .detail td, .detail th { padding-left:6px; padding-right:6px; } .badge { display:inline-block; margin:2px 0 0; } }
+  .badge { font-size:11px; font-weight:600; text-transform:uppercase; color:var(--red); background:color-mix(in srgb, var(--red) 14%, transparent); padding:4px 8px; border-radius:6px; margin-left:6px; vertical-align:1px; line-height:1; display:inline-block; }
+  @media (max-width:500px) { .sheet { margin:auto 0 0; width:100%; max-width:100%; border-radius:14px 14px 0 0; } }
+  .saved { width:18px; color:var(--green); font-size:15px; text-align:center; }
+  .saved.err { color:var(--red); }
+  .footnote { margin:8px 16px 0; font-size:13px; color:var(--label2); }
+  /* order tab */
+  .menu li { min-height:68px; }
+  .menu .line-name { flex:1; padding:10px 0; }
+  .menu .line-sub { display:block; font-size:13px; color:var(--label2); margin-top:2px; }
+  .qty { min-width:28px; text-align:center; font-weight:600; font-variant-numeric:tabular-nums; }
+  .qty.zero { color:var(--label2); font-weight:400; }
+  .step:disabled { color:var(--label2); opacity:.4; cursor:default; }
+  .checkout { position:fixed; left:0; right:0; bottom:0; background:var(--bar); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); border-top:.5px solid var(--sep); padding:12px 16px calc(12px + env(safe-area-inset-bottom)); }
+  .checkout-inner { max-width:980px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .floor { background:var(--card); border-radius:20px; padding:12px; }
+  .floor svg { display:block; width:100%; height:auto; max-height:400px; }
+  .room { fill:var(--bg); stroke:var(--sep); stroke-width:1.5; }
+  .kitchen { fill:var(--fill); }
+  .floor-label { fill:var(--label2); font:600 9px -apple-system, system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; }
+  .door { stroke:var(--card); stroke-width:4; }
+  .tbl { cursor:pointer; outline:none; }
+  .tbl .top { fill:var(--card); stroke:var(--sep); stroke-width:1.5; transition:fill .15s, stroke .15s; }
+  .tbl .chair { fill:var(--fill); transition:fill .15s; }
+  .tbl text { fill:var(--label); font:600 15px -apple-system, system-ui, sans-serif; text-anchor:middle; dominant-baseline:central; pointer-events:none; }
+  .tbl:hover .top { stroke:var(--blue); }
+  .tbl:focus-visible .top { stroke:var(--blue); stroke-width:3; }
+  .tbl[aria-checked="true"] .top { fill:var(--blue-fill); stroke:var(--blue-fill); }
+  .tbl[aria-checked="true"] .chair { fill:color-mix(in srgb, var(--blue) 45%, transparent); }
+  .tbl[aria-checked="true"] text { fill:#fff; }
+  .checkout-summary { flex:1; }
+  .checkout-summary { font-size:15px; color:var(--label2); white-space:nowrap; }
+  .checkout-summary strong { color:var(--label); font-size:17px; }
+  .finish { border:0; border-radius:12px; background:var(--blue-fill); color:#fff; font:600 17px -apple-system, system-ui, sans-serif; padding:14px 28px; cursor:pointer; }
+  .finish:disabled { background:var(--fill); color:var(--label2); cursor:default; }
+  .finish:focus-visible { outline:2px solid var(--blue); outline-offset:3px; }
+  #order { padding-bottom:150px; }
+  @media (max-width:500px) { .finish { flex:1 1 100%; } .segmented a { font-size:12px; letter-spacing:-.01em; } }
+  .history h2 { display:flex; justify-content:space-between; }
+  .history .when { color:var(--label2); font-size:13px; white-space:nowrap; }
+  .history li { align-items:flex-start; gap:12px; }
+  .history .what { flex:1; padding:12px 0; }
+  .history .when { padding-top:14px; }
+  .empty { text-align:center; color:var(--label2); padding:48px 16px; }
+  .toast { position:fixed; left:50%; top:20px; transform:translate(-50%, -150%); background:var(--card); color:var(--label); padding:12px 18px; border-radius:14px; box-shadow:0 8px 30px rgba(0,0,0,.18); font-size:15px; font-weight:500; transition:transform .3s, opacity .3s; z-index:3; max-width:calc(100% - 32px); opacity:0; pointer-events:none; }
+  .toast.show { transform:translate(-50%, 0); opacity:1; }
+  .toast.err { color:var(--red); }
+  /* portions tab + add forms */
+  .form { display:flex; gap:8px; flex-wrap:wrap; align-items:center; background:var(--card); border-radius:10px; padding:12px 16px; }
+  .field { height:36px; border:1.5px solid transparent; border-radius:10px; background:var(--fill); color:var(--label); font:inherit; padding:0 10px; min-width:0; }
+  .field:focus { outline:none; border-color:var(--blue); background:var(--card); }
+  .field::placeholder { color:var(--label2); }
+  .form .grow, .add-line .grow { flex:1 1 180px; }
+  .btn { height:36px; border:0; border-radius:10px; background:var(--blue-fill); color:#fff; font:600 15px -apple-system, system-ui, sans-serif; padding:0 16px; cursor:pointer; }
+  .btn:focus-visible, .remove:focus-visible, .recipe summary:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  .recipe { background:var(--card); border-radius:10px; margin-bottom:10px; overflow:hidden; }
+  .recipe summary { list-style:none; display:flex; align-items:center; gap:8px; min-height:52px; padding:0 16px; cursor:pointer; font-weight:600; }
+  .recipe summary::-webkit-details-marker { display:none; }
+  .recipe summary::after { content:"›"; color:var(--label2); font-size:22px; font-weight:400; transition:transform .2s; }
+  .recipe[open] summary::after { transform:rotate(90deg); }
+  .recipe .sub { margin-left:auto; color:var(--label2); font-weight:400; font-size:15px; }
+  .recipe .list { border-radius:0; border-top:.5px solid var(--sep); }
+  .recipe .list input { width:80px; }
+  .remove { width:32px; height:32px; border:0; border-radius:50%; background:none; color:var(--red); font-size:22px; line-height:1; cursor:pointer; flex:none; }
+  .remove:hover { background:color-mix(in srgb, var(--red) 12%, transparent); }
+  .list li.add-line { flex-wrap:wrap; gap:8px; padding-top:10px; padding-bottom:10px; }
+  .add-line .field { height:36px; }
+  /* prices, costs, billing */
+  .peso { color:var(--label2); font-size:15px; }
+  /* inventory rows are buttons that open the Add stock pop-up */
+  #stock .inv-row { display:grid; grid-template-columns:1fr auto auto auto; grid-template-areas:"name meta add edit"; align-items:center; gap:4px 12px;
+    min-height:56px; padding:8px 16px; }
+  .inv-name { grid-area:name; }
+  .inv-meta { grid-area:meta; display:flex; gap:16px; color:var(--label2); font-size:15px; font-variant-numeric:tabular-nums; }
+  .inv-meta .stock { color:var(--label); font-weight:600; min-width:84px; text-align:right; }
+  .inv-meta .cost { min-width:120px; text-align:right; }
+  .inv-btn { width:36px; height:36px; border:0; border-radius:50%; background:var(--fill); color:var(--blue); display:grid; place-items:center; font-size:22px; line-height:1; cursor:pointer; padding:0; }
+  .inv-btn.add { grid-area:add; } .inv-btn.edit { grid-area:edit; }
+  .inv-btn:hover { background:var(--sep); }
+  .inv-btn:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  @media (max-width:500px) { #stock .inv-row { grid-template-columns:1fr auto auto; grid-template-areas:"name add edit" "meta add edit"; }
+    .inv-meta .stock, .inv-meta .cost { min-width:0; text-align:left; } }
+  .buy-now { color:var(--label2); font-size:15px; margin:12px 0 0; }
+  .buy-preview { color:var(--label2); font-size:15px; margin:12px 4px 0; min-height:20px; }
+  .buy-preview strong { color:var(--label); }
+  #buy .list input, #edit .list input { width:120px; }
+  .sheet-head .cancel { font-weight:400 !important; }
+  .recipe .money { justify-content:space-between; font-weight:600; }
+  .recipe .money .val { font-variant-numeric:tabular-nums; }
+  .bills { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px; align-items:start; }
+  .bill { background:var(--card); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; }
+  .bill header { padding:14px 16px 10px; display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .bill h3 { margin:0; font-size:20px; }
+  .bill .since { color:var(--label2); font-size:13px; }
+  .bill .list { border-radius:0; border-top:.5px solid var(--sep); }
+  .bill .list li { justify-content:space-between; min-height:40px; font-size:15px; }
+  .bill .amt { font-variant-numeric:tabular-nums; color:var(--label2); }
+  .bill footer { display:flex; justify-content:space-between; align-items:baseline; padding:12px 16px; border-top:.5px solid var(--sep); font-size:17px; }
+  .bill footer strong { font-size:22px; font-variant-numeric:tabular-nums; }
+  .bill .pay { margin:0 16px 16px; height:44px; font-size:17px; }
+  .bill .pay.confirm { background:var(--green); color:#000; }
+  .bills-total { display:flex; justify-content:space-between; align-items:baseline; margin:16px 16px 0; color:var(--label2); }
+  .bills-total strong { color:var(--label); font-size:20px; font-variant-numeric:tabular-nums; }
+  .history .when { text-align:right; }
+  .paid-tag { font-size:11px; font-weight:600; text-transform:uppercase; color:var(--green); }
+  .open-tag { font-size:11px; font-weight:600; text-transform:uppercase; color:var(--orange); }
+
+  /* daily profit */
+  .stats { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; }
+  .kpi-stats { grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); }
+  .stat { background:var(--card); border-radius:16px; padding:14px 16px; display:flex; flex-direction:column; gap:4px; min-width:0; container-type:inline-size; }
+  .stat-label { font-size:13px; color:var(--label2); }
+  /* sized to the tile so ₱1,000,000.00 still fits */
+  .stat-val { font:700 clamp(14px, 12.5cqw, 22px)/1.1 ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .stat-sub { font-size:13px; color:var(--label2); }
+  .gain { color:var(--green-text); } .loss { color:var(--red-text); }
+  @media (max-width:500px) { .stats { grid-template-columns:1fr; gap:8px; }
+    .stat { display:grid; grid-template-columns:1fr auto; grid-template-areas:"label val" "sub val"; align-items:center; column-gap:12px; padding:12px 16px; }
+    .stat-label { grid-area:label; } .stat-sub { grid-area:sub; } .stat-val { grid-area:val; }
+    #dashboard .detail { overflow-x:auto; } #dashboard .detail table { font-size:13px; } #dashboard .detail td, #dashboard .detail th { padding-left:4px; padding-right:4px; } }
+
+  /* v2: notes, per-kg, floor status, pay dialog, low stock, takings, staff */
+  .menu li { flex-wrap:wrap; }
+  .item-extra { flex-basis:100%; display:flex; gap:8px; flex-wrap:wrap; padding:0 0 10px; }
+  .item-extra .field { flex:1 1 160px; height:36px; }
+  .note-btn { color:var(--blue); }
+  .note-btn.has-note { background:var(--blue-fill); color:#fff; }
+  .line-sub .note { display:block; }
+  #note-dlg textarea { width:100%; min-height:96px; resize:vertical; font:inherit; padding:12px; border-radius:10px; border:1.5px solid transparent; background:var(--card); color:var(--label); }
+  #note-dlg textarea:focus { outline:none; border-color:var(--blue); }
+  .quick-notes { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .chip { border:0; border-radius:16px; background:var(--fill); color:var(--label); font:inherit; font-size:14px; padding:6px 12px; cursor:pointer; }
+  .change-due { text-align:center; padding:18px 12px; margin-top:12px; border-radius:16px; background:color-mix(in srgb, var(--green) 14%, var(--card)); }
+  .change-due .label { font-size:15px; color:var(--label2); }
+  .change-due .amount { display:block; font:700 44px/1.1 ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; color:var(--green-text); font-variant-numeric:tabular-nums; }
+  .change-due.none { background:var(--card); }
+  .change-due.none .amount { color:var(--label); font-size:28px; }
+  .item-extra .weight { flex:0 1 150px; }
+  .note { color:var(--label2); font-style:italic; font-size:13px; }
+  /* busy tint covers the chairs too; :not() keeps the blue "selected" look when a busy table is picked */
+  .tbl.busy:not([aria-checked="true"]) .top { fill:color-mix(in srgb, var(--orange) 22%, var(--card)); stroke:var(--orange); }
+  .tbl.busy:not([aria-checked="true"]) .chair { fill:color-mix(in srgb, var(--orange) 45%, transparent); }
+  .tbl .mins { font-size:10px; font-weight:600; fill:var(--label2); }
+  .tbl[aria-checked="true"] .mins { fill:#fff; }
+  .floor-legend { display:flex; gap:16px; font-size:13px; color:var(--label2); padding:8px 4px 0; }
+  .floor-legend i { display:inline-block; width:12px; height:12px; border-radius:4px; vertical-align:-1px; margin-right:6px; border:1.5px solid var(--sep); background:var(--card); }
+  .floor-legend i.busy { background:color-mix(in srgb, var(--orange) 22%, var(--card)); border-color:var(--orange); }
+  .bill .list li { gap:8px; }
+  .bill .line-name { flex:1; }
+  .void { width:28px; height:28px; border:0; border-radius:50%; background:var(--fill); color:var(--red-text); font-size:18px; line-height:1; cursor:pointer; flex:none; padding:0; }
+  .void.confirm { width:auto; border-radius:14px; padding:0 10px; font-size:13px; font-weight:600; background:color-mix(in srgb, var(--red) 15%, transparent); }
+  #pay .list input[type="number"] { width:96px; }
+  #pay .list select { width:110px; }
+  .breakdown { background:var(--card); border-radius:10px; padding:4px 16px; }
+  .breakdown div { display:flex; justify-content:space-between; padding:8px 0; font-variant-numeric:tabular-nums; }
+  .breakdown div + div { border-top:.5px solid var(--sep); }
+  .breakdown div > span:last-child { white-space:nowrap; text-align:right; padding-left:12px; }
+  .breakdown .grand { font-weight:700; font-size:20px; }
+  .part { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .part .change { flex-basis:100%; font-size:13px; color:var(--label2); }
+  .check { display:flex; align-items:center; gap:10px; }
+  .check input { width:22px; height:22px; accent-color:var(--blue-fill); }
+  .low-tag { color:var(--orange); font-weight:700; font-size:12px; text-transform:uppercase; margin-left:6px; }
+  .shopping li { justify-content:space-between; gap:12px; }
+  .shopping .buy-qty { font-weight:600; font-variant-numeric:tabular-nums; }
+  .history-list { margin:0; padding:0; list-style:none; font-size:14px; }
+  .history-list li { display:flex; justify-content:space-between; gap:8px; padding:8px 0; border-top:.5px solid var(--sep); font-variant-numeric:tabular-nums; }
+  .takings .btn { margin-top:12px; width:100%; height:44px; font-size:17px; }
+  .closed-note { font-size:14px; color:var(--label2); margin:10px 4px 0; }
+  .staff-row { flex-wrap:wrap; gap:8px; padding-top:8px !important; padding-bottom:8px !important; }
+  .staff-row .who-name { flex:1 1 140px; }
+  .staff-row .sub { display:block; font-size:12px; color:var(--label2); }
+  .link-btn { border:0; background:none; color:var(--blue); font:inherit; font-size:15px; cursor:pointer; padding:4px 0; }
+  .link-btn.danger { color:var(--red-text); }
+
+  /* v3: sold out, batches, forecast, reports */
+  .tile.soldout { opacity:.6; }
+  .demo-tag { display:inline-block; white-space:nowrap; font-size:13px; font-weight:600; vertical-align:middle; color:var(--orange); background:color-mix(in srgb, var(--orange) 14%, transparent); padding:4px 8px; border-radius:6px; }
+  .tile .soldout-tag, .soldout-tag { font-size:11px; font-weight:700; text-transform:uppercase; color:var(--red-text); }
+  .soldout-btn { width:100%; height:44px; margin-top:14px; font-size:17px; }
+  .soldout-btn.on { background:var(--fill); color:var(--label); }
+  .batch { display:flex; flex-wrap:wrap; align-items:center; gap:8px; justify-content:space-between; }
+  .batch .first { font-size:11px; font-weight:700; text-transform:uppercase; color:var(--green-text); margin-left:6px; }
+  .batch .old { color:var(--orange); font-weight:600; }
+  .batch .dead-form { flex-basis:100%; display:flex; gap:8px; align-items:center; }
+  .batch .dead-form input { width:90px; }
+  .report-head { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:16px; }
+  .report-head .field { height:40px; }
+  #expense-list li { gap:12px; }
+  #expense-list .line-name { flex:1; padding:8px 0; }
+  .breakdown .sub-line { padding-left:16px; color:var(--label2); font-size:15px; }
+  .breakdown .net { font-weight:700; font-size:20px; }
+  .heat { overflow-x:auto; background:var(--card); border-radius:10px; padding:8px; }
+  .heat table { border-collapse:separate; border-spacing:3px; font-size:12px; font-variant-numeric:tabular-nums; }
+  .heat th { color:var(--label2); font-weight:500; padding:2px 4px; text-align:center; }
+  .heat td { width:34px; height:26px; border-radius:5px; background:var(--fill); text-align:center; color:transparent; }
+  .heat td.has { color:var(--label); }
+  .segmented { overflow-x:auto; scrollbar-width:none; }
+  .segmented::-webkit-scrollbar { display:none; }
+  @media (max-width:500px) { .segmented a { flex:1 0 auto; padding:6px 9px; } }
+
+  /* sign-in */
+  .meta { display:flex; align-items:baseline; gap:10px; color:var(--label2); font-size:13px; flex-wrap:wrap; }
+  .who { font-weight:600; color:var(--label); }
+  .signout { border:0; background:none; color:var(--blue); font:inherit; font-size:13px; cursor:pointer; padding:0; }
+  .signout:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  .login { position:fixed; inset:0; z-index:5; background:var(--bg); display:grid; place-items:center; padding:16px; }
+  .login form { width:min(360px, 100%); display:flex; flex-direction:column; gap:12px; }
+  .login h1 { text-align:center; margin-bottom:4px; }
+  .login p { margin:0; text-align:center; color:var(--label2); font-size:15px; }
+  .login .field { height:48px; font-size:17px; padding:0 14px; }
+  .login .btn { height:48px; font-size:17px; }
+  .login .error { color:var(--red); min-height:20px; }
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-inner">
+    <div class="title-row"><h1>King Crab House</h1>
+      <div class="meta"><span id="status" role="status">Loading…</span><span class="who" id="who"></span><button type="button" class="signout" id="staff-link" hidden>Staff</button><button type="button" class="signout" id="signout" hidden>Sign out</button></div></div>
+    <nav class="segmented" aria-label="Sections"><a href="#dashboard">Dashboard</a><a href="#order">Order</a><a href="#billing">Billing</a><a href="#history">History</a><a href="#inventory">Inventory</a><a href="#portions">Portions</a><a href="#reports">Reports</a></nav>
+  </div>
+</header>
+<main>
+  <section id="dashboard">
+    <div id="profit"></div>
+    <div id="meals"></div>
+    <div id="profit-more"></div>
+  </section>
+
+  <section id="inventory" hidden>
+    <h2>Stock · average price paid</h2>
+    <ul class="list" id="stock"></ul>
+    <p class="footnote">Tap + to add a purchase, or the pencil to fix a count.</p>
+    <h2>Purchase history</h2>
+    <div class="breakdown"><ul class="history-list" id="stock-history"></ul></div>
+    <div id="add-ingredient-block" hidden>
+    <h2>Add ingredient</h2>
+    <form class="form" id="new-ingredient">
+      <input class="field grow" name="name" type="text" maxlength="80" required placeholder="Ingredient name" aria-label="Ingredient name">
+      <select class="field" name="unit" aria-label="Unit"><option value="g">g (grams)</option><option value="pcs">pcs (pieces)</option><option value="mL">mL (millilitres)</option></select>
+      <button class="btn" type="submit">Add</button>
+    </form>
+    </div>
+  </section>
+
+  <section id="order" hidden>
+    <h2>Table</h2>
+    <div class="floor"><div id="floor"></div>
+      <div class="floor-legend"><span><i></i>Free</span><span><i class="busy"></i>Has an open bill (minutes since first order)</span></div></div>
+    <div id="menu"></div>
+    <p class="footnote">Finish Order takes the ingredients out of stock.</p>
+    <div class="checkout">
+      <div class="checkout-inner">
+        <div class="checkout-summary" id="cart-summary" aria-live="polite">No items yet</div>
+        <button type="button" class="finish" id="finish" disabled>Finish Order</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="portions" hidden>
+    <h2>New menu item</h2>
+    <form class="form" id="new-item">
+      <input class="field grow" name="name" type="text" maxlength="80" required placeholder="Menu item name" aria-label="Menu item name">
+      <select class="field" name="category" aria-label="Category"><option value="crab">Crab</option><option value="platters">Platters</option><option value="drinks">Drinks</option></select>
+      <button class="btn" type="submit">Add</button>
+    </form>
+    <div id="recipes"></div>
+    <p class="footnote">Amounts are per portion. Changes save automatically.</p>
+  </section>
+
+  <section id="billing" hidden>
+    <h2>Open bills</h2>
+    <div class="bills" id="bills"></div>
+    <div class="bills-total" id="bills-total"></div>
+  </section>
+
+  <section id="reports" hidden>
+    <div class="report-head"><label for="report-month" style="font-weight:600">Month</label>
+      <input class="field" id="report-month" type="month" aria-label="Report month"></div>
+    <div id="kpis"></div>
+    <h2>Profit &amp; loss</h2>
+    <div class="breakdown" id="pnl"><div><span>Loading…</span></div></div>
+    <p class="footnote">Sales are bills paid this month. Service charge counts as income.</p>
+    <h2>Expenses</h2>
+    <form class="form" id="expense-add" novalidate>
+      <input class="field" name="date" type="date" aria-label="Date">
+      <select class="field" name="category" aria-label="Category">
+        <option value="rent">Rent</option><option value="wages">Wages</option><option value="gas">Gas / LPG</option><option value="electricity">Electricity</option>
+        <option value="water">Water</option><option value="supplies">Supplies</option><option value="repairs">Repairs</option><option value="other">Other</option></select>
+      <input class="field" name="amount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="₱ Amount" aria-label="Amount" style="width:120px">
+      <input class="field grow" name="note" type="text" maxlength="120" placeholder="Note (optional)" aria-label="Note">
+      <button class="btn" type="submit">Add</button>
+    </form>
+    <ul class="list" id="expense-list" style="margin-top:12px"></ul>
+    <h2>Stock losses (waste report)</h2>
+    <div id="losses"></div>
+    <h2>Busiest hours · last 30 days</h2>
+    <div id="heatmap"></div>
+  </section>
+
+  <section id="history" class="history" hidden>
+    <div id="history-list"></div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<dialog class="sheet" id="buy" aria-labelledby="buy-title">
+  <form id="buy-form" novalidate>
+    <div class="sheet-head"><button type="button" class="cancel">Cancel</button><h3 id="buy-title">Add stock</h3><button type="submit">Add</button></div>
+    <div class="sheet-body">
+      <p class="buy-now" id="buy-now"></p>
+      <h2>Purchase</h2>
+      <ul class="list">
+        <li><label for="buy-qty">Amount bought</label><span class="editor">
+          <input id="buy-qty" name="qty" type="number" min="0" step="any" inputmode="decimal" placeholder="0">
+          <span class="unit" id="buy-unit"></span></span></li>
+        <li><label for="buy-cost">Total paid</label><span class="editor"><span class="peso">₱</span>
+          <input id="buy-cost" name="cost" type="number" min="0" step="any" inputmode="decimal" placeholder="0.00">
+          <span class="unit"></span></span></li>
+      </ul>
+      <p class="buy-preview" id="buy-preview" aria-live="polite"></p>
+      <div id="batch-block" hidden>
+        <h2>Batches on hand · oldest first</h2>
+        <ul class="list" id="batch-list"></ul>
+        <p class="footnote" style="margin-left:4px">Use the oldest batch first.</p>
+      </div>
+      <h2>Recent purchases</h2>
+      <div class="breakdown"><ul class="history-list" id="buy-history"></ul></div>
+    </div>
+  </form>
+</dialog>
+<dialog class="sheet" id="purchase-dlg" aria-labelledby="purchase-title">
+  <form id="purchase-form" novalidate>
+    <div class="sheet-head"><button type="button" class="cancel">Cancel</button><h3 id="purchase-title">Edit purchase</h3><button type="submit">Save</button></div>
+    <div class="sheet-body">
+      <h2 id="purchase-sub">Purchase</h2>
+      <ul class="list">
+        <li><label for="purchase-qty">Amount bought</label><span class="editor">
+          <input id="purchase-qty" name="qty" type="number" min="0" step="any" inputmode="decimal">
+          <span class="unit" id="purchase-unit"></span></span></li>
+        <li><label for="purchase-cost">Total paid</label><span class="editor"><span class="peso">₱</span>
+          <input id="purchase-cost" name="cost" type="number" min="0" step="any" inputmode="decimal">
+          <span class="unit"></span></span></li>
+      </ul>
+      <p class="footnote">For miscounts. Not counted as waste.</p>
+      <button type="button" class="link-btn danger" id="purchase-delete">Delete purchase</button>
+    </div>
+  </form>
+</dialog>
+<dialog class="sheet" id="edit" aria-labelledby="edit-title">
+  <form id="edit-form" novalidate>
+    <div class="sheet-head"><button type="button" class="cancel">Cancel</button><h3 id="edit-title">Edit</h3><button type="submit">Save</button></div>
+    <div class="sheet-body">
+      <h2>Edit</h2>
+      <ul class="list">
+        <li><label for="edit-count">Count</label><span class="editor">
+          <input id="edit-count" name="count" type="number" min="0" step="any" inputmode="decimal">
+          <span class="unit" id="edit-unit"></span></span></li>
+        <li><label for="edit-price">Average price</label><span class="editor"><span class="peso">₱</span>
+          <input id="edit-price" name="price" type="number" min="0" step="any" inputmode="decimal">
+          <span class="unit" id="edit-per"></span></span></li>
+        <li><span>Low-stock level</span><span class="buy-qty" id="edit-level" style="margin-left:auto"></span></li>
+      </ul>
+      <p class="footnote">A lower count is logged as waste. Low-stock level is forecast use for the next 3 days.</p>
+      <p class="buy-preview" id="edit-preview" aria-live="polite"></p>
+    </div>
+  </form>
+</dialog>
+<dialog class="sheet" id="pay" aria-labelledby="pay-title">
+  <form id="pay-form" novalidate>
+    <div class="sheet-head"><button type="button" class="cancel">Cancel</button><h3 id="pay-title">Bill</h3><button type="submit">Close bill</button></div>
+    <div class="sheet-body">
+      <h2>Guests</h2>
+      <ul class="list">
+        <li><label for="pay-guests">Guests at the table</label><span class="editor"><input id="pay-guests" name="guests" type="number" min="1" max="50" step="1" inputmode="numeric" value="1"></span></li>
+        <li><label for="pay-seniors">Senior citizens / PWD</label><span class="editor"><input id="pay-seniors" name="seniors" type="number" min="0" step="1" inputmode="numeric" value="0"></span></li>
+      </ul>
+      <h2>Bill</h2>
+      <div class="breakdown" id="pay-breakdown"></div>
+      <h2>Payment</h2>
+      <ul class="list">
+        <li><label for="pay-split">Split between</label><span class="editor"><input id="pay-split" name="split" type="number" min="1" max="20" step="1" inputmode="numeric" value="1"><span class="unit">people</span></span></li>
+      </ul>
+      <ul class="list" id="pay-parts" style="margin-top:12px"></ul>
+      <p class="buy-preview" id="pay-check" aria-live="polite"></p>
+    </div>
+  </form>
+</dialog>
+<dialog class="sheet" id="receipt" aria-labelledby="receipt-title">
+  <div class="sheet-head"><h3 id="receipt-title">Bill summary</h3><button type="button" class="cancel" style="font-weight:600 !important">Done</button></div>
+  <div class="sheet-body" id="receipt-body"></div>
+</dialog>
+<dialog class="sheet" id="note-dlg" aria-labelledby="note-title">
+  <form id="note-form" novalidate>
+    <div class="sheet-head"><button type="button" class="cancel">Cancel</button><h3 id="note-title">Note</h3><button type="submit">Save</button></div>
+    <div class="sheet-body">
+      <h2>Note for the kitchen</h2>
+      <textarea id="note-text" name="note" maxlength="120" placeholder="Type a note, or tap a suggestion below" aria-label="Note"></textarea>
+      <div class="quick-notes" id="quick-notes"></div>
+      <p class="footnote" style="margin-left:0">Leave it empty to remove the note.</p>
+    </div>
+  </form>
+</dialog>
+<dialog class="sheet" id="close-day" aria-labelledby="close-day-title">
+  <form id="close-day-form" novalidate>
+    <div class="sheet-head"><button type="button" class="cancel">Cancel</button><h3 id="close-day-title">Close the day</h3><button type="submit">Save</button></div>
+    <div class="sheet-body">
+      <div class="breakdown" id="close-day-summary" style="margin-top:12px"></div>
+      <h2>Cash drawer</h2>
+      <ul class="list">
+        <li><label for="close-counted">Cash counted</label><span class="editor"><span class="peso">₱</span><input id="close-counted" name="counted" type="number" min="0" step="any" inputmode="decimal" placeholder="0.00"></span></li>
+      </ul>
+      <p class="buy-preview" id="close-day-diff" aria-live="polite"></p>
+    </div>
+  </form>
+</dialog>
+<dialog class="sheet" id="staff" aria-labelledby="staff-title">
+  <div class="sheet-head"><h3 id="staff-title">Staff accounts</h3><button type="button" class="cancel" style="font-weight:600 !important">Done</button></div>
+  <div class="sheet-body">
+    <ul class="list" id="staff-list" style="margin-top:12px"></ul>
+    <h2>Add an account</h2>
+    <form class="form" id="staff-add" novalidate>
+      <input class="field grow" name="username" type="text" maxlength="60" placeholder="Name (used to sign in)" aria-label="Name" autocomplete="off">
+      <input class="field grow" name="password" type="password" minlength="8" placeholder="Password (8+ characters)" aria-label="Password" autocomplete="new-password">
+      <select class="field" name="role" aria-label="Role"><option value="staff">Staff</option><option value="owner">Owner</option></select>
+      <button class="btn" type="submit">Add</button>
+    </form>
+  </div>
+</dialog>
+<dialog class="sheet" id="sheet" aria-labelledby="sheet-title">
+  <div class="sheet-head"><h3 id="sheet-title"></h3><button type="button" id="sheet-done">Done</button></div>
+  <div class="sheet-body" id="sheet-body"></div>
+</dialog>
+<div class="login" id="login" hidden>
+  <form id="login-form">
+    <h1>King Crab House</h1>
+    <p>Sign in with your name</p>
+    <input class="field" name="username" type="text" autocomplete="username" autocapitalize="words" spellcheck="false" required maxlength="60" placeholder="Your name" aria-label="Your name">
+    <input class="field" name="password" type="password" autocomplete="current-password" required placeholder="Password" aria-label="Password">
+    <p class="error" id="login-error" role="alert"></p>
+    <button class="btn" type="submit">Sign in</button>
+  </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="calc.js"></script>
+<script>
+// Supabase → Project Settings → API. The anon key is safe to put in a page (RLS limits it).
+const SUPABASE_URL = 'https://ndknssmzfabnhwnhkucm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ka25zc216ZmFibmh3bmhrdWNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyMDcwOTUsImV4cCI6MjEwODc4MzA5NX0.2reKBV-2GRJjHyfv6GxS8RvnI6ZoXQ3JlvQbozXgEls';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Test version: the same page opened with ?test reads and writes the sample data in the `demo` schema instead
+const DEMO = new URLSearchParams(location.search).has('test');
+const headers = { apikey: SUPABASE_ANON_KEY, 'Content-Type': 'application/json', ...(DEMO ? { 'Accept-Profile': 'demo', 'Content-Profile': 'demo' } : {}) };
+if (DEMO) {
+  document.title += ' · Test';
+  document.querySelector('.title-row h1').insertAdjacentHTML('beforeend', ' <span class="demo-tag">Test version · sample data</span>');
+}
+// every request carries the signed-in user's token; the database decides what owner/staff may do
+async function api(path, opts = {}) {
+  const { data: { session } } = await sb.auth.getSession();
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...opts, headers: { ...headers, ...opts.headers, Authorization: `Bearer ${session?.access_token}` } });
+  const t = await r.text();
+  if (!r.ok) throw new Error(t || r.status);
+  return t ? JSON.parse(t) : null;
+}
+const fmt = n => +Number(n).toFixed(2);
+const peso = n => `${n < 0 ? '−' : ''}₱${Math.abs(Number(n)).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+// ingredient costs are stored per g / pc / mL; shown per kg / pc / L
+const PER = { g: ['kg', 1000], pcs: ['pc', 1], mL: ['L', 1000] };
+const per = unit => PER[unit] || [unit, 1];
+const esc = s => String(s).replace(/[&<>"]/g, c => `&#${c.charCodeAt(0)};`);
+const status = document.getElementById('status');
+let data, lastReport = null;
+
+async function load() {
+  try {
+    const since = new Date(Date.now() - 30 * 864e5).toISOString();
+    const [recipes, items, ingredients, orders] = await Promise.all([
+      api('recipes?select=*&order=name'), api('recipe_ingredients?select=*'), api('ingredients?select=*,ingredient_costs(cost)&order=name'),
+      // last 30 days for History, plus any older bill that is still open
+      api(`orders?select=id,table_no,created_at,paid_at,order_items(recipe_id,qty,price,note),order_item_costs(recipe_id,unit_cost)&or=(created_at.gte."${since}",paid_at.is.null)&order=created_at.desc&limit=1000`),
+    ]);
+    // costs come from owner-only tables; for staff these embeds are simply empty
+    for (const i of ingredients) i.cost = Number(i.ingredient_costs?.cost ?? 0);
+    for (const o of orders) for (const it of o.order_items) it.unit_cost = o.order_item_costs?.find(c => c.recipe_id === it.recipe_id)?.unit_cost ?? null;
+    // owner-only: today's bills, payments and closing for the Dashboard takings panel
+    let takings = { bills: [], payments: [], closing: null }, guesses = {};
+    if (role === 'owner') {
+      const start = new Date(); start.setHours(0, 0, 0, 0);
+      const t = start.toISOString(), today = start.toLocaleDateString('en-CA'); // YYYY-MM-DD, local
+      const [bills, payments, closing, saved] = await Promise.all([
+        api(`bills?select=*&closed_at=gte.${t}`), api(`payments?select=*&created_at=gte.${t}`), api(`day_closings?select=*&day=eq.${today}`),
+        api(`forecasts?select=ingredient_id,staff&day=eq.${tomorrowISO()}`).catch(() => []),
+      ]);
+      takings = { bills, payments, closing: closing[0] || null };
+      for (const s of saved) if (s.staff !== null) guesses[s.ingredient_id] = Number(s.staff);
+    }
+    data = { recipes, items, ingredients, orders, takings, guesses };
+    renderStock(); renderMeals(); renderOrder(); renderHistory(); renderRecipes(); renderBills(); renderProfit(); drawFloor();
+    if (role === 'owner') { loadStockHistory(); saveModelForecast(); renderReportData(); }
+    status.textContent = `Updated ${new Date().toLocaleTimeString()}`;
+  } catch (e) { status.textContent = 'Could not load data — check the connection, then reload.'; console.error(e); }
+}
+
+// items deleted in Portions stay in data.recipes so past orders and bills still show their names
+const onMenu = () => data.recipes.filter(r => !r.archived_at);
+// recipe lines of dishes still on the menu, so forecasts ignore deleted dishes' past sales
+const menuItems = () => { const on = new Set(onMenu().map(r => r.id)); return data.items.filter(it => on.has(it.recipe_id)); };
+const MENU_SECTIONS = [['crab', 'Crab'], ['platters', 'Platters'], ['drinks', 'Drinks']];
+const dayKey = d => new Date(d).toDateString();
+const dayLabel = k => k === dayKey(Date.now()) ? 'Today' : k === dayKey(Date.now() - 864e5) ? 'Yesterday'
+  : new Date(k).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+const todayISO = () => new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local (Manila)
+const isSoldOut = r => r.sold_out_on === todayISO();
+const level = n => n === 0 ? 'out' : n < 5 ? 'low' : 'ok';
+const portions = n => `${n}<small>${n === 1 ? 'portion' : 'portions'}</small>`;
+let meals = [];
+
+function renderMeals() {
+  meals = computeServings(onMenu(), data.items, data.ingredients);
+  const tile = r => `
+    <button type="button" class="tile ${level(r.servings)}${isSoldOut(r) ? ' soldout' : ''}" data-i="${meals.indexOf(r)}" aria-haspopup="dialog">
+      <h3>${esc(r.name)}</h3>${isSoldOut(r) ? '<span class="soldout-tag">Sold out today</span>' : ''}<span class="count">${portions(r.servings)}</span>
+    </button>`;
+  document.getElementById('meals').innerHTML = MENU_SECTIONS.map(([cat, title]) => {
+    const rows = meals.filter(r => r.category === cat);
+    return rows.length ? `<h2>${title}</h2><div class="grid">${rows.map(tile).join('')}</div>` : '';
+  }).join('');
+}
+
+// Today's sales, ingredient cost and profit, plus the last 7 days. Counts every order placed, paid or not.
+function renderProfit() {
+  const days = dailyTotals(data.orders, data.recipes, data.items, data.ingredients, dayKey);
+  const today = days.find(d => d.day === dayKey(Date.now())) || { sales: 0, cost: 0, profit: 0, orders: 0 };
+  const cls = n => n > 0 ? 'gain' : n < 0 ? 'loss' : '';
+  const weekAgo = dayKey(Date.now() - 6 * 864e5), recent = days.filter(d => new Date(d.day) >= new Date(weekAgo));
+  document.getElementById('profit').innerHTML = `
+    <h2>Today</h2>
+    <div class="stats">
+      <div class="stat"><span class="stat-label">Sales</span><span class="stat-val">${peso(today.sales)}</span><span class="stat-sub">${today.orders} ${today.orders === 1 ? 'order' : 'orders'}</span></div>
+      <div class="stat"><span class="stat-label">Cost</span><span class="stat-val">${peso(today.cost)}</span><span class="stat-sub">ingredients</span></div>
+      <div class="stat"><span class="stat-label">Gross profit</span><span class="stat-val ${cls(today.profit)}">${peso(today.profit)}</span><span class="stat-sub">${today.sales ? `${Math.round(today.profit / today.sales * 100)}% margin` : '—'}</span></div>
+    </div>
+    ${takingsHtml()}`;
+  // below the crab/platters/drinks tiles
+  document.getElementById('profit-more').innerHTML = `
+    ${recent.length ? `<h2>Last 7 days</h2>
+    <div class="detail"><table>
+      <thead><tr><th>Day</th><th>Sales</th><th>Cost</th><th>Gross profit</th></tr></thead>
+      <tbody>${recent.map(d => `<tr><td>${dayLabel(d.day)}</td><td>${peso(d.sales)}</td><td>${peso(d.cost)}</td><td class="makes ${cls(d.profit)}">${peso(d.profit)}</td></tr>`).join('')}</tbody>
+    </table></div>` : ''}
+    ${dishesHtml()}
+    ${lowStockHtml()}
+    ${forecastHtml()}`;
+}
+
+// today's money in, by payment method, and the cash-drawer closing
+function takingsSummary() {
+  const t = data.takings, by = m => t.payments.filter(p => p.method === m).reduce((s, p) => s + Number(p.amount), 0);
+  const sum = k => t.bills.reduce((s, b) => s + Number(b[k]), 0);
+  return { cash: by('cash'), gcash: by('gcash'), card: by('card'), bills: t.bills.length, total: sum('total'),
+           discount: sum('discount') + sum('vat_removed'), service: sum('service_charge') };
+}
+function takingsHtml() {
+  const s = takingsSummary(), c = data.takings.closing;
+  const row = (label, val, cls = '') => `<div class="${cls}"><span>${label}</span><span>${val}</span></div>`;
+  return `<h2>Today's takings</h2><div class="takings"><div class="breakdown">
+      ${row('Cash', peso(s.cash))}${row('GCash', peso(s.gcash))}${row('Card', peso(s.card))}
+      ${s.discount ? row('Senior/PWD discounts given', `−${peso(s.discount)}`) : ''}${s.service ? row('Service charge collected', peso(s.service)) : ''}
+      ${row(`Total · ${s.bills} ${s.bills === 1 ? 'bill' : 'bills'} paid`, peso(s.total), 'grand')}</div>
+    ${c ? `<p class="closed-note">Closed at ${new Date(c.created_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}: counted ${peso(c.counted_cash)} vs expected ${peso(c.expected_cash)} — ${Number(c.difference) === 0 ? 'balanced' : `<span class="${c.difference < 0 ? 'loss' : 'gain'}">${c.difference < 0 ? 'short' : 'over'} ${peso(Math.abs(c.difference))}</span>`}.</p>` : ''}
+    <button type="button" class="btn" id="open-close-day">${c ? 'Close the day again' : 'Close the day'}</button></div>`;
+}
+// Running low: forecast days of cover under the reorder point (lead time + 1 safety day).
+function lowStockHtml() {
+  const cover = coverNow(), low = cover.filter(i => i.reorder && i.buy > 0);
+  if (!low.length) return cover.length ? '' : '<h2>Running low</h2><p class="footnote" style="margin-top:0">Fills in once there are orders.</p>';
+  const days = c => c >= 60 ? '60+ days' : `${c < 10 ? c.toFixed(1) : Math.round(c)} day${c === 1 ? '' : 's'}`;
+  return `<h2>Running low · shopping list</h2><ul class="list shopping">${low.map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">${fmt(i.stock)} ${i.unit} · ~${days(i.cover)} left</span></span>
+    <span class="buy-qty loss">Buy ${fmt(i.buy)} ${i.unit}</span></li>`).join('')}</ul>
+    <p class="footnote">Runs out within ${LEAD_DAYS + 1} days. Buys ${TARGET_DAYS} days' worth (crab: ${HOLD_DAYS}).</p>`;
+}
+const tomorrowDate = () => { const d = new Date(); d.setDate(d.getDate() + 1); return d; };
+const tomorrowISO = () => tomorrowDate().toLocaleDateString('en-CA');
+// The manager's own guess for tomorrow, compared later with the model in Reports (forecast vs guesswork).
+function guessHtml(day) {
+  const tracked = data.ingredients.filter(i => i.batch_tracked);
+  return tracked.length ? `<h2>Tomorrow (${day}) · your estimate</h2><ul class="list">${tracked.map(i => `<li><label for="guess-${i.id}">${esc(i.name)} you expect to use</label>
+    <span class="editor"><input id="guess-${i.id}" data-guess="${i.id}" type="number" min="0" step="any" inputmode="decimal" placeholder="—" value="${data.guesses?.[i.id] ?? ''}">
+    <span class="unit">${i.unit}</span></span></li>`).join('')}</ul>
+    <p class="footnote">Enter before reading the forecast.</p>` : '';
+}
+// Save tomorrow's model forecast so Reports can measure its error; same numbers every load, so saving again is harmless.
+async function saveModelForecast() {
+  const f = forecastBuy(data.orders, menuItems(), data.ingredients, tomorrowDate(), 4, dayKey);
+  if (!f.ingredients.length) return;
+  try {
+    await api('rpc/save_forecasts', { method: 'POST', body: JSON.stringify({ day: tomorrowISO(), rows: f.ingredients.map(i => ({ ingredient_id: i.id, model: fmt(i.need) })) }) });
+  } catch (e) { console.error('Could not save forecast', e); }
+}
+document.getElementById('profit-more').addEventListener('change', async e => {
+  const id = e.target.dataset.guess; if (!id) return;
+  const v = e.target.value === '' ? null : Number(e.target.value);
+  if (v === null || !(v >= 0)) return;
+  try {
+    await api('rpc/save_forecasts', { method: 'POST', body: JSON.stringify({ day: tomorrowISO(), rows: [{ ingredient_id: id, staff: v }] }) });
+    data.guesses[id] = v; showToast('Estimate saved');
+  } catch { showToast('Could not save the estimate', true); }
+});
+// Tomorrow's expected crab use; what to buy is on the Running low list.
+function forecastHtml() {
+  const tomorrow = tomorrowDate();
+  const day = tomorrow.toLocaleDateString([], { weekday: 'long' });
+  const f = forecastBuy(data.orders, menuItems(), data.ingredients, tomorrow, 4, dayKey);
+  if (!f.days) return `${guessHtml(day)}<h2>Tomorrow (${day}) · forecast</h2><p class="footnote" style="margin-top:0">Not enough ${day} history yet.</p>`;
+  const rows = f.ingredients.filter(i => i.batch_tracked);
+  return `${guessHtml(day)}<h2>Tomorrow (${day}) · forecast</h2>
+    ${rows.length ? `<ul class="list shopping">${rows.map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">Have ${fmt(i.stock)} ${i.unit}</span></span>
+      <span class="buy-qty">Expect ~${fmt(i.need)} ${i.unit}</span></li>`).join('')}</ul>` : ''}
+    <p class="footnote">Based on the last ${f.days} ${day}${f.days === 1 ? '' : 's'}, recent weeks counting more.</p>`;
+}
+function dishesHtml() {
+  const stats = dishStats(data.orders, data.recipes, data.items, data.ingredients);
+  if (!stats.length) return '';
+  return `<h2>Dishes · last 30 days</h2><div class="detail"><table>
+    <thead><tr><th>Dish</th><th>Sold</th><th>Sales</th><th>Gross profit</th></tr></thead>
+    <tbody>${stats.slice(0, 12).map(d => `<tr><td>${esc(d.name)}</td><td>${d.qty}</td><td>${peso(d.sales)}</td>
+      <td class="makes ${d.profit > 0 ? 'gain' : d.profit < 0 ? 'loss' : ''}">${peso(d.profit)}<br><span class="u">${d.sales ? Math.round(d.profit / d.sales * 100) : 0}% margin</span></td></tr>`).join('')}</tbody>
+  </table></div>`;
+}
+const closeDlg = document.getElementById('close-day'), closeForm = document.getElementById('close-day-form');
+document.getElementById('profit').addEventListener('click', e => {
+  if (e.target.id !== 'open-close-day') return;
+  const s = takingsSummary();
+  document.getElementById('close-day-summary').innerHTML = `<div><span>Cash sales</span><span>${peso(s.cash)}</span></div>
+    <div><span>GCash</span><span>${peso(s.gcash)}</span></div><div><span>Card</span><span>${peso(s.card)}</span></div>
+    <div class="grand"><span>Expected cash in drawer</span><span>${peso(s.cash)}</span></div>`;
+  closeForm.reset(); updateCloseDiff();
+  closeDlg.showModal(); closeForm.counted.focus();
+});
+function updateCloseDiff() {
+  const expected = takingsSummary().cash, v = closeForm.counted.value, diff = Number(v) - expected;
+  document.getElementById('close-day-diff').innerHTML = v === '' ? 'Count the cash in the drawer (sales only, without your starting float).'
+    : Math.abs(diff) < 0.005 ? '<strong>Balanced.</strong>' : `<span class="${diff < 0 ? 'loss' : 'gain'}"><strong>${diff < 0 ? 'Short' : 'Over'} by ${peso(Math.abs(diff))}</strong></span>`;
+}
+closeForm.addEventListener('input', updateCloseDiff);
+closeDlg.querySelector('.cancel').addEventListener('click', () => closeDlg.close());
+closeDlg.addEventListener('click', e => { if (e.target === closeDlg) closeDlg.close(); });
+closeForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const counted = Number(closeForm.counted.value);
+  if (closeForm.counted.value === '' || !(counted >= 0)) return showToast('Enter the cash counted', true);
+  try {
+    const r = await api('rpc/close_day', { method: 'POST', body: JSON.stringify({ counted_cash: counted }) });
+    closeDlg.close();
+    showToast(Number(r.difference) === 0 ? 'Day closed — cash balanced' : `Day closed — ${r.difference < 0 ? 'short' : 'over'} ${peso(Math.abs(r.difference))}`);
+    await load();
+  } catch { showToast('Could not close the day', true); }
+});
+
+const sheet = document.getElementById('sheet');
+document.getElementById('meals').addEventListener('click', e => {
+  const r = meals[e.target.closest('.tile')?.dataset.i];
+  if (!r) return;
+  document.getElementById('sheet-title').textContent = r.name;
+  document.getElementById('sheet-body').innerHTML = `
+    <div class="${level(r.servings)}"><span class="count">${portions(r.servings)}</span></div>
+    <h2>Ingredients</h2>
+    <div class="detail"><table>
+      <thead><tr><th>Ingredient</th><th>Needs</th><th>In stock</th><th>Makes</th></tr></thead>
+      <tbody>${r.lines.map(l => `
+        <tr class="${l.portions === r.servings ? 'limiting' : ''}">
+          <td>${esc(l.name)}${l.portions === r.servings ? '<span class="badge">Limits</span>' : ''}</td>
+          <td>${fmt(l.qty)} <span class="u">${l.unit}</span></td>
+          <td>${fmt(l.stock)} <span class="u">${l.unit}</span></td>
+          <td class="makes">${l.portions}</td>
+        </tr>`).join('')}
+      </tbody></table></div>
+    <p class="footnote">Needs: per portion. Makes: portions it alone covers.</p>
+    <button type="button" class="btn soldout-btn${isSoldOut(r) ? ' on' : ''}" data-soldout="${r.id}">${isSoldOut(r) ? 'Back on the menu' : 'Mark sold out for today'}</button>
+    <p class="footnote">Sold out lasts until tomorrow.</p>`;
+  sheet.showModal();
+});
+document.getElementById('sheet-done').addEventListener('click', () => sheet.close());
+document.getElementById('sheet-body').addEventListener('click', async e => {
+  const b = e.target.closest('[data-soldout]'); if (!b) return;
+  const r = data.recipes.find(x => x.id === b.dataset.soldout), on = !isSoldOut(r);
+  b.disabled = true;
+  try {
+    await api('rpc/set_sold_out', { method: 'POST', body: JSON.stringify({ recipe_id: r.id, sold_out: on }) });
+    r.sold_out_on = on ? todayISO() : null;
+    sheet.close();
+    showToast(on ? `${r.name} marked sold out for today` : `${r.name} is back on the menu`);
+    renderMeals(); renderOrder();
+  } catch { showToast('Could not change that', true); b.disabled = false; }
+});
+sheet.addEventListener('click', e => { if (e.target === sheet) sheet.close(); }); // tap outside to close
+
+let role = null;
+function showTab() {
+  // staff take orders and payments; the owner sees everything
+  const allowed = role === 'owner' ? ['#dashboard', '#order', '#billing', '#history', '#inventory', '#portions', '#reports'] : ['#order', '#billing'];
+  const tab = allowed.includes(location.hash) ? location.hash.slice(1) : allowed[0].slice(1);
+  for (const s of document.querySelectorAll('main > section')) s.hidden = s.id !== tab;
+  for (const a of document.querySelectorAll('.segmented a')) a.toggleAttribute('aria-current', a.hash === `#${tab}`);
+  if (tab === 'reports' && role === 'owner') loadReport();
+}
+addEventListener('hashchange', showTab);
+showTab();
+
+function renderStock() {
+  const low = new Set(coverNow().filter(c => c.reorder).map(c => c.id));
+  document.getElementById('stock').innerHTML = data.ingredients.map(i => {
+    const [perLabel, f] = per(i.unit);
+    return `<li class="inv-row" data-id="${i.id}">
+      <span class="inv-name">${esc(i.name)}</span>
+      <span class="inv-meta"><span class="stock">${fmt(i.stock)} ${i.unit}${low.has(i.id) ? '<span class="low-tag">Low</span>' : ''}</span>
+        <span class="cost">${peso(Number(i.cost || 0) * f)}/${perLabel}</span></span>
+      <button type="button" class="inv-btn add" data-act="buy" aria-haspopup="dialog" aria-label="Add stock of ${esc(i.name)}">+</button>
+      <button type="button" class="inv-btn edit" data-act="edit" aria-haspopup="dialog" aria-label="Edit count and price of ${esc(i.name)}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg></button></li>`;
+  }).join('');
+}
+
+// --- adding stock (+) and editing count/price (pencil) ---
+const buy = document.getElementById('buy'), buyForm = document.getElementById('buy-form');
+const edit = document.getElementById('edit'), editForm = document.getElementById('edit-form');
+let invIng = null;
+// running average, same formula as add_purchase in the database
+const blendedCost = (ing, qty, total) => (Math.max(Number(ing.stock), 0) * ing.cost + total) / (Math.max(Number(ing.stock), 0) + qty);
+
+function openBuy(id) {
+  invIng = data.ingredients.find(i => i.id === id);
+  const [perLabel, f] = per(invIng.unit);
+  document.getElementById('buy-title').textContent = invIng.name;
+  document.getElementById('buy-unit').textContent = invIng.unit;
+  document.getElementById('buy-now').innerHTML = `In stock: <strong>${fmt(invIng.stock)} ${invIng.unit}</strong> · Average paid: ${peso(invIng.cost * f)}/${perLabel}`;
+  buyForm.reset(); updateBuyPreview();
+  buy.showModal(); buyForm.qty.focus();
+  loadPurchaseHistory(invIng);
+  document.getElementById('batch-block').hidden = !invIng.batch_tracked;
+  if (invIng.batch_tracked) loadBatches(invIng);
+}
+async function loadBatches(ing) {
+  const el = document.getElementById('batch-list');
+  el.innerHTML = '<li>Loading…</li>';
+  try {
+    const [buys, deaths] = await Promise.all([
+      api(`purchases?select=id,qty,created_at&ingredient_id=eq.${encodeURIComponent(ing.id)}&order=created_at.desc&limit=60`),
+      api(`stock_adjustments?select=purchase_id,change&ingredient_id=eq.${encodeURIComponent(ing.id)}&reason=eq.dead`),
+    ]);
+    if (invIng !== ing) return;
+    const dead = {};
+    for (const d of deaths) if (d.purchase_id) dead[d.purchase_id] = (dead[d.purchase_id] || 0) - Number(d.change);
+    const { batches, older } = batchesOnHand(ing.stock, buys, dead);
+    // calendar days since delivery (bought Monday → "3 days old" on Thursday)
+    const days = d => { const a = new Date(d), t = new Date(); return Math.max(0, Math.round((new Date(t.getFullYear(), t.getMonth(), t.getDate()) - new Date(a.getFullYear(), a.getMonth(), a.getDate())) / 864e5)); };
+    const rows = batches.reverse().map(b => ({ id: b.id, label: new Date(b.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' }), left: b.left, of: Number(b.qty) - (dead[b.id] || 0), age: days(b.created_at) }));
+    if (older > 0) rows.unshift({ id: '', label: 'Before batches were recorded', left: older, age: null });
+    el.innerHTML = rows.map((b, k) => `<li class="batch" data-batch="${b.id}">
+      <span>${esc(b.label)}${k === 0 ? '<span class="first">Use first</span>' : ''}<span class="line-sub" style="display:block">${fmt(b.left)} ${ing.unit} left${b.of ? ` of ${fmt(b.of)}` : ''}${b.age !== null ? ` · <span class="${b.age >= 2 ? 'old' : ''}">${b.age === 0 ? 'today' : `${b.age} day${b.age === 1 ? '' : 's'} old`}</span>` : ''}</span></span>
+      <button type="button" class="link-btn danger" data-dead-open>Log dead</button></li>`).join('') || `<li>None in stock.</li>`;
+  } catch { el.innerHTML = '<li>Could not load batches.</li>'; }
+}
+document.getElementById('batch-list').addEventListener('click', async e => {
+  const li = e.target.closest('.batch'); if (!li) return;
+  if (e.target.closest('[data-dead-open]')) {
+    e.target.closest('[data-dead-open]').outerHTML = `<span class="dead-form"><input class="field" type="number" min="1" step="1" inputmode="numeric" placeholder="How many" aria-label="How many died">
+      <button type="button" class="btn" data-dead-save>Save</button></span>`;
+    li.querySelector('input').focus();
+  } else if (e.target.closest('[data-dead-save]')) {
+    const qty = Number(li.querySelector('input').value);
+    if (!(qty > 0)) return showToast('Enter how many died', true);
+    try {
+      const r = await api('rpc/log_dead', { method: 'POST', body: JSON.stringify({ ingredient_id: invIng.id, purchase_id: li.dataset.batch ? Number(li.dataset.batch) : null, qty }) });
+      invIng.stock = Number(r.stock);
+      showToast(`Logged ${fmt(qty)} dead ${invIng.name.toLowerCase()}`);
+      afterInventoryChange(); loadBatches(invIng);
+      document.getElementById('buy-now').innerHTML = document.getElementById('buy-now').innerHTML.replace(/<strong>[^<]*<\/strong>/, `<strong>${fmt(invIng.stock)} ${invIng.unit}</strong>`);
+    } catch { showToast('Could not log that', true); }
+  }
+});
+async function loadPurchaseHistory(ing) {
+  const el = document.getElementById('buy-history'), [perLabel, f] = per(ing.unit);
+  el.innerHTML = '<li>Loading…</li>';
+  try {
+    const rows = await api(`purchases?select=qty,total_cost,created_at&ingredient_id=eq.${encodeURIComponent(ing.id)}&order=created_at.desc&limit=10`);
+    if (invIng !== ing) return; // another ingredient was opened meanwhile
+    el.innerHTML = rows.map(p => `<li><span>${new Date(p.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' })} · ${fmt(p.qty)} ${ing.unit}</span>
+      <span>${peso(p.total_cost)} · <strong>${peso(p.total_cost / p.qty * f)}/${perLabel}</strong></span></li>`).join('') || '<li>No purchases recorded yet.</li>';
+  } catch { el.innerHTML = '<li>Could not load purchases.</li>'; }
+}
+// every stock purchase, newest first; Edit fixes a miscounted purchase
+let stockHistory = [], editingPurchase = null;
+const purchaseDlg = document.getElementById('purchase-dlg'), purchaseForm = document.getElementById('purchase-form');
+document.getElementById('stock-history').addEventListener('click', e => {
+  const p = stockHistory[e.target.closest('[data-n]')?.dataset.n];
+  if (!p) return;
+  editingPurchase = p;
+  const ing = data.ingredients.find(i => i.id === p.ingredient_id);
+  document.getElementById('purchase-sub').textContent = `${ing?.name || p.ingredient_id} · ${new Date(p.created_at).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })}`;
+  document.getElementById('purchase-unit').textContent = ing?.unit || '';
+  purchaseForm.qty.value = fmt(p.qty); purchaseForm.cost.value = fmt(p.total_cost);
+  const del = document.getElementById('purchase-delete'); del.classList.remove('confirm'); del.textContent = 'Delete purchase';
+  purchaseDlg.showModal(); purchaseForm.qty.focus(); purchaseForm.qty.select();
+});
+// takes its amount back out of stock; tap twice to confirm
+document.getElementById('purchase-delete').addEventListener('click', async e => {
+  const btn = e.currentTarget;
+  if (!btn.classList.contains('confirm')) { btn.classList.add('confirm'); btn.textContent = 'Tap again to delete'; return; }
+  btn.disabled = true;
+  try {
+    const r = await api('rpc/delete_purchase', { method: 'POST', body: JSON.stringify({ purchase_id: editingPurchase.id }) });
+    const ing = data.ingredients.find(i => i.id === editingPurchase.ingredient_id);
+    if (ing) Object.assign(ing, { stock: Number(r.stock), cost: Number(r.cost) });
+    purchaseDlg.close();
+    showToast('Purchase deleted');
+    afterInventoryChange(); loadStockHistory();
+  } catch (err) { showToast(/less than 0/.test(err?.message) ? 'That would leave less than 0 in stock' : 'Could not delete that purchase', true); }
+  finally { btn.disabled = false; }
+});
+purchaseDlg.querySelector('.cancel').addEventListener('click', () => purchaseDlg.close());
+purchaseDlg.addEventListener('click', e => { if (e.target === purchaseDlg) purchaseDlg.close(); });
+purchaseForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const qty = Number(purchaseForm.qty.value), total = Number(purchaseForm.cost.value), btn = purchaseForm.querySelector('[type="submit"]');
+  if (!(qty > 0) || !(total >= 0) || purchaseForm.cost.value === '') return showToast('Amount must be above 0 and total paid 0 or more', true);
+  btn.disabled = true;
+  try {
+    // untouched fields send the exact stored value, so display rounding isn't saved as a change
+    const r = await api('rpc/edit_purchase', { method: 'POST', body: JSON.stringify({ purchase_id: editingPurchase.id,
+      qty: qty === fmt(editingPurchase.qty) ? Number(editingPurchase.qty) : qty, total_cost: total === fmt(editingPurchase.total_cost) ? Number(editingPurchase.total_cost) : total }) });
+    const ing = data.ingredients.find(i => i.id === editingPurchase.ingredient_id);
+    if (ing) Object.assign(ing, { stock: Number(r.stock), cost: Number(r.cost) });
+    purchaseDlg.close();
+    showToast('Purchase updated');
+    afterInventoryChange(); loadStockHistory();
+  } catch (err) { showToast(/less than 0/.test(err?.message) ? 'That would leave less than 0 in stock' : 'Could not save that purchase', true); }
+  finally { btn.disabled = false; }
+});
+async function loadStockHistory() {
+  const el = document.getElementById('stock-history');
+  try {
+    stockHistory = await api('purchases?select=id,ingredient_id,qty,total_cost,created_at&order=created_at.desc&limit=200');
+    el.innerHTML = stockHistory.map((p, n) => {
+      const ing = data.ingredients.find(i => i.id === p.ingredient_id);
+      return `<li><span>${new Date(p.created_at).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })} · ${esc(ing?.name || p.ingredient_id)}</span>
+        <span>${fmt(p.qty)} ${ing?.unit || ''} · <strong>${peso(p.total_cost)}</strong>
+          <button type="button" class="link-btn" data-n="${n}" aria-haspopup="dialog">Edit</button></span></li>`;
+    }).join('') || '<li>No purchases recorded yet.</li>';
+  } catch { el.innerHTML = '<li>Could not load purchases.</li>'; }
+}
+function updateBuyPreview() {
+  const qty = Number(buyForm.qty.value), total = Number(buyForm.cost.value), [perLabel, f] = per(invIng.unit);
+  document.getElementById('buy-preview').innerHTML = qty > 0 && buyForm.cost.value !== ''
+    ? `That's ${peso(total / qty * f)}/${perLabel}. Stock becomes <strong>${fmt(Number(invIng.stock) + qty)} ${invIng.unit}</strong>, average <strong>${peso(blendedCost(invIng, qty, total) * f)}/${perLabel}</strong>.` : '';
+}
+
+function openEdit(id) {
+  invIng = data.ingredients.find(i => i.id === id);
+  const [perLabel, f] = per(invIng.unit);
+  document.getElementById('edit-title').textContent = invIng.name;
+  document.getElementById('edit-unit').textContent = invIng.unit;
+  document.getElementById('edit-per').textContent = `/${perLabel}`;
+  editForm.count.value = fmt(invIng.stock);
+  editForm.price.value = fmt(invIng.cost * f);
+  const c = coverNow().find(x => x.id === invIng.id);
+  document.getElementById('edit-level').textContent = c ? `~${fmt(Math.ceil(c.reorderAt * 100) / 100)} ${invIng.unit}` : 'Not used yet';
+  updateEditPreview();
+  edit.showModal(); editForm.count.focus(); editForm.count.select();
+}
+function updateEditPreview() {
+  const [perLabel, f] = per(invIng.unit), count = Number(editForm.count.value), price = Number(editForm.price.value);
+  const changes = [];
+  if (editForm.count.value !== '' && count !== fmt(invIng.stock)) changes.push(`Count ${fmt(invIng.stock)} → <strong>${fmt(count)} ${invIng.unit}</strong>`);
+  if (editForm.price.value !== '' && price !== fmt(invIng.cost * f)) changes.push(`Price ${peso(invIng.cost * f)} → <strong>${peso(price)}/${perLabel}</strong>`);
+  document.getElementById('edit-preview').innerHTML = changes.join('<br>') || 'No changes yet.';
+}
+
+document.getElementById('stock').addEventListener('click', e => {
+  const btn = e.target.closest('.inv-btn');
+  if (btn) (btn.dataset.act === 'buy' ? openBuy : openEdit)(btn.closest('.inv-row').dataset.id);
+});
+for (const d of [buy, edit]) {
+  d.querySelector('.cancel').addEventListener('click', () => d.close());
+  d.addEventListener('click', e => { if (e.target === d) d.close(); }); // tap outside to close
+}
+buyForm.addEventListener('input', updateBuyPreview);
+editForm.addEventListener('input', updateEditPreview);
+const afterInventoryChange = () => { renderStock(); renderMeals(); renderOrder(); renderRecipes(); renderProfit(); };
+
+buyForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const qty = Number(buyForm.qty.value), total = Number(buyForm.cost.value), btn = buyForm.querySelector('[type="submit"]');
+  if (!(qty > 0) || !(total >= 0) || buyForm.cost.value === '') return showToast('Enter the amount bought and what you paid', true);
+  btn.disabled = true;
+  try {
+    const r = await api('rpc/add_purchase', { method: 'POST', body: JSON.stringify({ ingredient_id: invIng.id, qty, total_cost: total }) });
+    Object.assign(invIng, { stock: Number(r.stock), cost: Number(r.cost) });
+    buy.close();
+    showToast(`Added ${fmt(qty)} ${invIng.unit} of ${invIng.name}`);
+    afterInventoryChange(); loadStockHistory();
+  } catch { showToast('Could not save that purchase', true); }
+  finally { btn.disabled = false; }
+});
+
+editForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const count = Number(editForm.count.value), price = Number(editForm.price.value), btn = editForm.querySelector('[type="submit"]');
+  if (editForm.count.value === '' || editForm.price.value === '' || !(count >= 0) || !(price >= 0)) return showToast('Count and price must be 0 or more', true);
+  btn.disabled = true;
+  try {
+    const r = await api('rpc/edit_inventory', { method: 'POST', body: JSON.stringify({ ingredient_id: invIng.id, new_stock: count === fmt(invIng.stock) ? Number(invIng.stock) : count, new_cost: price / per(invIng.unit)[1], new_min: null }) });
+    Object.assign(invIng, { stock: Number(r.stock), cost: Number(r.cost) });
+    edit.close();
+    showToast(`${invIng.name} updated`);
+    afterInventoryChange();
+  } catch { showToast('Could not save that change', true); }
+  finally { btn.disabled = false; }
+});
+
+// --- ordering ---
+const cart = {}, notes = {}, weights = {}; // recipe_id -> qty / note text / total kg for per-kg items
+let table = null;
+
+// Floor plan: kitchen along the top, entrance at the bottom, 8 tables in two rows.
+// Odd tables are round 2-seaters, even tables are square 4-seaters.
+const TABLES = [1, 2, 3, 4, 5, 6, 7, 8].map((n, i) => ({ n, x: 85 + (i % 4) * 117, y: i < 4 ? 128 : 238, round: n % 2 === 1 }));
+function drawFloor() {
+  // tables with an open bill are tinted, with minutes since their first order
+  const open = data ? Object.fromEntries(openBills(data.orders, data.recipes).map(b => [b.table_no, b])) : {};
+  const mins = n => Math.max(0, Math.round((Date.now() - new Date(open[n].since)) / 60000));
+  const t = ({ n, x, y, round }) => `<g class="tbl${open[n] ? ' busy' : ''}" role="radio" tabindex="${(table ?? 1) === n ? 0 : -1}" aria-checked="${table === n}" aria-label="Table ${n}${open[n] ? `, open bill, ${mins(n)} minutes` : ', free'}" data-n="${n}">
+    <rect x="${x - 40}" y="${y - 41}" width="80" height="82" fill="transparent"/>
+    ${round
+      ? `<circle class="chair" cx="${x}" cy="${y - 30}" r="8"/><circle class="chair" cx="${x}" cy="${y + 30}" r="8"/><circle class="top" cx="${x}" cy="${y}" r="21"/>`
+      : `<circle class="chair" cx="${x - 14}" cy="${y - 30}" r="8"/><circle class="chair" cx="${x + 14}" cy="${y - 30}" r="8"/>
+         <circle class="chair" cx="${x - 14}" cy="${y + 30}" r="8"/><circle class="chair" cx="${x + 14}" cy="${y + 30}" r="8"/>
+         <rect class="top" x="${x - 30}" y="${y - 21}" width="60" height="42" rx="7"/>`}
+    <text x="${x}" y="${open[n] ? y - 5 : y}">${n}</text>${open[n] ? `<text class="mins" x="${x}" y="${y + 10}">${mins(n)}m</text>` : ''}</g>`;
+  document.getElementById('floor').innerHTML = `<svg viewBox="0 0 520 320" role="radiogroup" aria-label="Choose a table">
+    <rect class="room" x="6" y="6" width="508" height="308" rx="14"/>
+    <rect class="kitchen" x="6" y="6" width="508" height="48" rx="14"/><rect class="kitchen" x="6" y="30" width="508" height="24"/>
+    <text class="floor-label" x="260" y="33" text-anchor="middle">Kitchen</text>
+    <line class="door" x1="225" y1="314" x2="295" y2="314"/>
+    <text class="floor-label" x="260" y="304" text-anchor="middle">Entrance</text>
+    ${TABLES.map(t).join('')}</svg>`;
+}
+function pickTable(n) {
+  table = n; drawFloor(); renderOrder();
+  document.querySelector(`.tbl[data-n="${n}"]`).focus();
+}
+const floor = document.getElementById('floor');
+floor.addEventListener('click', e => { const g = e.target.closest('.tbl'); if (g) pickTable(Number(g.dataset.n)); });
+floor.addEventListener('keydown', e => {
+  const g = e.target.closest('.tbl'); if (!g) return;
+  const n = Number(g.dataset.n), move = { ArrowRight: 1, ArrowDown: 4, ArrowLeft: -1, ArrowUp: -4 }[e.key];
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); pickTable(n); }
+  else if (move) { e.preventDefault(); pickTable(((n - 1 + move + 8) % 8) + 1); }
+});
+drawFloor();
+const toast = document.getElementById('toast');
+function showToast(msg, err) {
+  toast.textContent = msg; toast.className = `toast show${err ? ' err' : ''}`;
+  clearTimeout(showToast.t); showToast.t = setTimeout(() => toast.className = 'toast', 3000);
+}
+
+function renderOrder() {
+  // how many more of each meal fit once the cart's ingredients are set aside
+  const used = {};
+  for (const it of data.items) used[it.ingredient_id] = (used[it.ingredient_id] || 0) + (cart[it.recipe_id] || 0) * Number(it.qty);
+  const left = computeServings(onMenu(), data.items, data.ingredients.map(i => ({ ...i, stock: Number(i.stock) - (used[i.id] || 0) })));
+  const item = r => {
+    const n = cart[r.id] || 0;
+    const perKg = r.pricing === 'per_kg', soldOut = isSoldOut(r);
+    const note = (notes[r.id] || '').trim();
+    return `<li><span class="line-name">${esc(r.name)}<span class="line-sub">${peso(r.price)}${perKg ? '/kg' : ''} · ${soldOut ? '<span class="soldout-tag">Sold out today</span>' : r.servings === 0 && n === 0 ? 'Out of stock' : `${r.servings} more available`}${n && note ? `<span class="note">Note: ${esc(note)}</span>` : ''}</span></span>
+      <span class="editor">
+        <button type="button" class="step" data-id="${r.id}" data-dir="-1" aria-label="Remove one ${esc(r.name)}" ${n ? '' : 'disabled'}>−</button>
+        <span class="qty ${n ? '' : 'zero'}" aria-label="${n} in order">${n}</span>
+        <button type="button" class="step" data-id="${r.id}" data-dir="1" aria-label="Add one ${esc(r.name)}" ${r.servings && !soldOut ? '' : 'disabled'}>+</button>
+        <button type="button" class="step note-btn${note ? ' has-note' : ''}" data-note-for="${r.id}" aria-haspopup="dialog" aria-label="${note ? 'Edit' : 'Add'} note for ${esc(r.name)}" ${n ? '' : 'disabled'}><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M5 4h14v12H9l-4 4V4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 9h6M9 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </span>${n && perKg ? `<span class="item-extra">
+        <input class="field weight" data-weight="${r.id}" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Total weight (kg)" aria-label="Total weight in kg for ${esc(r.name)}" value="${weights[r.id] ?? ''}">
+      </span>` : ''}</li>`;
+  };
+  document.getElementById('menu').innerHTML = MENU_SECTIONS.map(([cat, title]) => {
+    const rows = left.filter(r => r.category === cat);
+    return rows.length ? `<h2>${title}</h2><ul class="list menu">${rows.map(item).join('')}</ul>` : '';
+  }).join('');
+  renderCartSummary();
+}
+// per-kg items are priced by the weight entered; fixed items by count
+const lineTotal = r => r.pricing === 'per_kg' ? Number(weights[r.id] || 0) * Number(r.price) : (cart[r.id] || 0) * Number(r.price);
+function renderCartSummary() {
+  const count = Object.values(cart).reduce((a, b) => a + b, 0);
+  document.getElementById('cart-summary').innerHTML = (table ? `<strong>Table ${table}</strong> · ` : 'No table · ')
+    + (count ? `${count} ${count === 1 ? 'item' : 'items'} · <strong>${peso(data.recipes.reduce((s, r) => s + lineTotal(r), 0))}</strong>` : 'no items yet');
+  document.getElementById('finish').disabled = !count;
+}
+
+function renderHistory() {
+  const names = Object.fromEntries(data.recipes.map(r => [r.id, r.name]));
+  // orders arrive newest first, so grouping by local day keeps both days and orders newest first
+  const groups = new Map();
+  for (const o of data.orders) { const k = dayKey(o.created_at); groups.has(k) ? groups.get(k).push(o) : groups.set(k, [o]); }
+  const time = d => new Date(d).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const prices = Object.fromEntries(data.recipes.map(r => [r.id, Number(r.price)]));
+  const total = o => o.order_items.reduce((s, i) => s + i.qty * Number(i.price ?? prices[i.recipe_id] ?? 0), 0);
+  document.getElementById('history-list').innerHTML = [...groups].map(([k, orders]) =>
+    `<h2><span>${dayLabel(k)}</span><span>${orders.length} ${orders.length === 1 ? 'order' : 'orders'}</span></h2>
+      <ul class="list">${orders.map(o => `<li><span class="what"><strong>Table ${o.table_no}</strong><br>${o.order_items.map(i => `${i.qty}× ${esc(names[i.recipe_id] || i.recipe_id)}${i.note ? ` <span class="note">— ${esc(i.note)}</span>` : ''}`).join('<br>')}</span>
+        <span class="when">${time(o.created_at)}<br>${peso(total(o))}<br>${o.paid_at ? '<span class="paid-tag">Paid</span>' : '<span class="open-tag">Open</span>'}</span></li>`).join('')}</ul>`).join('')
+    || '<p class="empty">No orders yet.</p>';
+}
+
+document.getElementById('menu').addEventListener('click', e => {
+  const btn = e.target.closest('.step[data-dir]'); // − and + only; the note button has its own handler
+  if (!btn || btn.disabled) return;
+  const n = (cart[btn.dataset.id] || 0) + Number(btn.dataset.dir);
+  if (n > 0) cart[btn.dataset.id] = n; else { delete cart[btn.dataset.id]; delete notes[btn.dataset.id]; delete weights[btn.dataset.id]; }
+  renderOrder();
+  document.querySelector(`#menu .step[data-id="${btn.dataset.id}"][data-dir="${btn.dataset.dir}"]`)?.focus();
+});
+
+document.getElementById('menu').addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.weight) { weights[t.dataset.weight] = t.value; renderCartSummary(); }
+});
+
+// note pop-up for an item in the order
+const noteDlg = document.getElementById('note-dlg'), noteForm = document.getElementById('note-form');
+// quick notes depend on the item: drinks get drink notes; food gets "No …" only for leave-out-able
+// ingredients that dish actually uses (core ingredients like crab or sauces aren't offered)
+const LEAVE_OUT = { chorizo: 'No chorizo', hebi: 'No hebi', onion_leeks: 'No onions', onion_native: 'No onions', garlic: 'No garlic',
+  ginger: 'No ginger', vetsin: 'No MSG', pechay: 'No pechay', carrot: 'No carrots', shrimp: 'No shrimp', pork: 'No pork' };
+function quickNotesFor(r) {
+  if (r.category === 'drinks') return ['With ice', 'No ice', 'With a glass', 'Takeout'];
+  const uses = data.items.filter(it => it.recipe_id === r.id).map(it => LEAVE_OUT[it.ingredient_id]).filter(Boolean);
+  return [...new Set(uses), 'Less salty', 'Takeout', 'Serve first'];
+}
+let noteFor = null;
+document.getElementById('menu').addEventListener('click', e => {
+  const b = e.target.closest('[data-note-for]');
+  if (!b || b.disabled) return;
+  noteFor = b.dataset.noteFor;
+  const recipe = data.recipes.find(r => r.id === noteFor);
+  document.getElementById('note-title').textContent = recipe.name;
+  noteForm.note.value = notes[noteFor] || '';
+  document.getElementById('quick-notes').innerHTML = quickNotesFor(recipe).map(q => `<button type="button" class="chip">${q}</button>`).join('');
+  noteDlg.showModal(); noteForm.note.focus();
+});
+document.getElementById('quick-notes').addEventListener('click', e => {
+  const c = e.target.closest('.chip'); if (!c) return;
+  const t = noteForm.note, cur = t.value.trim();
+  t.value = (cur ? `${cur}, ${c.textContent.toLowerCase()}` : c.textContent).slice(0, 120);
+  t.focus();
+});
+noteForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const v = noteForm.note.value.trim();
+  if (v) notes[noteFor] = v; else delete notes[noteFor];
+  noteDlg.close(); renderOrder();
+  document.querySelector(`[data-note-for="${noteFor}"]`)?.focus();
+});
+noteDlg.querySelector('.cancel').addEventListener('click', () => noteDlg.close());
+noteDlg.addEventListener('click', e => { if (e.target === noteDlg) noteDlg.close(); });
+
+document.getElementById('finish').addEventListener('click', async e => {
+  const btn = e.target;
+  const items = Object.entries(cart).map(([recipe_id, qty]) => ({ recipe_id, qty, note: (notes[recipe_id] || '').trim(), weight: weights[recipe_id] || '' }));
+  if (!table) { showToast('Pick a table first', true); document.getElementById('floor').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  const unweighed = data.recipes.find(r => r.pricing === 'per_kg' && cart[r.id] && !(Number(weights[r.id]) > 0));
+  if (unweighed) { showToast(`Enter the weight for ${unweighed.name}`, true); document.querySelector(`[data-weight="${unweighed.id}"]`)?.focus(); return; }
+  btn.disabled = true; btn.textContent = 'Placing…';
+  try {
+    await api('rpc/place_order', { method: 'POST', body: JSON.stringify({ table_no: table, items }) });
+    for (const o of [cart, notes, weights]) for (const k in o) delete o[k];
+    const n = items.reduce((a, i) => a + i.qty, 0);
+    showToast(`Table ${table} order placed · ${n} ${n === 1 ? 'item' : 'items'} taken from inventory`);
+    table = null; drawFloor();
+    await load();
+  } catch (err) {
+    const soldOut = /sold out today: ([a-z0-9_]+)/.exec(err.message);
+    showToast(soldOut ? `${data.recipes.find(r => r.id === soldOut[1])?.name || 'An item'} is sold out today — remove it from the order.`
+      : /Not enough stock/.test(err.message) ? 'Not enough stock — inventory changed. Check the order.' : 'Order failed. Nothing was taken from inventory.', true);
+    await load();
+  } finally { btn.textContent = 'Finish Order'; renderOrder(); }
+});
+
+// --- billing ---
+const billsEl = document.getElementById('bills');
+function renderBills() {
+  const bills = openBills(data.orders, data.recipes);
+  const time = d => new Date(d).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  billsEl.innerHTML = bills.map(b => `<article class="bill">
+      <header><h3>Table ${b.table_no}</h3><span class="since">${b.orders} ${b.orders === 1 ? 'order' : 'orders'} · since ${time(b.since)}</span></header>
+      <ul class="list">${b.lines.map(l => `<li><span class="line-name">${l.qty}× ${esc(l.name)}${l.notes ? `<br><span class="note">${esc(l.notes.join('; '))}</span>` : ''}</span>
+        <span class="amt">${peso(l.qty * l.price)}</span>
+        <button type="button" class="void" data-table="${b.table_no}" data-recipe="${l.recipe_id}" aria-label="Void one ${esc(l.name)}">−</button></li>`).join('')}</ul>
+      <footer><span>Total</span><strong>${peso(b.total)}</strong></footer>
+      <button type="button" class="btn pay" data-table="${b.table_no}">Take payment</button>
+    </article>`).join('') || '<p class="empty">No open bills. New orders show up here by table.</p>';
+  const all = bills.reduce((s, b) => s + b.total, 0);
+  document.getElementById('bills-total').innerHTML = bills.length ? `<span>${bills.length} open ${bills.length === 1 ? 'table' : 'tables'}</span><strong>${peso(all)}</strong>` : '';
+}
+billsEl.addEventListener('click', async e => {
+  const pay = e.target.closest('.pay');
+  if (pay) return openPay(Number(pay.dataset.table));
+  const v = e.target.closest('.void');
+  if (!v) return;
+  // two taps to void, so a stray tap can't remove an item
+  if (!v.classList.contains('confirm')) {
+    v.classList.add('confirm'); v.textContent = 'Void 1?';
+    setTimeout(() => { if (v.isConnected) { v.classList.remove('confirm'); v.textContent = '−'; } }, 3000);
+    return;
+  }
+  v.disabled = true;
+  try {
+    await api('rpc/void_item', { method: 'POST', body: JSON.stringify({ table_no: Number(v.dataset.table), recipe_id: v.dataset.recipe, qty: 1 }) });
+    showToast('Voided 1 — ingredients put back in stock');
+  } catch { showToast('Could not void that item', true); }
+  await load();
+});
+
+// pay dialog: guests, Senior/PWD, service charge, split, method and change
+const payDlg = document.getElementById('pay'), payForm = document.getElementById('pay-form');
+const SERVICE_RATE = 0.10;
+let payBill = null, payTotals = null;
+const METHODS = [['cash', 'Cash'], ['gcash', 'GCash'], ['card', 'Card']];
+function openPay(tableNo) {
+  payBill = openBills(data.orders, data.recipes).find(b => b.table_no === tableNo);
+  if (!payBill) return;
+  document.getElementById('pay-title').textContent = `Table ${tableNo}`;
+  payForm.reset();
+  updatePay(true);
+  payDlg.showModal();
+  payForm.guests.focus(); payForm.guests.select();
+}
+function updatePay(resplit) {
+  const guests = Math.max(1, Math.floor(Number(payForm.guests.value) || 1));
+  const seniors = Math.min(guests, Math.max(0, Math.floor(Number(payForm.seniors.value) || 0)));
+  payTotals = billTotals(payBill.total, guests, seniors, SERVICE_RATE);
+  const row = (label, val, cls = '') => `<div class="${cls}"><span>${label}</span><span>${val}</span></div>`;
+  document.getElementById('pay-breakdown').innerHTML =
+    row('Subtotal (VAT included)', peso(payTotals.gross))
+    + (payTotals.vatRemoved ? row(`VAT exemption · ${seniors} Senior/PWD`, `−${peso(payTotals.vatRemoved)}`) : '')
+    + (payTotals.discount ? row('20% Senior/PWD discount', `−${peso(payTotals.discount)}`) : '')
+    + (payTotals.serviceCharge ? row('Service charge 10%', peso(payTotals.serviceCharge)) : '')
+    + row('Total', peso(payTotals.total), 'grand');
+  if (resplit) {
+    const n = Math.min(20, Math.max(1, Math.floor(Number(payForm.split.value) || 1)));
+    document.getElementById('pay-parts').innerHTML = splitEven(payTotals.total, n).map((amt, k) => `<li class="part" data-k="${k}">
+      <label>${n > 1 ? `Person ${k + 1}` : 'Amount'}</label>
+      <span class="editor"><span class="peso">₱</span><input name="amount" type="number" min="0" step="0.01" inputmode="decimal" value="${amt.toFixed(2)}" aria-label="Amount ${n > 1 ? `for person ${k + 1}` : ''}"></span>
+      <select class="field" name="method" aria-label="Payment method">${METHODS.map(([v, t]) => `<option value="${v}">${t}</option>`).join('')}</select>
+      <span class="editor cash-only"><span class="peso">₱</span><input name="received" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Received" aria-label="Cash received"></span>
+      <span class="change"></span></li>`).join('');
+  }
+  updatePayParts();
+}
+function updatePayParts() {
+  let sum = 0;
+  for (const li of document.querySelectorAll('#pay-parts .part')) {
+    const amt = Number(li.querySelector('[name="amount"]').value) || 0, method = li.querySelector('[name="method"]').value;
+    const recv = li.querySelector('[name="received"]').value, cash = method === 'cash';
+    sum += amt;
+    li.querySelector('.cash-only').hidden = !cash;
+    li.querySelector('.change').innerHTML = cash && recv !== ''
+      ? (Number(recv) >= amt ? `Change: <strong>${peso(Number(recv) - amt)}</strong>` : '<span class="loss">Received is less than the amount</span>') : '';
+  }
+  const diff = Math.round((payTotals.total - sum) * 100) / 100;
+  document.getElementById('pay-check').innerHTML = Math.abs(diff) < 0.01 ? `Paying ${peso(payTotals.total)} in full.`
+    : `<span class="loss">Payments add up to ${peso(sum)} — ${diff > 0 ? `${peso(diff)} short` : `${peso(-diff)} over`}.</span>`;
+}
+payForm.addEventListener('input', e => {
+  // changing who's at the table or the split re-divides the amounts; editing an amount just re-checks the total
+  if (['guests', 'seniors', 'split'].includes(e.target.name)) updatePay(true); else updatePayParts();
+});
+payForm.addEventListener('change', e => { if (e.target.name === 'method') updatePayParts(); });
+payDlg.querySelector('.cancel').addEventListener('click', () => payDlg.close());
+payDlg.addEventListener('click', e => { if (e.target === payDlg) payDlg.close(); });
+payForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const guests = Math.max(1, Math.floor(Number(payForm.guests.value) || 1));
+  const seniors = Math.min(guests, Math.max(0, Math.floor(Number(payForm.seniors.value) || 0)));
+  const payments = [...document.querySelectorAll('#pay-parts .part')].map(li => {
+    const amount = Number(li.querySelector('[name="amount"]').value) || 0, method = li.querySelector('[name="method"]').value;
+    const recv = li.querySelector('[name="received"]').value;
+    return { method, amount: amount.toFixed(2), received: (method === 'cash' && recv !== '' ? Number(recv) : amount).toFixed(2) };
+  });
+  const sum = payments.reduce((s, p) => s + Number(p.amount), 0);
+  if (Math.abs(sum - payTotals.total) >= 0.01) return showToast('Payments must add up to the total', true);
+  if (payments.some(p => p.method === 'cash' && Number(p.received) < Number(p.amount))) return showToast('Cash received is less than the amount', true);
+  const btn = payForm.querySelector('[type="submit"]');
+  btn.disabled = true;
+  try {
+    await api('rpc/close_table', { method: 'POST', body: JSON.stringify({ table_no: payBill.table_no, guests, seniors, service_rate: SERVICE_RATE, payments }) });
+    payDlg.close();
+    showReceipt(payBill, payTotals, payments, seniors);
+  } catch (err) { showToast(/add up/.test(err.message) ? 'The bill changed — check the total and try again' : 'Could not close that bill', true); }
+  finally { btn.disabled = false; }
+  await load();
+});
+
+// summary shown after a bill is closed, with the change to hand back up front
+const receiptDlg = document.getElementById('receipt');
+receiptDlg.querySelector('.cancel').addEventListener('click', () => receiptDlg.close());
+function showReceipt(bill, t, payments, seniors) {
+  const NAMES = Object.fromEntries(METHODS);
+  const change = payments.reduce((s, p) => s + (p.method === 'cash' ? Number(p.received) - Number(p.amount) : 0), 0);
+  const anyCash = payments.some(p => p.method === 'cash');
+  const row = (label, val, cls = '') => `<div class="${cls}"><span>${label}</span><span>${val}</span></div>`;
+  document.getElementById('receipt-title').textContent = `Table ${bill.table_no} · paid`;
+  document.getElementById('receipt-body').innerHTML = `
+    <div class="change-due${change > 0 ? '' : ' none'}" role="status">
+      <span class="label">${change > 0 ? 'Change to give' : anyCash ? 'Exact cash — no change' : 'Paid by ' + [...new Set(payments.map(p => NAMES[p.method]))].join(' + ')}</span>
+      <span class="amount">${change > 0 ? peso(change) : peso(t.total)}</span>
+    </div>
+    <h2>Payments</h2>
+    <div class="breakdown">${payments.map((p, k) => row(
+      `${payments.length > 1 ? `Person ${k + 1} · ` : ''}${NAMES[p.method]}${p.method === 'cash' ? ` · received ${peso(p.received)}` : ''}`,
+      p.method === 'cash' && Number(p.received) > Number(p.amount) ? `${peso(p.amount)}<br><span class="u">change ${peso(Number(p.received) - Number(p.amount))}</span>` : peso(p.amount))).join('')}</div>
+    <h2>Bill</h2>
+    <div class="breakdown">
+      ${bill.lines.map(l => row(`${l.qty}× ${esc(l.name)}`, peso(l.qty * l.price))).join('')}
+      ${row('Subtotal (VAT included)', peso(t.gross))}
+      ${t.vatRemoved ? row(`VAT exemption · ${seniors} Senior/PWD`, `−${peso(t.vatRemoved)}`) : ''}
+      ${t.discount ? row('20% Senior/PWD discount', `−${peso(t.discount)}`) : ''}
+      ${row('Service charge 10%', peso(t.serviceCharge))}
+      ${row('Total', peso(t.total), 'grand')}
+    </div>`;
+  receiptDlg.showModal();
+  receiptDlg.querySelector('.cancel').focus();
+}
+
+// --- portions ---
+const fmt3 = n => +Number(n).toFixed(3);
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || `item_${Date.now()}`;
+const openRecipes = new Set();
+const recipesEl = document.getElementById('recipes');
+const refreshAll = () => { renderMeals(); renderOrder(); renderRecipes(); };
+
+// markup = (price − cost) ÷ cost; per-kg prices aren't per portion, so no markup for those
+function recipeSub(r) {
+  const cost = recipeCost(r.id, data.items, data.ingredients), price = Number(r.price);
+  const markup = r.pricing !== 'per_kg' && cost > 0 && price > 0 ? ` · Markup <span class="${price >= cost ? 'gain' : 'loss'}">${Math.round((price - cost) / cost * 100)}%</span>` : '';
+  return `Cost <span class="cost-val">${peso(cost)}</span> · Price ${peso(price)}${r.pricing === 'per_kg' ? '/kg' : ''}${markup}`;
+}
+function renderRecipes() {
+  const byId = Object.fromEntries(data.ingredients.map(i => [i.id, i]));
+  const card = r => {
+    const lines = data.items.filter(it => it.recipe_id === r.id);
+    const unused = data.ingredients.filter(i => !lines.some(l => l.ingredient_id === i.id));
+    const cost = recipeCost(r.id, data.items, data.ingredients);
+    return `<details class="recipe" data-id="${r.id}" ${openRecipes.has(r.id) ? 'open' : ''}>
+      <summary>${esc(r.name)}<span class="sub">${recipeSub(r)}</span></summary>
+      <ul class="list">
+        <li><label for="p-${r.id}">Menu price</label>
+          <span class="editor"><span class="peso">₱</span>
+            <input id="p-${r.id}" class="price-input" type="number" min="0" step="any" inputmode="decimal" enterkeyhint="done" value="${fmt(r.price)}">
+            <select class="field pricing-input" aria-label="How ${esc(r.name)} is priced">
+              <option value="fixed" ${r.pricing !== 'per_kg' ? 'selected' : ''}>each</option>
+              <option value="per_kg" ${r.pricing === 'per_kg' ? 'selected' : ''}>per kg</option></select>
+            <span class="saved" aria-live="polite"></span></span></li>
+        ${lines.map(l => { const i = byId[l.ingredient_id]; return `
+        <li><label for="q-${r.id}-${i.id}">${esc(i.name)}</label>
+          <span class="editor">
+            <input id="q-${r.id}-${i.id}" class="qty-input" type="number" min="0" step="any" inputmode="decimal" enterkeyhint="done" value="${fmt3(l.qty)}" data-ing="${i.id}">
+            <span class="unit">${i.unit}</span><span class="saved" aria-live="polite"></span>
+            <button type="button" class="remove" data-ing="${i.id}" aria-label="Remove ${esc(i.name)} from ${esc(r.name)}">×</button>
+          </span></li>`; }).join('')}
+        <li class="money"><span>Total cost per portion</span><span class="val cost-val">${peso(cost)}</span></li>
+        <li class="add-line"><form class="add-line-form" style="display:contents">
+          <select class="field grow" name="ing" aria-label="Ingredient to add" required>
+            <option value="">Add ingredient…</option>${unused.map(i => `<option value="${i.id}">${esc(i.name)} (${i.unit})</option>`).join('')}
+          </select>
+          <input class="field" name="qty" type="number" min="0" step="any" inputmode="decimal" required placeholder="Amount" aria-label="Amount per portion" style="width:96px">
+          <button class="btn" type="submit">Add</button>
+        </form></li>
+        <li><button type="button" class="link-btn danger" data-delete-item>Delete menu item</button></li>
+      </ul></details>`;
+  };
+  recipesEl.innerHTML = MENU_SECTIONS.map(([cat, title]) => {
+    const rows = onMenu().filter(r => r.category === cat);
+    return rows.length ? `<h2>${title}</h2>${rows.map(card).join('')}` : '';
+  }).join('');
+}
+
+recipesEl.addEventListener('toggle', e => { const id = e.target.dataset.id; e.target.open ? openRecipes.add(id) : openRecipes.delete(id); }, true);
+const isEditBox = el => el.classList.contains('qty-input') || el.classList.contains('price-input');
+recipesEl.addEventListener('focusin', e => { if (isEditBox(e.target)) e.target.select(); });
+recipesEl.addEventListener('keydown', e => { if (e.key === 'Enter' && isEditBox(e.target)) e.target.blur(); });
+// refresh a card's cost figures in place, so the cursor stays where it is
+const updateCost = id => {
+  document.querySelectorAll(`.recipe[data-id="${id}"] .cost-val`).forEach(el => el.textContent = peso(recipeCost(id, data.items, data.ingredients)));
+  const sub = document.querySelector(`.recipe[data-id="${id}"] summary .sub`);
+  if (sub) sub.innerHTML = recipeSub(data.recipes.find(r => r.id === id)); // markup moves with the cost
+};
+
+// fixed price vs. market price by weight
+recipesEl.addEventListener('change', async e => {
+  const sel = e.target;
+  if (!sel.classList.contains('pricing-input')) return;
+  const id = sel.closest('.recipe').dataset.id, note = sel.parentElement.querySelector('.saved');
+  try {
+    await api(`recipes?id=eq.${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ pricing: sel.value }), headers: { ...headers, Prefer: 'return=minimal' } });
+    data.recipes.find(r => r.id === id).pricing = sel.value;
+    note.className = 'saved'; note.textContent = '✓'; setTimeout(() => note.textContent = '', 1500);
+    renderOrder(); renderRecipes();
+  } catch { note.className = 'saved err'; note.textContent = '!'; showToast('Could not save that', true); }
+});
+recipesEl.addEventListener('change', async e => {
+  const input = e.target;
+  if (!input.classList.contains('price-input')) return;
+  const id = input.closest('.recipe').dataset.id, value = Number(input.value), note = input.parentElement.querySelector('.saved');
+  if (!(value >= 0)) { note.className = 'saved err'; note.textContent = '!'; note.title = 'Must be 0 or more'; return; }
+  try {
+    await api(`recipes?id=eq.${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ price: value }), headers: { ...headers, Prefer: 'return=minimal' } });
+    const r = data.recipes.find(r => r.id === id);
+    r.price = value;
+    note.className = 'saved'; note.textContent = '✓'; note.title = 'Saved'; setTimeout(() => note.textContent = '', 1500);
+    input.closest('.recipe').querySelector('summary .sub').innerHTML = recipeSub(r);
+    renderOrder();
+  } catch { note.className = 'saved err'; note.textContent = '!'; note.title = 'Not saved'; showToast('Could not save that price', true); }
+});
+// delete a menu item: tap twice; it's hidden, not removed, so its past sales stay in History and Reports
+recipesEl.addEventListener('click', async e => {
+  const btn = e.target.closest('[data-delete-item]'); if (!btn) return;
+  const id = btn.closest('.recipe').dataset.id, r = data.recipes.find(r => r.id === id);
+  if (!btn.classList.contains('confirm')) { btn.classList.add('confirm'); btn.textContent = `Tap again to delete ${r.name}`; return; }
+  btn.disabled = true;
+  try {
+    const at = new Date().toISOString();
+    await api(`recipes?id=eq.${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ archived_at: at }), headers: { ...headers, Prefer: 'return=minimal' } });
+    r.archived_at = at; delete cart[id]; openRecipes.delete(id);
+    refreshAll(); renderCartSummary();
+    showToast(`${r.name} deleted from the menu`);
+  } catch { btn.disabled = false; showToast('Could not delete that menu item', true); }
+});
+const lineUrl = (r, i) => `recipe_ingredients?recipe_id=eq.${encodeURIComponent(r)}&ingredient_id=eq.${encodeURIComponent(i)}`;
+
+recipesEl.addEventListener('change', async e => {
+  const input = e.target;
+  if (!input.classList.contains('qty-input')) return;
+  const r = input.closest('.recipe').dataset.id, i = input.dataset.ing, value = Number(input.value), note = input.parentElement.querySelector('.saved');
+  if (!(value > 0)) { note.className = 'saved err'; note.textContent = '!'; note.title = 'Must be more than 0 — use × to remove'; return; }
+  try {
+    await api(lineUrl(r, i), { method: 'PATCH', body: JSON.stringify({ qty: value }), headers: { ...headers, Prefer: 'return=minimal' } });
+    data.items.find(it => it.recipe_id === r && it.ingredient_id === i).qty = value;
+    note.className = 'saved'; note.textContent = '✓'; note.title = 'Saved'; setTimeout(() => note.textContent = '', 1500);
+    renderMeals(); renderOrder(); updateCost(r);
+  } catch (err) { note.className = 'saved err'; note.textContent = '!'; note.title = 'Not saved'; showToast('Could not save that amount', true); }
+});
+
+recipesEl.addEventListener('click', async e => {
+  const btn = e.target.closest('.remove');
+  if (!btn) return;
+  const r = btn.closest('.recipe').dataset.id, i = btn.dataset.ing;
+  try {
+    await api(lineUrl(r, i), { method: 'DELETE', headers: { ...headers, Prefer: 'return=minimal' } });
+    data.items = data.items.filter(it => !(it.recipe_id === r && it.ingredient_id === i));
+    refreshAll();
+  } catch { showToast('Could not remove that ingredient', true); }
+});
+
+recipesEl.addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, r = f.closest('.recipe').dataset.id, line = { recipe_id: r, ingredient_id: f.ing.value, qty: Number(f.qty.value) };
+  if (!line.ingredient_id || !(line.qty > 0)) return showToast('Pick an ingredient and an amount above 0', true);
+  try {
+    await api('recipe_ingredients', { method: 'POST', body: JSON.stringify(line), headers: { ...headers, Prefer: 'return=minimal' } });
+    data.items.push(line);
+    refreshAll();
+  } catch { showToast('Could not add that ingredient', true); }
+});
+
+document.getElementById('new-item').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, name = f.elements.name.value.trim(), item = { id: slug(name), name, category: f.category.value };
+  if (!name) return;
+  const old = data.recipes.find(r => r.id === item.id || r.name.toLowerCase() === name.toLowerCase());
+  if (old && !old.archived_at) return showToast(`${name} is already on the menu`, true);
+  if (old) {
+    try {
+      await api(`recipes?id=eq.${encodeURIComponent(old.id)}`, { method: 'PATCH', body: JSON.stringify({ archived_at: null }), headers: { ...headers, Prefer: 'return=minimal' } });
+      old.archived_at = null; openRecipes.add(old.id); f.reset(); refreshAll();
+      return showToast(`${old.name} is back on the menu, with its old ingredients`);
+    } catch { return showToast('Could not add that menu item', true); }
+  }
+  try {
+    await api('recipes', { method: 'POST', body: JSON.stringify(item), headers: { ...headers, Prefer: 'return=minimal' } });
+    data.recipes.push(item); data.recipes.sort((a, b) => a.name.localeCompare(b.name));
+    openRecipes.add(item.id); f.reset();
+    refreshAll();
+    showToast(`${name} added — now add its ingredients`);
+    document.querySelector(`.recipe[data-id="${item.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch { showToast('Could not add that menu item', true); }
+});
+
+document.getElementById('new-ingredient').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, name = f.elements.name.value.trim();
+  const ing = { id: slug(name), name, unit: f.unit.value };
+  if (!name) return;
+  if (data.ingredients.some(i => i.id === ing.id || i.name.toLowerCase() === name.toLowerCase())) return showToast(`${name} is already in inventory`, true);
+  try {
+    await api('ingredients', { method: 'POST', body: JSON.stringify(ing), headers: { ...headers, Prefer: 'return=minimal' } });
+    data.ingredients.push({ ...ing, stock: 0, cost: 0 }); data.ingredients.sort((a, b) => a.name.localeCompare(b.name));
+    f.reset(); renderStock(); renderRecipes();
+    openBuy(ing.id); // record the first purchase right away
+  } catch { showToast('Could not add that ingredient', true); }
+});
+
+// --- sign-in ---
+// Supabase signs in by email, so each name maps to a made-up address: "Maria Santos" -> maria.santos@kingcrab.invalid
+// (.invalid can never be a real domain, so no mail is ever sent anywhere).
+const LOGIN_DOMAIN = 'kingcrab.invalid';
+const emailFromName = n => { const s = n.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '.').replace(/^\.|\.$/g, ''); return s && `${s}@${LOGIN_DOMAIN}`; };
+const nameFromEmail = e => (e || '').split('@')[0].split('.').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+const loginEl = document.getElementById('login'), loginError = document.getElementById('login-error');
+let userId = null;
+
+async function startSession(session) {
+  if (!session) { loginEl.hidden = false; return; }
+  if (session.user.id === userId) return; // already running for this user
+  const r = session.user.app_metadata?.role;
+  if (r !== 'owner' && r !== 'staff') {
+    loginError.textContent = 'This account has no access yet. Ask the owner to set it up.';
+    loginEl.hidden = false; await sb.auth.signOut(); return;
+  }
+  userId = session.user.id; role = r;
+  loginEl.hidden = true;
+  document.getElementById('who').textContent = `${nameFromEmail(session.user.email)} · ${role === 'owner' ? 'Owner' : 'Staff'}`;
+  document.getElementById('signout').hidden = false;
+  document.getElementById('staff-link').hidden = role !== 'owner' || DEMO; // logins are shared; manage them in the main version
+  for (const a of document.querySelectorAll('.segmented a')) a.hidden = role !== 'owner' && !['#order', '#billing'].includes(a.hash);
+  document.getElementById('add-ingredient-block').hidden = role !== 'owner';
+  showTab();
+  load();
+}
+// supabase-js asks that we not await its own calls inside this callback
+sb.auth.onAuthStateChange((event, session) => {
+  if (['INITIAL_SESSION', 'SIGNED_IN', 'SIGNED_OUT'].includes(event)) setTimeout(() => startSession(session));
+});
+
+document.getElementById('login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, btn = f.querySelector('button');
+  loginError.textContent = ''; btn.disabled = true; btn.textContent = 'Signing in…';
+  const email = emailFromName(f.username.value);
+  if (!email) { btn.disabled = false; btn.textContent = 'Sign in'; loginError.textContent = 'Type your name.'; return; }
+  const { error } = await sb.auth.signInWithPassword({ email, password: f.password.value });
+  btn.disabled = false; btn.textContent = 'Sign in';
+  if (error) loginError.textContent = /invalid/i.test(error.message) ? 'Wrong name or password.' : error.message;
+  else f.password.value = '';
+});
+document.getElementById('signout').addEventListener('click', async () => { await sb.auth.signOut(); location.reload(); });
+
+// --- reports (owner): monthly P&L, expenses, stock losses, busiest hours ---
+const monthEl = document.getElementById('report-month'), expenseForm = document.getElementById('expense-add');
+monthEl.value = todayISO().slice(0, 7);
+expenseForm.date.value = todayISO();
+const EXPENSE_NAMES = { rent: 'Rent', wages: 'Wages', gas: 'Gas / LPG', electricity: 'Electricity', water: 'Water', supplies: 'Supplies', repairs: 'Repairs', other: 'Other' };
+async function loadReport() {
+  const month = `${monthEl.value || todayISO().slice(0, 7)}-01`, end = new Date(month); end.setMonth(end.getMonth() + 1);
+  const next = end.toLocaleDateString('en-CA');
+  try {
+    const [r, exps] = await Promise.all([
+      api('rpc/monthly_report', { method: 'POST', body: JSON.stringify({ month }) }),
+      api(`expenses?select=*&spent_on=gte.${month}&spent_on=lt.${next}&order=spent_on.desc`),
+    ]);
+    lastReport = r;
+    renderReport(r, exps);
+  } catch { document.getElementById('pnl').innerHTML = '<div><span>Could not load the report.</span></div>'; }
+  if (data) renderHeatmap();
+}
+// KPIs and the heatmap need the page data; on a reload straight into Reports it can arrive after the report
+function renderReportData() {
+  if (!data || document.getElementById('reports').hidden) return;
+  if (lastReport) renderKpis(lastReport);
+  renderHeatmap();
+}
+// shortcut: one supplier lead time for every ingredient; add a per-ingredient lead time if suppliers differ
+const LEAD_DAYS = 2;
+const TARGET_DAYS = 7; // reorders restock to this many days of forecast use
+// shortcut: one holding limit for every batch-tracked item (live crab); set it from Reports' "lost by days held"
+const HOLD_DAYS = 3; // live crab weakens and dies if held longer, so restock only this many days
+const restockDays = i => i.batch_tracked ? HOLD_DAYS : TARGET_DAYS;
+// forecast days of cover per ingredient, from tomorrow (dishes still on the menu only)
+const coverNow = () => daysOfCover(data.ingredients, weekForecast(data.orders, menuItems(), data.ingredients, tomorrowDate(), dayKey), dailyUse(data.orders, menuItems()), LEAD_DAYS, restockDays);
+const pct = n => `${Math.round(n * 100)}%`;
+// Capstone KPIs: crab spoilage and loss per crab sold (selected month), days of cover (now)
+function renderKpis(r) {
+  const crab = r.batch?.[0], stat = (label, val, sub) => `<div class="stat"><span class="stat-label">${label}</span><span class="stat-val">${val}</span><span class="stat-sub">${sub}</span></div>`;
+  const cover = coverNow(), due = cover.filter(i => i.reorder);
+  const ages = crab ? Object.entries(crab.dead_by_age) : [];
+  // forecast vs guesswork: the batch-tracked ingredient (crab) first, then the rest
+  const fe = forecastError(r.forecasts || []).sort((a, b) => (b.ingredient_id === crab?.ingredient_id) - (a.ingredient_id === crab?.ingredient_id) || b.model?.days - a.model?.days);
+  const off = e => e ? `±${Math.round(e.avg * 100)}%` : '—';
+  // break-even: sales at which this month's margin after ingredients covers expenses and stock losses (net profit = 0)
+  const collected = Number(r.collected) || 0, fixed = Number(r.expense_total || 0) + Number(r.loss_value || 0);
+  const ratio = collected > 0 ? (collected - Number(r.ingredient_cost || 0)) / collected : 0, breakEven = ratio > 0 ? fixed / ratio : null;
+  const lean = e => e ? (Math.abs(e.bias) < 0.005 ? 'on target' : `${Math.round(Math.abs(e.bias) * 100)}% ${e.bias > 0 ? 'over' : 'under'}`) : '';
+  document.getElementById('kpis').innerHTML = `<h2>KPIs</h2>
+    <div class="stats kpi-stats">
+      ${crab ? stat(`${esc(crab.ingredient)} spoilage`, Number(crab.bought) ? pct(crab.dead / crab.bought) : '—', `${fmt(crab.dead)} of ${fmt(crab.bought)} lost`)
+        + stat(`Loss per ${esc(crab.ingredient.toLowerCase())} sold`, Number(crab.sold) ? peso(crab.dead_value / crab.sold) : '—', `${fmt(crab.sold)} sold`) : ''}
+      ${stat('Reorder now', due.length, `under ${LEAD_DAYS + 1} days left`)}
+      ${'collected' in r ? stat('Break-even sales', !Number(r.expense_total) ? '—' : breakEven === null ? '—' : peso(breakEven),
+        !Number(r.expense_total) ? 'add expenses below' : breakEven === null ? 'no sales yet' : `${pct(Math.min(collected / breakEven, 9.99))} reached`) : ''}
+      ${fe[0] ? stat(`Forecast error · ${esc(fe[0].ingredient)}`, off(fe[0].model), `you ${off(fe[0].staff)} · target ±15%`) : ''}
+    </div>
+    ${ages.length ? `<p class="footnote">Lost by days held: ${ages.sort().map(([a, q]) => `${a === 'unknown' ? 'batch not known' : a === '4' ? '4+ days' : `day ${a}`} · ${fmt(q)}`).join(', ')}</p>` : ''}
+    ${fe.length ? `<h2>Forecast vs your estimate · this month</h2><ul class="list shopping">${fe.map(g => `<li><span>${esc(g.ingredient)}<span class="line-sub" style="display:block">Forecast ${lean(g.model) || 'not saved'}${g.staff ? ` · you ${lean(g.staff)}` : ' · no estimates yet'}</span></span>
+      <span class="buy-qty${g.model && g.staff ? (g.model.avg <= g.staff.avg ? ' gain' : ' loss') : ''}">${off(g.model)} vs ${off(g.staff)}</span></li>`).join('')}</ul>
+    <p class="footnote">Average daily miss. Green: forecast beat you.</p>` : ''}
+    ${cover.length ? `<h2>Days of cover · now</h2><ul class="list shopping">${cover.slice(0, 8).map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">${fmt(i.stock)} ${i.unit} · ~${fmt(i.perDay)}/day</span></span>
+      <span class="buy-qty${i.reorder ? ' loss' : ''}">${i.cover >= 60 ? '60+' : i.cover < 10 ? i.cover.toFixed(1) : Math.round(i.cover)} days${i.reorder ? ' · reorder' : ''}</span></li>`).join('')}</ul>
+    <p class="footnote">From the forecast, starting tomorrow.</p>` : ''}`;
+}
+function renderReport(r, exps) {
+  if (data) renderKpis(r);
+  const row =(label, val, cls = '') => `<div class="${cls}"><span>${label}</span><span>${val}</span></div>`;
+  const net = Number(r.collected) - Number(r.ingredient_cost) - Number(r.loss_value) - Number(r.expense_total);
+  document.getElementById('pnl').innerHTML =
+    row(`Sales at menu prices · ${r.bills} ${r.bills === 1 ? 'bill' : 'bills'}`, peso(r.gross))
+    + (Number(r.discounts) ? row('Senior/PWD discounts', `−${peso(r.discounts)}`, 'sub-line') : '')
+    + row('Service charge', peso(r.service_charge), 'sub-line')
+    + row('Collected', peso(r.collected), 'grand')
+    + row('Ingredient cost of dishes sold', `−${peso(r.ingredient_cost)}`)
+    + row('Stock losses', `−${peso(r.loss_value)}`)
+    + Object.entries(r.expenses).map(([k, v]) => row(EXPENSE_NAMES[k] || k, `−${peso(v)}`, 'sub-line')).join('')
+    + row('Expenses', `−${peso(r.expense_total)}`)
+    + row('Net profit', `<span class="${net > 0 ? 'gain' : net < 0 ? 'loss' : ''}">${peso(net)}</span>`, 'net');
+  document.getElementById('expense-list').innerHTML = exps.map(x => `<li data-expense="${x.id}"><span class="line-name">${EXPENSE_NAMES[x.category]}${x.note ? ` · ${esc(x.note)}` : ''}<span class="line-sub" style="display:block">${new Date(x.spent_on + 'T00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}</span></span>
+    <span class="buy-qty">${peso(x.amount)}</span><button type="button" class="void" data-del-expense aria-label="Delete this expense">−</button></li>`).join('')
+    || '<li><span class="line-name" style="color:var(--label2)">No expenses this month yet.</span></li>';
+  document.getElementById('losses').innerHTML = r.losses.length ? `<div class="detail"><table>
+      <thead><tr><th>Ingredient</th><th>Lost</th><th>Value</th></tr></thead>
+      <tbody>${r.losses.map(l => `<tr><td>${esc(l.ingredient)}${l.dead ? ' <span class="u">(dead)</span>' : ''}</td><td>${fmt(l.qty)} <span class="u">${l.unit}</span></td><td class="makes loss">${peso(l.value)}</td></tr>`).join('')}</tbody>
+    </table></div>` : '<p class="footnote" style="margin-top:0">No stock losses recorded this month.</p>';
+}
+function renderHeatmap() {
+  const grid = salesByHour(data.orders, data.recipes), max = Math.max(...grid.flat());
+  const el = document.getElementById('heatmap');
+  if (!max) { el.innerHTML = '<p class="footnote" style="margin-top:0">No sales in the last 30 days yet.</p>'; return; }
+  const hours = grid[0].map((_, h) => h).filter(h => grid.some(d => d[h]));
+  const h0 = Math.min(...hours), h1 = Math.max(...hours), span = Array.from({ length: h1 - h0 + 1 }, (_, i) => h0 + i);
+  const DAYS = [1, 2, 3, 4, 5, 6, 0], dn = d => new Date(2026, 9, 25 + d).toLocaleDateString([], { weekday: 'short' }); // Oct 25 2026 is a Sunday
+  const hl = h => new Date(2026, 0, 1, h).toLocaleTimeString([], { hour: 'numeric' });
+  let best = [0, 0]; for (const d of DAYS) for (const h of span) if (grid[d][h] > grid[best[0]][best[1]]) best = [d, h];
+  el.innerHTML = `<div class="heat"><table><thead><tr><th></th>${span.map(h => `<th>${hl(h)}</th>`).join('')}</tr></thead><tbody>
+    ${DAYS.map(d => `<tr><th>${dn(d)}</th>${span.map(h => { const v = grid[d][h];
+      return `<td class="${v ? 'has' : ''}" style="${v ? `background:color-mix(in srgb, var(--blue-fill) ${Math.round(15 + 85 * v / max)}%, var(--card));${v / max > .5 ? 'color:#fff' : ''}` : ''}" title="${dn(d)} ${hl(h)}: ${peso(v)}">${v ? (v < 1000 ? Math.round(v) : `${(v / 1000).toFixed(v < 10000 ? 1 : 0)}k`) : ''}</td>`; }).join('')}</tr>`).join('')}
+  </tbody></table></div><p class="footnote">Busiest: <strong>${dn(best[0])} ${hl(best[1])}</strong> (${peso(grid[best[0]][best[1]])}). Darker = more sales.</p>`;
+}
+monthEl.addEventListener('change', loadReport);
+expenseForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = expenseForm, amount = Number(f.amount.value);
+  if (!f.date.value || !(amount > 0)) return showToast('Enter a date and an amount', true);
+  try {
+    await api('expenses', { method: 'POST', body: JSON.stringify({ spent_on: f.date.value, category: f.category.value, amount, note: f.note.value.trim() || null }), headers: { ...headers, Prefer: 'return=minimal' } });
+    f.amount.value = ''; f.note.value = '';
+    showToast(`${EXPENSE_NAMES[f.category.value]} ${peso(amount)} added`);
+    if (f.date.value.slice(0, 7) !== monthEl.value) monthEl.value = f.date.value.slice(0, 7);
+    loadReport();
+  } catch { showToast('Could not add that expense', true); }
+});
+document.getElementById('expense-list').addEventListener('click', async e => {
+  const b = e.target.closest('[data-del-expense]'); if (!b) return;
+  if (!b.classList.contains('confirm')) { b.classList.add('confirm'); b.textContent = 'Delete?'; return; }
+  try { await api(`expenses?id=eq.${b.closest('li').dataset.expense}`, { method: 'DELETE', headers: { ...headers, Prefer: 'return=minimal' } }); showToast('Expense deleted'); }
+  catch { showToast('Could not delete that', true); }
+  loadReport();
+});
+
+// --- staff accounts (owner) via the manage-staff server function ---
+const staffDlg = document.getElementById('staff'), staffList = document.getElementById('staff-list');
+async function staffApi(body) {
+  const { data: { session } } = await sb.auth.getSession();
+  const r = await fetch(`${SUPABASE_URL}/functions/v1/manage-staff`, { method: 'POST', body: JSON.stringify(body),
+    headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${session?.access_token}` } });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || `Error ${r.status}`);
+  return j;
+}
+async function renderStaff() {
+  staffList.innerHTML = '<li>Loading…</li>';
+  try {
+    const { users } = await staffApi({ action: 'list' });
+    staffList.innerHTML = users.map(u => `<li class="staff-row" data-id="${u.id}">
+      <span class="who-name">${esc(u.name)}${u.me ? ' (you)' : ''}<span class="sub">${u.last_sign_in_at ? `Last signed in ${new Date(u.last_sign_in_at).toLocaleDateString([], { month: 'short', day: 'numeric' })}` : 'Never signed in'}${u.role ? '' : ' · no access'}</span></span>
+      <select class="field" data-act="role" aria-label="Role for ${esc(u.name)}" ${u.me ? 'disabled' : ''}>
+        <option value="staff" ${u.role === 'staff' ? 'selected' : ''}>Staff</option><option value="owner" ${u.role === 'owner' ? 'selected' : ''}>Owner</option></select>
+      <button type="button" class="link-btn" data-act="reset">Reset password</button>
+      ${u.me ? '' : '<button type="button" class="link-btn danger" data-act="remove">Remove</button>'}
+    </li>`).join('');
+  } catch (err) { staffList.innerHTML = `<li>${esc(err.message)}</li>`; }
+}
+document.getElementById('staff-link').addEventListener('click', () => { staffDlg.showModal(); renderStaff(); });
+staffDlg.querySelector('.cancel').addEventListener('click', () => staffDlg.close());
+staffDlg.addEventListener('click', e => { if (e.target === staffDlg) staffDlg.close(); });
+staffList.addEventListener('change', async e => {
+  if (e.target.dataset.act !== 'role') return;
+  const id = e.target.closest('.staff-row').dataset.id;
+  try { await staffApi({ action: 'set_role', id, role: e.target.value }); showToast('Role changed — they need to sign in again'); }
+  catch (err) { showToast(err.message, true); }
+  renderStaff();
+});
+staffList.addEventListener('click', async e => {
+  const btn = e.target.closest('[data-act]'), row = btn?.closest('.staff-row');
+  if (!btn || !row) return;
+  const id = row.dataset.id;
+  if (btn.dataset.act === 'reset') {
+    // swap the button for a password box + Save in that row
+    btn.outerHTML = `<span class="editor"><input class="field" type="password" minlength="8" placeholder="New password" aria-label="New password" autocomplete="new-password" style="width:150px">
+      <button type="button" class="btn" data-act="save-pw">Save</button></span>`;
+    row.querySelector('input[type="password"]').focus();
+  } else if (btn.dataset.act === 'save-pw') {
+    const pw = row.querySelector('input[type="password"]').value;
+    if (pw.length < 8) return showToast('Password must be at least 8 characters', true);
+    try { await staffApi({ action: 'reset_password', id, password: pw }); showToast('Password changed'); renderStaff(); }
+    catch (err) { showToast(err.message, true); }
+  } else if (btn.dataset.act === 'remove') {
+    if (!btn.classList.contains('confirm')) { btn.classList.add('confirm'); btn.textContent = 'Tap again to remove'; return; }
+    try { await staffApi({ action: 'remove', id }); showToast('Account removed'); }
+    catch (err) { showToast(err.message, true); }
+    renderStaff();
+  }
+});
+document.getElementById('staff-add').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, name = f.username.value.trim(), password = f.password.value, role = f.role.value;
+  if (!name) return showToast('Enter a name', true);
+  if (password.length < 8) return showToast('Password must be at least 8 characters', true);
+  try {
+    const r = await staffApi({ action: 'create', name, password, role });
+    f.reset();
+    showToast(`${r.name} can now sign in as "${r.name}"`);
+    renderStaff();
+  } catch (err) { showToast(err.message, true); }
+});
+
+// pick up changes made on other devices, but don't wipe a number someone is typing
+setInterval(() => { if (role && !['INPUT', 'SELECT'].includes(document.activeElement?.tagName)) load(); }, 60000);
+</script>
+</body>
+</html>

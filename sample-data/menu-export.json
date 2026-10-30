@@ -1,0 +1,742 @@
+{
+ "columns": {
+  "bills": [
+   "id:bigint:NO:",
+   "table_no:integer:NO:",
+   "guests:integer:NO:",
+   "seniors:integer:NO:0",
+   "gross:numeric:NO:",
+   "vat_removed:numeric:NO:0",
+   "discount:numeric:NO:0",
+   "service_charge:numeric:NO:0",
+   "total:numeric:NO:",
+   "closed_at:timestamp with time zone:NO:now()",
+   "created_by:uuid:YES:auth.uid()"
+  ],
+  "day_closings": [
+   "id:bigint:NO:",
+   "day:date:NO:",
+   "expected_cash:numeric:NO:",
+   "counted_cash:numeric:NO:",
+   "difference:numeric:NO:",
+   "summary:jsonb:NO:",
+   "created_at:timestamp with time zone:NO:now()",
+   "created_by:uuid:YES:auth.uid()"
+  ],
+  "expenses": [
+   "id:bigint:NO:",
+   "spent_on:date:NO:",
+   "category:text:NO:",
+   "amount:numeric:NO:",
+   "note:text:YES:",
+   "created_at:timestamp with time zone:NO:now()",
+   "created_by:uuid:YES:auth.uid()"
+  ],
+  "forecasts": [
+   "day:date:NO:",
+   "ingredient_id:text:NO:",
+   "model:numeric:YES:",
+   "staff:numeric:YES:",
+   "updated_at:timestamp with time zone:NO:now()"
+  ],
+  "ingredient_costs": [
+   "ingredient_id:text:NO:",
+   "cost:numeric:NO:0",
+   "estimated:boolean:NO:true"
+  ],
+  "ingredients": [
+   "id:text:NO:",
+   "name:text:NO:",
+   "unit:text:NO:",
+   "stock:numeric:NO:0",
+   "min_stock:numeric:NO:0",
+   "batch_tracked:boolean:NO:false"
+  ],
+  "order_item_costs": [
+   "order_id:bigint:NO:",
+   "recipe_id:text:NO:",
+   "unit_cost:numeric:NO:"
+  ],
+  "order_items": [
+   "order_id:bigint:NO:",
+   "recipe_id:text:NO:",
+   "qty:integer:NO:",
+   "price:numeric:YES:",
+   "note:text:YES:"
+  ],
+  "orders": [
+   "id:bigint:NO:",
+   "created_at:timestamp with time zone:NO:now()",
+   "table_no:integer:NO:",
+   "paid_at:timestamp with time zone:YES:",
+   "bill_id:bigint:YES:"
+  ],
+  "payments": [
+   "id:bigint:NO:",
+   "bill_id:bigint:NO:",
+   "method:text:NO:",
+   "amount:numeric:NO:",
+   "received:numeric:NO:",
+   "change:numeric:NO:0",
+   "created_at:timestamp with time zone:NO:now()"
+  ],
+  "purchases": [
+   "id:bigint:NO:",
+   "ingredient_id:text:NO:",
+   "qty:numeric:NO:",
+   "total_cost:numeric:NO:",
+   "created_at:timestamp with time zone:NO:now()",
+   "created_by:uuid:YES:auth.uid()"
+  ],
+  "recipe_ingredients": [
+   "recipe_id:text:NO:",
+   "ingredient_id:text:NO:",
+   "qty:numeric:NO:"
+  ],
+  "recipes": [
+   "id:text:NO:",
+   "name:text:NO:",
+   "category:text:NO:'platters'::text",
+   "price:numeric:NO:0",
+   "pricing:text:NO:'fixed'::text",
+   "sold_out_on:date:YES:",
+   "archived_at:timestamp with time zone:YES:"
+  ],
+  "stock_adjustments": [
+   "id:bigint:NO:",
+   "ingredient_id:text:NO:",
+   "change:numeric:NO:",
+   "new_stock:numeric:NO:",
+   "reason:text:YES:",
+   "created_at:timestamp with time zone:NO:now()",
+   "created_by:uuid:YES:auth.uid()",
+   "old_cost:numeric:YES:",
+   "new_cost:numeric:YES:",
+   "purchase_id:bigint:YES:"
+  ],
+  "voids": [
+   "id:bigint:NO:",
+   "table_no:integer:NO:",
+   "recipe_id:text:NO:",
+   "qty:integer:NO:",
+   "price:numeric:YES:",
+   "created_at:timestamp with time zone:NO:now()",
+   "created_by:uuid:YES:auth.uid()"
+  ]
+ },
+ "counts": {
+  "adj": 34,
+  "expenses": 1,
+  "forecasts": 0,
+  "orders": 14,
+  "purchases": 26
+ },
+ "ingredients": [
+  {
+   "batch": false,
+   "cost": 0.15,
+   "id": "canton",
+   "name": "Canton noodles",
+   "stock": 3800,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 0.1,
+   "id": "carrot",
+   "name": "Carrot",
+   "stock": 2840,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 0.22,
+   "id": "chicken_legs",
+   "name": "Chicken legs",
+   "stock": 7500,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 0.27,
+   "id": "chicken_powder",
+   "name": "Chicken powder",
+   "stock": 877.5,
+   "unit": "mL"
+  },
+  {
+   "batch": false,
+   "cost": 0.5,
+   "id": "chorizo",
+   "name": "Chorizo",
+   "stock": 990,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 25,
+   "id": "coke",
+   "name": "Coke",
+   "stock": 47,
+   "unit": "pcs"
+  },
+  {
+   "batch": false,
+   "cost": 25,
+   "id": "coke_zero",
+   "name": "Coke Zero",
+   "stock": 21,
+   "unit": "pcs"
+  },
+  {
+   "batch": false,
+   "cost": 0.08,
+   "id": "cornstarch",
+   "name": "Cornstarch",
+   "stock": 1550,
+   "unit": "g"
+  },
+  {
+   "batch": true,
+   "cost": 250,
+   "id": "crab",
+   "name": "Crab",
+   "stock": 18,
+   "unit": "pcs"
+  },
+  {
+   "batch": false,
+   "cost": 9,
+   "id": "egg",
+   "name": "Egg",
+   "stock": 83,
+   "unit": "pcs"
+  },
+  {
+   "batch": false,
+   "cost": 0.18,
+   "id": "garlic",
+   "name": "Garlic",
+   "stock": 1890,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 0.2,
+   "id": "ginger",
+   "name": "Luya (ginger)",
+   "stock": 890,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 0.9,
+   "id": "hebi",
+   "name": "Hebi (dried shrimp)",
+   "stock": 492,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 0.15,
+   "id": "onion_leeks",
+   "name": "Onion leeks",
+   "stock": 1372,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 0.25,
+   "id": "onion_native",
+   "name": "Onion native",
+   "stock": 1920,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 0.2,
+   "id": "oyster_sauce",
+   "name": "Oyster sauce",
+   "stock": 1850,
+   "unit": "mL"
+  },
+  {
+   "batch": false,
+   "cost": 0.12,
+   "id": "pechay",
+   "name": "Baguio pechay",
+   "stock": 4800,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 0.34,
+   "id": "pork",
+   "name": "Pork",
+   "stock": 4800,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 25,
+   "id": "royal",
+   "name": "Royal",
+   "stock": 22,
+   "unit": "pcs"
+  },
+  {
+   "batch": false,
+   "cost": 0.035,
+   "id": "salt",
+   "name": "Salt",
+   "stock": 997.5,
+   "unit": "mL"
+  },
+  {
+   "batch": false,
+   "cost": 0.5333333333333333,
+   "id": "sesame_oil",
+   "name": "Sesame oil",
+   "stock": 708.75,
+   "unit": "mL"
+  },
+  {
+   "batch": false,
+   "cost": 0.55,
+   "id": "shrimp",
+   "name": "Shrimp",
+   "stock": 2800,
+   "unit": "g"
+  },
+  {
+   "batch": false,
+   "cost": 0.1,
+   "id": "soy_sauce",
+   "name": "Light soy sauce",
+   "stock": 1910,
+   "unit": "mL"
+  },
+  {
+   "batch": false,
+   "cost": 25,
+   "id": "sprite",
+   "name": "Sprite",
+   "stock": 22,
+   "unit": "pcs"
+  },
+  {
+   "batch": false,
+   "cost": 0.0675,
+   "id": "sugar",
+   "name": "Sugar",
+   "stock": 1891.25,
+   "unit": "mL"
+  },
+  {
+   "batch": false,
+   "cost": 0.135,
+   "id": "vetsin",
+   "name": "Vetsin (MSG)",
+   "stock": 975,
+   "unit": "mL"
+  }
+ ],
+ "items": [
+  {
+   "ingredient_id": "crab",
+   "qty": 2,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "ginger",
+   "qty": 5,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "onion_leeks",
+   "qty": 4,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "hebi",
+   "qty": 4,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "garlic",
+   "qty": 5,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "chorizo",
+   "qty": 5,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "crab",
+   "qty": 2,
+   "recipe_id": "crab_sotanghon"
+  },
+  {
+   "ingredient_id": "ginger",
+   "qty": 50,
+   "recipe_id": "crab_sotanghon"
+  },
+  {
+   "ingredient_id": "garlic",
+   "qty": 50,
+   "recipe_id": "crab_sotanghon"
+  },
+  {
+   "ingredient_id": "onion_leeks",
+   "qty": 60,
+   "recipe_id": "crab_sotanghon"
+  },
+  {
+   "ingredient_id": "onion_native",
+   "qty": 40,
+   "recipe_id": "crab_sotanghon"
+  },
+  {
+   "ingredient_id": "ginger",
+   "qty": 40,
+   "recipe_id": "crab_ginger_onion"
+  },
+  {
+   "ingredient_id": "garlic",
+   "qty": 40,
+   "recipe_id": "crab_ginger_onion"
+  },
+  {
+   "ingredient_id": "onion_native",
+   "qty": 30,
+   "recipe_id": "crab_ginger_onion"
+  },
+  {
+   "ingredient_id": "crab",
+   "qty": 2,
+   "recipe_id": "crispy_salted_crab"
+  },
+  {
+   "ingredient_id": "egg",
+   "qty": 2,
+   "recipe_id": "crispy_salted_crab"
+  },
+  {
+   "ingredient_id": "cornstarch",
+   "qty": 100,
+   "recipe_id": "crispy_salted_crab"
+  },
+  {
+   "ingredient_id": "canton",
+   "qty": 300,
+   "recipe_id": "shrimp_pork_canton"
+  },
+  {
+   "ingredient_id": "pechay",
+   "qty": 50,
+   "recipe_id": "shrimp_pork_canton"
+  },
+  {
+   "ingredient_id": "carrot",
+   "qty": 40,
+   "recipe_id": "shrimp_pork_canton"
+  },
+  {
+   "ingredient_id": "pork",
+   "qty": 50,
+   "recipe_id": "shrimp_pork_canton"
+  },
+  {
+   "ingredient_id": "shrimp",
+   "qty": 50,
+   "recipe_id": "shrimp_pork_canton"
+  },
+  {
+   "ingredient_id": "chicken_legs",
+   "qty": 500,
+   "recipe_id": "szechuan_chicken"
+  },
+  {
+   "ingredient_id": "egg",
+   "qty": 1,
+   "recipe_id": "szechuan_chicken"
+  },
+  {
+   "ingredient_id": "cornstarch",
+   "qty": 70,
+   "recipe_id": "szechuan_chicken"
+  },
+  {
+   "ingredient_id": "coke",
+   "qty": 1,
+   "recipe_id": "coke"
+  },
+  {
+   "ingredient_id": "coke_zero",
+   "qty": 1,
+   "recipe_id": "coke_zero"
+  },
+  {
+   "ingredient_id": "sprite",
+   "qty": 1,
+   "recipe_id": "sprite"
+  },
+  {
+   "ingredient_id": "royal",
+   "qty": 1,
+   "recipe_id": "royal"
+  },
+  {
+   "ingredient_id": "oyster_sauce",
+   "qty": 37.5,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "sugar",
+   "qty": 22.5,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "chicken_powder",
+   "qty": 15,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "sesame_oil",
+   "qty": 7.5,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "soy_sauce",
+   "qty": 7.5,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "vetsin",
+   "qty": 3.75,
+   "recipe_id": "crab_rice"
+  },
+  {
+   "ingredient_id": "oyster_sauce",
+   "qty": 37.5,
+   "recipe_id": "crab_sotanghon"
+  },
+  {
+   "ingredient_id": "sugar",
+   "qty": 22.5,
+   "recipe_id": "crab_sotanghon"
+  },
+  {
+   "ingredient_id": "chicken_powder",
+   "qty": 30,
+   "recipe_id": "crab_sotanghon"
+  },
+  {
+   "ingredient_id": "sesame_oil",
+   "qty": 7.5,
+   "recipe_id": "crab_sotanghon"
+  },
+  {
+   "ingredient_id": "soy_sauce",
+   "qty": 22.5,
+   "recipe_id": "crab_sotanghon"
+  },
+  {
+   "ingredient_id": "oyster_sauce",
+   "qty": 30,
+   "recipe_id": "crab_ginger_onion"
+  },
+  {
+   "ingredient_id": "sugar",
+   "qty": 22.5,
+   "recipe_id": "crab_ginger_onion"
+  },
+  {
+   "ingredient_id": "chicken_powder",
+   "qty": 22.5,
+   "recipe_id": "crab_ginger_onion"
+  },
+  {
+   "ingredient_id": "sesame_oil",
+   "qty": 15,
+   "recipe_id": "crab_ginger_onion"
+  },
+  {
+   "ingredient_id": "vetsin",
+   "qty": 1.25,
+   "recipe_id": "crispy_salted_crab"
+  },
+  {
+   "ingredient_id": "salt",
+   "qty": 2.5,
+   "recipe_id": "crispy_salted_crab"
+  },
+  {
+   "ingredient_id": "sugar",
+   "qty": 2.5,
+   "recipe_id": "crispy_salted_crab"
+  },
+  {
+   "ingredient_id": "vetsin",
+   "qty": 2.5,
+   "recipe_id": "shrimp_pork_canton"
+  },
+  {
+   "ingredient_id": "chicken_powder",
+   "qty": 5,
+   "recipe_id": "shrimp_pork_canton"
+  },
+  {
+   "ingredient_id": "sugar",
+   "qty": 2.5,
+   "recipe_id": "shrimp_pork_canton"
+  },
+  {
+   "ingredient_id": "sesame_oil",
+   "qty": 1.25,
+   "recipe_id": "shrimp_pork_canton"
+  },
+  {
+   "ingredient_id": "soy_sauce",
+   "qty": 7.5,
+   "recipe_id": "shrimp_pork_canton"
+  },
+  {
+   "ingredient_id": "vetsin",
+   "qty": 1.25,
+   "recipe_id": "szechuan_chicken"
+  },
+  {
+   "ingredient_id": "sugar",
+   "qty": 1.25,
+   "recipe_id": "szechuan_chicken"
+  },
+  {
+   "ingredient_id": "chicken_powder",
+   "qty": 2.5,
+   "recipe_id": "szechuan_chicken"
+  },
+  {
+   "ingredient_id": "sesame_oil",
+   "qty": 1.25,
+   "recipe_id": "szechuan_chicken"
+  },
+  {
+   "ingredient_id": "crab",
+   "qty": 2,
+   "recipe_id": "crab_ginger_onion"
+  }
+ ],
+ "recipes": [
+  {
+   "archived_at": null,
+   "category": "drinks",
+   "id": "coke",
+   "name": "Coke",
+   "price": 100,
+   "pricing": "fixed",
+   "sold_out_on": null
+  },
+  {
+   "archived_at": null,
+   "category": "drinks",
+   "id": "coke_zero",
+   "name": "Coke Zero",
+   "price": 100,
+   "pricing": "fixed",
+   "sold_out_on": null
+  },
+  {
+   "archived_at": null,
+   "category": "crab",
+   "id": "crab_ginger_onion",
+   "name": "Crab Ginger Onion",
+   "price": 2180,
+   "pricing": "fixed",
+   "sold_out_on": null
+  },
+  {
+   "archived_at": "2026-10-30T06:53:09.32+00:00",
+   "category": "crab",
+   "id": "crab_legs",
+   "name": "Crab Legs",
+   "price": 1000,
+   "pricing": "fixed",
+   "sold_out_on": null
+  },
+  {
+   "archived_at": null,
+   "category": "crab",
+   "id": "crab_rice",
+   "name": "Crab Rice",
+   "price": 2110,
+   "pricing": "fixed",
+   "sold_out_on": null
+  },
+  {
+   "archived_at": null,
+   "category": "crab",
+   "id": "crab_sotanghon",
+   "name": "Crab Sotanghon",
+   "price": 2250,
+   "pricing": "fixed",
+   "sold_out_on": null
+  },
+  {
+   "archived_at": null,
+   "category": "crab",
+   "id": "crispy_salted_crab",
+   "name": "Crispy Salted Crab",
+   "price": 2110,
+   "pricing": "fixed",
+   "sold_out_on": null
+  },
+  {
+   "archived_at": null,
+   "category": "drinks",
+   "id": "royal",
+   "name": "Royal",
+   "price": 100,
+   "pricing": "fixed",
+   "sold_out_on": null
+  },
+  {
+   "archived_at": null,
+   "category": "platters",
+   "id": "shrimp_pork_canton",
+   "name": "Shrimp & Pork Canton",
+   "price": 410,
+   "pricing": "fixed",
+   "sold_out_on": null
+  },
+  {
+   "archived_at": null,
+   "category": "drinks",
+   "id": "sprite",
+   "name": "Sprite",
+   "price": 100,
+   "pricing": "fixed",
+   "sold_out_on": null
+  },
+  {
+   "archived_at": null,
+   "category": "platters",
+   "id": "szechuan_chicken",
+   "name": "Szechuan Chicken",
+   "price": 500,
+   "pricing": "fixed",
+   "sold_out_on": null
+  }
+ ],
+ "users": [
+  {
+   "email": "nina@kingcrab.invalid",
+   "role": "staff"
+  },
+  {
+   "email": "matt@kingcrab.invalid",
+   "role": "owner"
+  }
+ ]
+}

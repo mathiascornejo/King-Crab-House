@@ -1,0 +1,6 @@
+.DS_Store
+supabase-db-password.txt
+supabase/.temp/
+.impeccable/
+# Real sales, cost and staff activity
+sample-data/live-backup-*.json
