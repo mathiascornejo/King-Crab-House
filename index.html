@@ -4,22 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>King Crab House Stock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap">
 <style>
-  /* Apple system colors (light / dark), grouped-background layout */
+  /* Swiss Ledger, "Crab shell" colours: peach paper, dark-brown ink, one burnt-orange accent. Light only.
+     Contrast on the peach: ink 15:1, --label2 6.7:1, --red-text 6.2:1, --green-text 5.8:1; white on the accent 5.7:1.
+     --blue is the ink for links and focus; --blue-fill is the accent behind --on-accent (white) button text.
+     --orange (amber) marks busy tables; --red (the accent) marks what needs attention. */
   :root {
-    color-scheme: light dark;
-    --bg:#f2f2f7; --card:#fff; --fill:rgba(118,118,128,.12); --label:#000; --label2:rgba(60,60,67,.78); /* darker than Apple's .6 so small grey text meets 4.5:1 */
-    --sep:rgba(60,60,67,.29); --bar:rgba(249,249,249,.8);
-    --green:#34c759; --orange:#ff9500; --red:#ff3b30; --blue:#007aff; --blue-fill:#0066d6; /* deeper blue behind white text for 4.5:1 */ --green-text:#248a3d; --red-text:#d70015; /* readable on white */
+    color-scheme: light;
+    --font:"Inter Tight", system-ui, -apple-system, sans-serif;
+    --bg:#FFF1E8; --card:#FFF1E8; --fill:rgba(58,20,0,.07); --label:#3A1400; --label2:#7A4A30;
+    --sep:rgba(58,20,0,.18); --bar:#FFF1E8; --on-accent:#FFFFFF;
+    --green:#2E6B2F; --orange:#C98500; --red:#B83C00; --blue:#3A1400; --blue-fill:#B83C00; --green-text:#2E6B2F; --red-text:#A33400;
   }
-  @media (prefers-color-scheme: dark) { :root {
-    --bg:#000; --card:#1c1c1e; --fill:rgba(118,118,128,.24); --label:#fff; --label2:rgba(235,235,245,.6);
-    --sep:rgba(84,84,88,.65); --bar:rgba(22,22,24,.8);
-    --green:#30d158; --orange:#ff9f0a; --red:#ff453a; --blue:#0a84ff; --green-text:#30d158; --red-text:#ff453a;
-  } }
   * { box-sizing:border-box; }
   [hidden] { display:none !important; } /* .login/.segmented set display, which would otherwise override hidden */
-  body { margin:0; background:var(--bg); color:var(--label); font:17px/1.3 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; -webkit-font-smoothing:antialiased; }
+  body { margin:0; background:var(--bg); color:var(--label); font:16px/1.35 var(--font); font-variant-numeric:tabular-nums; -webkit-font-smoothing:antialiased; }
   .bar { position:sticky; top:0; z-index:1; background:var(--bar); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); border-bottom:.5px solid var(--sep); }
   .bar-inner, main { max-width:980px; margin:0 auto; padding-left:16px; padding-right:16px; }
   .bar-inner { padding-top:12px; padding-bottom:10px; }
@@ -107,11 +108,11 @@
   .tbl:focus-visible .top { stroke:var(--blue); stroke-width:3; }
   .tbl[aria-checked="true"] .top { fill:var(--blue-fill); stroke:var(--blue-fill); }
   .tbl[aria-checked="true"] .chair { fill:color-mix(in srgb, var(--blue) 45%, transparent); }
-  .tbl[aria-checked="true"] text { fill:#fff; }
+  .tbl[aria-checked="true"] text { fill:var(--on-accent); }
   .checkout-summary { flex:1; }
   .checkout-summary { font-size:15px; color:var(--label2); white-space:nowrap; }
   .checkout-summary strong { color:var(--label); font-size:17px; }
-  .finish { border:0; border-radius:12px; background:var(--blue-fill); color:#fff; font:600 17px -apple-system, system-ui, sans-serif; padding:14px 28px; cursor:pointer; }
+  .finish { border:0; border-radius:12px; background:var(--blue-fill); color:var(--on-accent); font:600 17px -apple-system, system-ui, sans-serif; padding:14px 28px; cursor:pointer; }
   .finish:disabled { background:var(--fill); color:var(--label2); cursor:default; }
   .finish:focus-visible { outline:2px solid var(--blue); outline-offset:3px; }
   #order { padding-bottom:150px; }
@@ -131,7 +132,7 @@
   .field:focus { outline:none; border-color:var(--blue); background:var(--card); }
   .field::placeholder { color:var(--label2); }
   .form .grow, .add-line .grow { flex:1 1 180px; }
-  .btn { height:36px; border:0; border-radius:10px; background:var(--blue-fill); color:#fff; font:600 15px -apple-system, system-ui, sans-serif; padding:0 16px; cursor:pointer; }
+  .btn { height:36px; border:0; border-radius:10px; background:var(--blue-fill); color:var(--on-accent); font:600 15px -apple-system, system-ui, sans-serif; padding:0 16px; cursor:pointer; }
   .btn:focus-visible, .remove:focus-visible, .recipe summary:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
   .recipe { background:var(--card); border-radius:10px; margin-bottom:10px; overflow:hidden; }
   .recipe summary { list-style:none; display:flex; align-items:center; gap:8px; min-height:52px; padding:0 16px; cursor:pointer; font-weight:600; }
@@ -204,7 +205,7 @@
   .item-extra { flex-basis:100%; display:flex; gap:8px; flex-wrap:wrap; padding:0 0 10px; }
   .item-extra .field { flex:1 1 160px; height:36px; }
   .note-btn { color:var(--blue); }
-  .note-btn.has-note { background:var(--blue-fill); color:#fff; }
+  .note-btn.has-note { background:var(--blue-fill); color:var(--on-accent); }
   .line-sub .note { display:block; }
   #note-dlg textarea { width:100%; min-height:96px; resize:vertical; font:inherit; padding:12px; border-radius:10px; border:1.5px solid transparent; background:var(--card); color:var(--label); }
   #note-dlg textarea:focus { outline:none; border-color:var(--blue); }
@@ -221,7 +222,7 @@
   .tbl.busy:not([aria-checked="true"]) .top { fill:color-mix(in srgb, var(--orange) 22%, var(--card)); stroke:var(--orange); }
   .tbl.busy:not([aria-checked="true"]) .chair { fill:color-mix(in srgb, var(--orange) 45%, transparent); }
   .tbl .mins { font-size:10px; font-weight:600; fill:var(--label2); }
-  .tbl[aria-checked="true"] .mins { fill:#fff; }
+  .tbl[aria-checked="true"] .mins { fill:var(--on-accent); }
   .floor-legend { display:flex; gap:16px; font-size:13px; color:var(--label2); padding:8px 4px 0; }
   .floor-legend i { display:inline-block; width:12px; height:12px; border-radius:4px; vertical-align:-1px; margin-right:6px; border:1.5px solid var(--sep); background:var(--card); }
   .floor-legend i.busy { background:color-mix(in srgb, var(--orange) 22%, var(--card)); border-color:var(--orange); }
@@ -230,7 +231,6 @@
   .void { width:28px; height:28px; border:0; border-radius:50%; background:var(--fill); color:var(--red-text); font-size:18px; line-height:1; cursor:pointer; flex:none; padding:0; }
   .void.confirm { width:auto; border-radius:14px; padding:0 10px; font-size:13px; font-weight:600; background:color-mix(in srgb, var(--red) 15%, transparent); }
   #pay .list input[type="number"] { width:96px; }
-  #pay .list select { width:110px; }
   .breakdown { background:var(--card); border-radius:10px; padding:4px 16px; }
   .breakdown div { display:flex; justify-content:space-between; padding:8px 0; font-variant-numeric:tabular-nums; }
   .breakdown div + div { border-top:.5px solid var(--sep); }
@@ -280,7 +280,7 @@
   @media (max-width:500px) { .segmented a { flex:1 0 auto; padding:6px 9px; } }
 
   /* sign-in */
-  .meta { display:flex; align-items:baseline; gap:10px; color:var(--label2); font-size:13px; flex-wrap:wrap; }
+  .meta { display:flex; align-items:center; gap:10px; color:var(--label2); font-size:13px; flex-wrap:wrap; }
   .who { font-weight:600; color:var(--label); }
   .signout { border:0; background:none; color:var(--blue); font:inherit; font-size:13px; cursor:pointer; padding:0; }
   .signout:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
@@ -291,15 +291,219 @@
   .login .field { height:48px; font-size:17px; padding:0 14px; }
   .login .btn { height:48px; font-size:17px; }
   .login .error { color:var(--red); min-height:20px; }
-  @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+
+  /* --- Swiss Ledger layer: square corners, ink rules, one typeface --- */
+  .btn, .finish, .step, .count, .count small, .stat-val, .change-due .amount, .sheet-head button, .floor-label, .tbl text, .inv-btn, .remove, .void, .chip { font-family:var(--font); }
+  .tile, .list, .stat, .detail, .breakdown, .form, .recipe, .bill, .floor, .heat, .sheet, .btn, .finish, .field, .step, .inv-btn, .chip, .toast, .segmented, .change-due, .void.confirm, .demo-tag, .badge { border-radius:0; }
+  .bar { background:var(--bg); backdrop-filter:none; -webkit-backdrop-filter:none; border-bottom:3px solid var(--label); }
+  h1 { font-size:24px; font-weight:800; letter-spacing:-.02em; }
+  h1 .dot { color:var(--red); }
+  .segmented { background:none; padding:0; gap:22px; margin-top:10px; max-width:none; }
+  .segmented a { flex:none; display:flex; align-items:center; gap:6px; padding:8px 0 6px; border-radius:0; border-bottom:2px solid transparent; color:var(--label2); font-size:13px; }
+  .segmented a[aria-current] { background:none; box-shadow:none; color:var(--label); font-weight:700; border-bottom-color:var(--red); }
+  @media (max-width:500px) { .segmented { gap:16px; } .segmented a { padding:8px 0 6px; } }
+  h2 { margin:28px 0 10px; padding-top:8px; border-top:1px solid var(--label); color:var(--label); font-size:12px; font-weight:700; letter-spacing:.1em; display:flex; align-items:center; gap:8px; }
+  .sheet h2 { margin:20px 0 8px; }
+  .footnote { margin-left:0; }
+  .grid { gap:24px 16px; }
+  .tile { background:none; border-top:3px solid var(--label); padding:10px 0 4px; min-height:112px; }
+  .tile:hover { box-shadow:none; border-top-color:var(--red); }
+  .count { font-weight:800; letter-spacing:-.04em; }
+  .ok .count { color:var(--label); } .low .count { color:var(--red); } .out .count { color:var(--label2); }
+  /* flush-left rows sit on the page, not on a tinted card, so text never touches a filled edge */
+  .list, .detail, .breakdown { background:none; border-top:1px solid var(--label); border-bottom:1px solid var(--sep); }
+  .list li + li::before { left:0; }
+  .list li { padding-left:0; padding-right:0; }
+  .breakdown { padding:4px 0; }
+  .detail th:first-child, .detail td:first-child { padding-left:0; }
+  .detail td:last-child, .detail th:last-child { padding-right:0; }
+  .stats { gap:16px; }
+  .stat { background:none; border-top:3px solid var(--label); padding:10px 0 0; }
+  .stat-val { font-weight:800; letter-spacing:-.03em; font-size:clamp(16px, 13cqw, 30px); }
+  .stat.hero { grid-column:1 / -1; }
+  .stats:has(.hero) { grid-template-columns:repeat(2, 1fr); }
+  #pay .unit { width:auto; }
+  .stat.hero .stat-val { font-size:clamp(48px, 13cqw, 112px); letter-spacing:-.05em; line-height:.95; }
+  @media (max-width:500px) { .stat.hero { display:flex; } }
+  .btn, .finish { font-weight:700; }
+  .step, .inv-btn { width:48px; height:48px; border-radius:0; color:var(--label); font-weight:600; }
+  /* bigger targets everywhere (48px), for busy hands and non-technical staff */
+  .btn, .field, .add-line .field, .report-head .field, .list input { height:48px; }
+  .btn { font-size:16px; padding:0 20px; }
+  .void, .remove { width:44px; height:44px; }
+  .chip, .signout, .link-btn { min-height:44px; }
+  .link-btn { padding:10px 0; }
+  .step[data-dir="1"]:not(:disabled) { background:var(--label); color:var(--on-accent); }
+  .step { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; touch-action:manipulation; } /* hold-to-repeat, no text selection */
+  .sheet { border-top:3px solid var(--label); }
+  .sheet-head button { color:var(--label); }
+  .toast { background:var(--label); color:var(--on-accent); display:flex; align-items:center; gap:14px; overflow:hidden; }
+  .toast.err { color:var(--on-accent); background:var(--red-text); }
+  .floor { padding:12px 0; background:none; }
+  .room, .kitchen { rx:0; } .floor-legend i { border-radius:0; }
+  .checkout { background:var(--bg); backdrop-filter:none; -webkit-backdrop-filter:none; border-top:3px solid var(--label); }
+  .bill { overflow:visible; background:none; border-top:3px solid var(--label); }
+  .bill header, .bill footer { padding-left:0; padding-right:0; }
+  .bill .pay { margin:0 0 16px; }
+  .recipe { border-top:1px solid var(--label); background:none; }
+  .recipe summary { padding:0; }
+  .form { background:none; padding:12px 0; border-top:1px solid var(--label); }
+  .chip { border:1px solid var(--label); background:none; }
+  .chip[aria-pressed="true"] { background:var(--label); color:var(--on-accent); }
+
+  /* icons (sprite at the top of <body>) */
+  .ic { width:18px; height:18px; flex:none; vertical-align:-3px; }
+  h2 .ic { width:16px; height:16px; }
+  .icon-btn { display:inline-flex; align-items:center; gap:6px; }
+  kbd { font:600 11px var(--font); border:1px solid var(--sep); padding:1px 5px; color:var(--label2); }
+  @media (max-width:500px), (pointer:coarse) { kbd { display:none; } }
+
+  /* stock gauge on each inventory row */
+  #stock .inv-row { grid-template-columns:auto 1fr auto auto auto; grid-template-areas:"gauge name meta add edit"; }
+  .gauge { grid-area:gauge; width:32px; height:32px; }
+  .gauge .track { stroke:var(--sep); } .gauge .arc { stroke:var(--label); } .gauge.low .arc { stroke:var(--red); } .gauge.low .track { stroke:color-mix(in srgb, var(--red) 25%, var(--card)); }
+  .gauge circle { fill:none; stroke-width:4; }
+  @media (max-width:500px) { #stock .inv-row { grid-template-columns:auto 1fr auto auto; grid-template-areas:"gauge name add edit" "gauge meta add edit"; } }
+
+  /* 3: what runs out first, on each dish tile, and bars in the dish sheet */
+  .limit { display:flex; align-items:center; gap:4px; font-size:12px; color:var(--label2); }
+  .low .limit, .out .limit { color:var(--red-text); font-weight:600; }
+  .limit .ic { width:13px; height:13px; }
+  .mbar { display:block; height:4px; margin:0 0 4px auto; width:calc(var(--w) * 1%); background:var(--label); }
+  .limiting .mbar { background:var(--red); }
+
+  /* 4: heatmap legend */
+  .heat-key { display:flex; align-items:center; gap:4px; font-size:12px; color:var(--label2); margin-top:8px; }
+  .heat-key i { width:16px; height:10px; display:inline-block; }
+  .heat { padding:8px 0; background:none; } .heat td { border-radius:0; }
+
+  /* 6 + 18: donut charts */
+  .donut-wrap { display:flex; align-items:center; gap:20px; flex-wrap:wrap; padding:12px 0; }
+  .donut { width:148px; height:148px; flex:none; }
+  .donut circle { fill:none; stroke-width:6; }
+  .donut .c1 { font:800 6px var(--font); fill:var(--label); } .donut .c2 { font:500 3.2px var(--font); fill:var(--label2); }
+  .key { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; font-size:14px; flex:1 1 160px; }
+  .key li { display:flex; align-items:center; gap:8px; }
+  .key i { width:12px; height:12px; flex:none; }
+  .key span { flex:1; }
+
+  /* 9: time-seated ring around busy tables */
+  .tbl .ring { fill:none; stroke:var(--orange); stroke-width:3; }
+  .tbl .ring.late { stroke:var(--red); }
+
+  /* 13: command palette */
+  .palette { width:min(560px, 100%); margin-top:12vh; }
+  .palette input { width:100%; height:52px; border:0; border-bottom:1px solid var(--label); background:var(--bg); color:var(--label); font:500 18px var(--font); padding:0 16px; outline:none; }
+  .palette ul { list-style:none; margin:0; padding:6px 0; max-height:50vh; overflow:auto; }
+  .palette li { display:flex; align-items:center; gap:12px; min-height:44px; padding:0 16px; cursor:pointer; }
+  .palette li[aria-selected="true"] { background:var(--label); color:var(--on-accent); }
+  .palette li[aria-selected="true"] .hint { color:inherit; }
+  .palette .hint { margin-left:auto; font-size:13px; color:var(--label2); }
+
+  /* 15: swipe a bill left to pay, a stock row right to add stock (touch only) */
+  .bill, #stock .inv-row { touch-action:pan-y; transition:transform .2s; }
+  .swiping { transition:none !important; }
+  .bill.swiping::after, #stock .inv-row.swiping::after { content:attr(data-swipe-label); position:absolute; top:0; bottom:0; width:120px; display:grid; place-items:center; background:var(--blue-fill); color:var(--on-accent); font-weight:700; font-size:14px; }
+  .bill { position:relative; } .bill.swiping::after { right:-128px; }
+  #stock .inv-row.swiping::after { left:-120px; background:var(--label); color:var(--on-accent); }
+
+  /* 22: undo toast */
+  .toast.has-undo { pointer-events:auto; }
+  .toast .undo { display:inline-flex; align-items:center; gap:6px; height:36px; padding:0 12px; border:0; background:var(--bg); color:var(--label); font:700 14px var(--font); cursor:pointer; }
+  .toast .timer { position:absolute; left:0; bottom:0; height:3px; width:100%; background:var(--bg); transform-origin:left; animation:drain 5s linear forwards; }
+  @keyframes drain { to { transform:scaleX(0); } }
+
+  /* 26: empty states */
+  .empty { display:flex; flex-direction:column; align-items:center; gap:10px; padding:40px 16px; border-top:1px solid var(--label); }
+  .empty strong { color:var(--label); font-size:17px; }
+  .empty .btn { display:inline-flex; align-items:center; height:44px; text-decoration:none; }
+  .empty svg { width:150px; height:100px; }
+  .bills .empty { grid-column:1 / -1; }
+
+  /* "?" help: a small mark with a 44px tap area, opening a plain-language note */
+  .q { position:relative; width:22px; height:22px; margin-left:6px; padding:0; border:1.5px solid var(--label2); border-radius:50%; background:none; color:var(--label2); font:700 12px/1 var(--font); cursor:pointer; vertical-align:middle; flex:none; text-transform:none; letter-spacing:0; }
+  .q::before { content:""; position:absolute; inset:-11px; }
+  .help { max-width:min(320px, calc(100% - 32px)); margin:auto; border:0; border-top:3px solid var(--label); background:var(--bg); color:var(--label); padding:14px 16px; font-size:15px; line-height:1.45; box-shadow:0 12px 40px rgba(58,20,0,.25); }
+  .help strong { display:block; margin-bottom:4px; }
+  /* short dashboard */
+  .sentence { font-size:19px; line-height:1.45; margin:4px 0 16px; }
+  .btn.wide { width:100%; height:56px; margin-top:16px; display:flex; align-items:center; justify-content:center; gap:8px; font-size:18px; }
+  .more { margin-top:28px; border-top:1px solid var(--label); }
+  .more > summary { min-height:56px; display:flex; align-items:center; gap:8px; font-weight:700; cursor:pointer; list-style:none; }
+  .more > summary::-webkit-details-marker { display:none; }
+  .more > summary::before { content:"+"; width:28px; height:28px; display:grid; place-items:center; border:1.5px solid var(--label); font-size:18px; }
+  .more[open] > summary::before { content:"−"; }
+  .sheet-head button { min-height:44px; }
+
+  /* dropdowns: square, ink outline, brown chevron (the arrow is a data URI, so its colour is the --label hex) */
+  select.field { -webkit-appearance:none; appearance:none; padding:0 42px 0 14px; border:1.5px solid var(--sep); background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233A1400' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center / 16px;
+    color:var(--label); font-weight:600; cursor:pointer; text-overflow:ellipsis; transition:border-color .15s, background-color .15s; }
+  select.field:hover { border-color:var(--label); }
+  select.field:focus, select.field:focus-visible { outline:2px solid var(--label); outline-offset:2px; border-color:var(--label); background-color:var(--bg); }
+  select.field:disabled { opacity:.5; cursor:default; border-style:dashed; }
+  #pay .list select { width:124px; }
+  /* where the browser lets the open list be styled (Chrome 135+), it matches too; elsewhere the system list shows */
+  @supports (appearance: base-select) {
+    select.field, select.field::picker(select) { appearance:base-select; }
+    select.field { display:inline-flex; align-items:center; gap:10px; background-image:none; padding-right:14px; }
+    select.field::picker-icon { content:""; width:16px; height:16px; margin-left:auto; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233A1400' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat; transition:rotate .2s; }
+    select.field:open::picker-icon { rotate:180deg; }
+    select.field:open { border-color:var(--label); }
+    select.field::picker(select) { border:0; border-top:3px solid var(--label); background:var(--bg); color:var(--label); padding:6px 0; margin-top:6px; min-width:anchor-size(width); max-height:min(440px, 70vh); box-shadow:0 14px 40px rgba(58,20,0,.22); }
+    select.field option { display:flex; align-items:center; gap:12px; min-height:48px; padding:0 16px; font:500 16px var(--font); cursor:pointer; }
+    select.field option:hover, select.field option:focus-visible { background:var(--fill); outline:none; }
+    select.field option:checked { font-weight:700; background:color-mix(in srgb, var(--red) 10%, var(--bg)); }
+    select.field option::checkmark { order:1; margin-left:auto; color:var(--red); font-weight:800; }
+    select.field option:disabled { color:var(--label2); }
+  }
+  /* close-the-day drawer count: peso notes and coins in their own colours */
+  .denom { display:grid !important; grid-template-columns:64px 1fr auto 64px; align-items:center; gap:10px; padding:8px 0 !important; }
+  .note-pic { width:60px; height:30px; display:grid; place-items:center; font:800 13px var(--font); box-shadow:inset 0 0 0 2px rgba(255,255,255,.55); }
+  .coin-pic { width:34px; height:34px; margin:0 13px; border-radius:50%; display:grid; place-items:center; font:800 11px var(--font); color:#2b2b2b; box-shadow:inset 0 0 0 2px rgba(0,0,0,.15); }
+  .denom input { width:60px !important; }
+  .cash-sub { text-align:right; font-weight:600; }
+  @media (max-width:500px) { .denom { grid-template-columns:64px 1fr auto; } .cash-sub { grid-column:2; text-align:left; font-size:13px; color:var(--label2); } }
+  .part .change { font-size:17px; color:var(--label); }
+  .part .quick { flex-basis:100%; display:flex; flex-wrap:wrap; gap:6px; }
+  .btn.quiet { background:none; color:var(--label); border:1.5px solid var(--label); margin-top:10px; }
+  /* tick shown when an order or payment goes through */
+  .done { border:0; flex-direction:column; align-items:center; gap:10px; padding:24px 28px; background:var(--label); color:var(--on-accent); font-weight:700; font-size:17px; pointer-events:none; }
+  .done:popover-open { display:flex; animation:pop .2s ease-out; }
+  @keyframes pop { from { transform:scale(.9); opacity:0; } }
+  .done svg { width:64px; height:64px; fill:none; stroke:var(--on-accent); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+  .done circle { stroke-dasharray:151; stroke-dashoffset:151; } .done path { stroke-dasharray:40; stroke-dashoffset:40; }
+  .done:popover-open circle { animation:draw .4s ease-out forwards; } .done:popover-open path { animation:draw .3s .3s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+  @media (prefers-reduced-motion: reduce) { .done circle, .done path { stroke-dashoffset:0; } }
+
+  /* 27: a dish tile grows into its sheet (View Transitions, where supported) */
+  ::view-transition-group(morph) { animation-duration:.28s; }
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-dashboard" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z"/></symbol>
+  <symbol id="i-order" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="9" rx="9" ry="4"/><path d="M7 12l-1 8M17 12l1 8M12 13v7"/></g></symbol>
+  <symbol id="i-billing" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
+  <symbol id="i-inventory" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></symbol>
+  <symbol id="i-portions" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 11h16v1a8 8 0 0 1-16 0zM2 11h20M9 7c0-2 2-2 2-4M14 7c0-2 2-2 2-4"/></symbol>
+  <symbol id="i-reports" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 20V4M4 20h16M9 16v-5M13 16V8M17 16v-3"/></symbol>
+  <symbol id="i-crab" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="14" rx="6" ry="4"/><path d="M6 13L3 9l2-3M18 13l3-4-2-3M8 17l-2 3M16 17l2 3"/></g></symbol>
+  <symbol id="i-platters" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 11h18c-1 6-4 9-9 9s-8-3-9-9zM7 11c1-3 3-5 5-5s4 2 5 5"/></symbol>
+  <symbol id="i-drinks" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 5h10l-2 16H9zM13 5l2-4M8 10h8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></g></symbol>
+  <symbol id="i-cash" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12"/><circle cx="12" cy="12" r="3"/></g></symbol>
+  <symbol id="i-waste" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 7h14l-1 14H6zM9 7V4h6v3M3 7h18M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3"/></symbol>
+  <symbol id="i-limit" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M3 4h18l-7 8v6l-4 2v-8z"/></symbol>
+</svg>
 <header class="bar">
   <div class="bar-inner">
-    <div class="title-row"><h1>King Crab House</h1>
-      <div class="meta"><span id="status" role="status">Loading…</span><span class="who" id="who"></span><button type="button" class="signout" id="staff-link" hidden>Staff</button><button type="button" class="signout" id="signout" hidden>Sign out</button></div></div>
-    <nav class="segmented" aria-label="Sections"><a href="#dashboard">Dashboard</a><a href="#order">Order</a><a href="#billing">Billing</a><a href="#history">History</a><a href="#inventory">Inventory</a><a href="#portions">Portions</a><a href="#reports">Reports</a></nav>
+    <div class="title-row"><h1>King Crab House<span class="dot">.</span></h1>
+      <div class="meta"><span id="status" role="status">Loading…</span><span class="who" id="who"></span><button type="button" class="signout icon-btn" id="open-palette" hidden><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>Search <kbd>⌘K</kbd></button><button type="button" class="signout" id="staff-link" hidden>Staff</button><button type="button" class="signout" id="signout" hidden>Sign out</button></div></div>
+    <nav class="segmented" aria-label="Sections"><a href="#dashboard"><svg class="ic" aria-hidden="true"><use href="#i-dashboard"/></svg>Dashboard</a><a href="#order"><svg class="ic" aria-hidden="true"><use href="#i-order"/></svg>Order</a><a href="#billing"><svg class="ic" aria-hidden="true"><use href="#i-billing"/></svg>Billing</a><a href="#history"><svg class="ic" aria-hidden="true"><use href="#i-history"/></svg>History</a><a href="#inventory"><svg class="ic" aria-hidden="true"><use href="#i-inventory"/></svg>Inventory</a><a href="#portions"><svg class="ic" aria-hidden="true"><use href="#i-portions"/></svg>Portions</a><a href="#reports"><svg class="ic" aria-hidden="true"><use href="#i-reports"/></svg>Reports</a></nav>
   </div>
 </header>
 <main>
@@ -310,7 +514,7 @@
   </section>
 
   <section id="inventory" hidden>
-    <h2>Stock · average price paid</h2>
+    <h2>Stock · average price paid<button type="button" class="q" popovertarget="help-avgprice" aria-label="What is average price paid?">?</button></h2>
     <ul class="list" id="stock"></ul>
     <p class="footnote">Tap + to add a purchase, or the pencil to fix a count.</p>
     <h2>Purchase history</h2>
@@ -328,9 +532,9 @@
   <section id="order" hidden>
     <h2>Table</h2>
     <div class="floor"><div id="floor"></div>
-      <div class="floor-legend"><span><i></i>Free</span><span><i class="busy"></i>Has an open bill (minutes since first order)</span></div></div>
+      <div class="floor-legend"><span><i></i>Free</span><span><i class="busy"></i>Has an open bill (minutes since first order; the ring fills over 90 min, red after 60)</span></div></div>
     <div id="menu"></div>
-    <p class="footnote">Finish Order takes the ingredients out of stock.</p>
+    <p class="footnote">Finish Order shows the order for one last check before it goes to the kitchen.</p>
     <div class="checkout">
       <div class="checkout-inner">
         <div class="checkout-summary" id="cart-summary" aria-live="polite">No items yet</div>
@@ -357,7 +561,8 @@
   </section>
 
   <section id="reports" hidden>
-    <div class="report-head"><label for="report-month" style="font-weight:600">Month</label>
+    <div class="report-head"><span id="month-presets" role="group" aria-label="Quick months" style="display:flex;gap:8px;flex-wrap:wrap"></span>
+      <label for="report-month" style="font-weight:600">Other month</label>
       <input class="field" id="report-month" type="month" aria-label="Report month"></div>
     <div id="kpis"></div>
     <h2>Profit &amp; loss</h2>
@@ -374,7 +579,7 @@
       <button class="btn" type="submit">Add</button>
     </form>
     <ul class="list" id="expense-list" style="margin-top:12px"></ul>
-    <h2>Stock losses (waste report)</h2>
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-waste"/></svg>Stock losses (waste report)</h2>
     <div id="losses"></div>
     <h2>Busiest hours · last 30 days</h2>
     <div id="heatmap"></div>
@@ -440,7 +645,7 @@
         <li><label for="edit-price">Average price</label><span class="editor"><span class="peso">₱</span>
           <input id="edit-price" name="price" type="number" min="0" step="any" inputmode="decimal">
           <span class="unit" id="edit-per"></span></span></li>
-        <li><span>Low-stock level</span><span class="buy-qty" id="edit-level" style="margin-left:auto"></span></li>
+        <li><span>Low-stock level<button type="button" class="q" popovertarget="help-lowlevel" aria-label="What is the low-stock level?">?</button></span><span class="buy-qty" id="edit-level" style="margin-left:auto"></span></li>
       </ul>
       <p class="footnote">A lower count is logged as waste. Low-stock level is forecast use for the next 3 days.</p>
       <p class="buy-preview" id="edit-preview" aria-live="polite"></p>
@@ -454,7 +659,9 @@
       <h2>Guests</h2>
       <ul class="list">
         <li><label for="pay-guests">Guests at the table</label><span class="editor"><input id="pay-guests" name="guests" type="number" min="1" max="50" step="1" inputmode="numeric" value="1"></span></li>
-        <li><label for="pay-seniors">Senior citizens / PWD</label><span class="editor"><input id="pay-seniors" name="seniors" type="number" min="0" step="1" inputmode="numeric" value="0"></span></li>
+        <li><span id="seniors-q">Any senior citizen or PWD?</span><span class="editor" role="group" aria-labelledby="seniors-q">
+          <button type="button" class="chip" data-seniors="no" aria-pressed="true">No</button><button type="button" class="chip" data-seniors="yes" aria-pressed="false">Yes</button></span></li>
+        <li id="seniors-row" hidden><label for="pay-seniors">How many of them?</label><span class="editor"><input id="pay-seniors" name="seniors" type="number" min="0" step="1" inputmode="numeric" value="0"></span></li>
       </ul>
       <h2>Bill</h2>
       <div class="breakdown" id="pay-breakdown"></div>
@@ -462,6 +669,7 @@
       <ul class="list">
         <li><label for="pay-split">Split between</label><span class="editor"><input id="pay-split" name="split" type="number" min="1" max="20" step="1" inputmode="numeric" value="1"><span class="unit">people</span></span></li>
       </ul>
+      <div id="pay-pie"></div>
       <ul class="list" id="pay-parts" style="margin-top:12px"></ul>
       <p class="buy-preview" id="pay-check" aria-live="polite"></p>
     </div>
@@ -486,12 +694,17 @@
   <form id="close-day-form" novalidate>
     <div class="sheet-head"><button type="button" class="cancel">Cancel</button><h3 id="close-day-title">Close the day</h3><button type="submit">Save</button></div>
     <div class="sheet-body">
-      <div class="breakdown" id="close-day-summary" style="margin-top:12px"></div>
-      <h2>Cash drawer</h2>
+      <h2>1 · Today's money</h2>
+      <div class="breakdown" id="close-day-summary"></div>
+      <h2>2 · Count the cash drawer</h2>
+      <p class="footnote" style="margin-top:0">Count each kind of bill and coin. Sales cash only, without your starting float.</p>
+      <ul class="list" id="cash-count"></ul>
       <ul class="list">
-        <li><label for="close-counted">Cash counted</label><span class="editor"><span class="peso">₱</span><input id="close-counted" name="counted" type="number" min="0" step="any" inputmode="decimal" placeholder="0.00"></span></li>
+        <li><label for="close-counted"><strong>Cash counted</strong></label><span class="editor"><span class="peso">₱</span><input id="close-counted" name="counted" type="number" min="0" step="any" inputmode="decimal" placeholder="0.00" aria-describedby="close-day-diff"></span></li>
       </ul>
       <p class="buy-preview" id="close-day-diff" aria-live="polite"></p>
+      <h2>3 · Save</h2>
+      <button type="submit" class="btn wide">Save and close the day</button>
     </div>
   </form>
 </dialog>
@@ -512,6 +725,22 @@
   <div class="sheet-head"><h3 id="sheet-title"></h3><button type="button" id="sheet-done">Done</button></div>
   <div class="sheet-body" id="sheet-body"></div>
 </dialog>
+<dialog class="sheet palette" id="palette" aria-label="Search">
+  <input id="palette-q" type="text" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list" placeholder="Jump to a tab, table, dish or ingredient…" autocomplete="off" spellcheck="false" aria-label="Search">
+  <ul id="palette-list" role="listbox" aria-label="Results"></ul>
+</dialog>
+<dialog class="sheet" id="readback" aria-labelledby="readback-title">
+  <div class="sheet-head"><button type="button" class="cancel">Back</button><h3 id="readback-title">Check the order</h3><span style="width:44px"></span></div>
+  <div class="sheet-body" id="readback-body"></div>
+</dialog>
+<div popover="manual" class="done" id="done" role="status"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-16"/></svg><span></span></div>
+<div popover class="help" id="help-profit"><strong>Money left after ingredients</strong>What you sold, minus what the ingredients in those dishes cost. Rent, wages and other bills aren't taken out yet.</div>
+<div popover class="help" id="help-service"><strong>Service charge</strong>An extra 10% added to every bill, on top of the menu prices.</div>
+<div popover class="help" id="help-forecast"><strong>Forecast</strong>A guess at what tomorrow needs, from the same day of the week in the last few weeks. Recent weeks count more.</div>
+<div popover class="help" id="help-cover"><strong>Days of cover</strong>How many days the stock you have now will last if you keep selling at the usual pace.</div>
+<div popover class="help" id="help-breakeven"><strong>Break-even sales</strong>How much you need to sell this month to pay for all the month's expenses and stock losses. Anything above it is profit.</div>
+<div popover class="help" id="help-avgprice"><strong>Average price paid</strong>What you've paid per kg, litre or piece, averaged over the stock you have now. Old and new deliveries are mixed.</div>
+<div popover class="help" id="help-lowlevel"><strong>Low-stock level</strong>About 3 days of use. When stock drops below it, the item shows as Low and goes on the shopping list.</div>
 <div class="login" id="login" hidden>
   <form id="login-form">
     <h1>King Crab House</h1>
@@ -551,6 +780,31 @@ const peso = n => `${n < 0 ? '−' : ''}₱${Math.abs(Number(n)).toLocaleString(
 const PER = { g: ['kg', 1000], pcs: ['pc', 1], mL: ['L', 1000] };
 const per = unit => PER[unit] || [unit, 1];
 const esc = s => String(s).replace(/[&<>"]/g, c => `&#${c.charCodeAt(0)};`);
+const icon = name => `<svg class="ic" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+// "?" next to a term opens its plain-language explanation (popovers at the end of <body>)
+const q = term => `<button type="button" class="q" popovertarget="help-${term}" aria-label="What does this mean?">?</button>`;
+const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Donut on a circumference-100 circle, so each dash length is its percentage. parts: [{ label, value, color }]
+const DONUT_COLORS = ['var(--red)', 'var(--label)', 'var(--orange)', 'var(--label2)', 'var(--sep)'];
+function donut(parts, big, small, label) {
+  const total = parts.reduce((s, p) => s + p.value, 0) || 1;
+  let at = 0;
+  const arcs = parts.map(p => { const len = p.value / total * 100, a = `<circle r="15.9155" cx="21" cy="21" stroke="${p.color}" stroke-dasharray="${len} ${100 - len}" stroke-dashoffset="${25 - at}"/>`; at += len; return a; });
+  return `<svg class="donut" viewBox="0 0 42 42" role="img" aria-label="${esc(label)}"><circle r="15.9155" cx="21" cy="21" stroke="var(--fill)"/>${arcs.join('')}
+    <text class="c1" x="21" y="22" text-anchor="middle">${esc(big)}</text><text class="c2" x="21" y="27" text-anchor="middle">${esc(small)}</text></svg>`;
+}
+const SLEEPING_CRAB = `<svg viewBox="0 0 150 100" aria-hidden="true"><ellipse cx="75" cy="92" rx="60" ry="5" fill="var(--fill)"/>
+  <g fill="none" stroke="var(--label)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="75" cy="66" rx="40" ry="22" fill="var(--bg)"/>
+  <path d="M38 62Q20 54 22 40q8-6 14 2-4 6 4 14M112 62q18-8 16-22-8-6-14 2 4 6-4 14M50 84l-8 8M62 87l-4 7M88 87l4 7M100 84l8 8"/>
+  <path d="M60 60q4 4 8 0M82 60q4 4 8 0"/></g><text x="112" y="24" font-size="14" font-weight="800" fill="var(--red)">z</text><text x="122" y="14" font-size="18" font-weight="800" fill="var(--red)">Z</text></svg>`;
+const emptyHtml = (title, text, cta) => `<div class="empty">${SLEEPING_CRAB}<strong>${title}</strong><span>${text}</span>${cta || ''}</div>`;
+// A tile grows into the dialog it opens. Falls back to a plain open without the View Transitions API.
+function morph(from, to, open) {
+  if (!document.startViewTransition || reduceMotion() || !from) return open();
+  from.style.viewTransitionName = 'morph';
+  document.startViewTransition(() => { from.style.viewTransitionName = ''; to.style.viewTransitionName = 'morph'; open(); })
+    .finished.finally(() => { to.style.viewTransitionName = ''; });
+}
 const status = document.getElementById('status');
 let data, lastReport = null;
 
@@ -581,7 +835,7 @@ async function load() {
     renderStock(); renderMeals(); renderOrder(); renderHistory(); renderRecipes(); renderBills(); renderProfit(); drawFloor();
     if (role === 'owner') { loadStockHistory(); saveModelForecast(); renderReportData(); }
     status.textContent = `Updated ${new Date().toLocaleTimeString()}`;
-  } catch (e) { status.textContent = 'Could not load data — check the connection, then reload.'; console.error(e); }
+  } catch (e) { status.hidden = false; status.textContent = 'No connection. Check the Wi-Fi, then reload the page.'; console.error(e); }
 }
 
 // items deleted in Portions stay in data.recipes so past orders and bills still show their names
@@ -602,40 +856,73 @@ function renderMeals() {
   meals = computeServings(onMenu(), data.items, data.ingredients);
   const tile = r => `
     <button type="button" class="tile ${level(r.servings)}${isSoldOut(r) ? ' soldout' : ''}" data-i="${meals.indexOf(r)}" aria-haspopup="dialog">
-      <h3>${esc(r.name)}</h3>${isSoldOut(r) ? '<span class="soldout-tag">Sold out today</span>' : ''}<span class="count">${portions(r.servings)}</span>
+      <h3>${esc(r.name)}</h3>${isSoldOut(r) ? '<span class="soldout-tag">Sold out today</span>'
+        : r.lines.length > 1 ? `<span class="limit" title="Runs out first">${icon('limit')}${esc(r.limiting.join(', '))}</span>` : ''}<span class="count">${portions(r.servings)}</span>
     </button>`;
   document.getElementById('meals').innerHTML = MENU_SECTIONS.map(([cat, title]) => {
     const rows = meals.filter(r => r.category === cat);
-    return rows.length ? `<h2>${title}</h2><div class="grid">${rows.map(tile).join('')}</div>` : '';
+    return rows.length ? `<h2>${icon(cat)}${title}</h2><div class="grid">${rows.map(tile).join('')}</div>` : '';
   }).join('');
 }
 
+// Today in one sentence, so nobody has to read the numbers to know how the day is going.
+function todaySentence(today) {
+  if (!today.orders) return 'No orders yet today.';
+  const sold = {};
+  for (const o of data.orders) if (dayKey(o.created_at) === dayKey(Date.now())) for (const i of o.order_items) sold[i.recipe_id] = (sold[i.recipe_id] || 0) + i.qty;
+  const [bestId, bestQty] = Object.entries(sold).sort((a, b) => b[1] - a[1])[0];
+  const s = takingsSummary(), low = coverNow().filter(i => i.reorder && i.buy > 0).length;
+  return `Today you've sold <strong>${peso(today.sales)}</strong> across ${today.orders} ${today.orders === 1 ? 'order' : 'orders'}. `
+    + `The best seller is <strong>${esc(data.recipes.find(r => r.id === bestId)?.name || bestId)}</strong> (${bestQty}). `
+    + (s.bills ? `${s.bills} ${s.bills === 1 ? 'bill is' : 'bills are'} paid, ${peso(s.total)} in all. ` : 'No bills are paid yet. ')
+    + (low ? `${low} ${low === 1 ? 'item is' : 'items are'} running low.` : 'Stock is fine.');
+}
 // Today's sales, ingredient cost and profit, plus the last 7 days. Counts every order placed, paid or not.
+// Up top: one sentence and three numbers. Everything else sits behind "See more".
 function renderProfit() {
   const days = dailyTotals(data.orders, data.recipes, data.items, data.ingredients, dayKey);
   const today = days.find(d => d.day === dayKey(Date.now())) || { sales: 0, cost: 0, profit: 0, orders: 0 };
   const cls = n => n > 0 ? 'gain' : n < 0 ? 'loss' : '';
   const weekAgo = dayKey(Date.now() - 6 * 864e5), recent = days.filter(d => new Date(d.day) >= new Date(weekAgo));
+  const low = coverNow().filter(i => i.reorder && i.buy > 0).length, c = data.takings.closing;
   document.getElementById('profit').innerHTML = `
     <h2>Today</h2>
+    <p class="sentence">${todaySentence(today)}</p>
     <div class="stats">
-      <div class="stat"><span class="stat-label">Sales</span><span class="stat-val">${peso(today.sales)}</span><span class="stat-sub">${today.orders} ${today.orders === 1 ? 'order' : 'orders'}</span></div>
-      <div class="stat"><span class="stat-label">Cost</span><span class="stat-val">${peso(today.cost)}</span><span class="stat-sub">ingredients</span></div>
-      <div class="stat"><span class="stat-label">Gross profit</span><span class="stat-val ${cls(today.profit)}">${peso(today.profit)}</span><span class="stat-sub">${today.sales ? `${Math.round(today.profit / today.sales * 100)}% margin` : '—'}</span></div>
+      <div class="stat hero"><span class="stat-label">Sales</span><span class="stat-val" id="sales-now">${peso(today.sales)}</span><span class="stat-sub">${today.orders} ${today.orders === 1 ? 'order' : 'orders'}</span></div>
+      <div class="stat"><span class="stat-label">Money left after ingredients${q('profit')}</span><span class="stat-val ${cls(today.profit)}">${peso(today.profit)}</span><span class="stat-sub">${today.sales ? `keeps ${Math.round(today.profit / today.sales * 100)}% of sales` : '—'}</span></div>
+      <div class="stat"><span class="stat-label">Running low</span><span class="stat-val ${low ? 'loss' : ''}">${low} ${low === 1 ? 'item' : 'items'}</span><span class="stat-sub">${low ? 'see the list below' : 'nothing to buy'}</span></div>
     </div>
-    ${takingsHtml()}`;
+    ${c ? `<p class="closed-note">Closed at ${new Date(c.created_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}: counted ${peso(c.counted_cash)} vs expected ${peso(c.expected_cash)} — ${Number(c.difference) === 0 ? 'balanced' : `<span class="${c.difference < 0 ? 'loss' : 'gain'}">${c.difference < 0 ? 'short' : 'over'} ${peso(Math.abs(c.difference))}</span>`}.</p>` : ''}
+    <button type="button" class="btn wide" id="open-close-day">${icon('cash')}${c ? 'Close the day again' : 'Close the day'}</button>`;
+  countUp(document.getElementById('sales-now'), today.sales);
   // below the crab/platters/drinks tiles
   document.getElementById('profit-more').innerHTML = `
+    ${lowStockHtml()}
+    <details class="more"><summary>See more · takings, last 7 days, best dishes, tomorrow</summary>
+    ${takingsHtml()}
     ${recent.length ? `<h2>Last 7 days</h2>
     <div class="detail"><table>
       <thead><tr><th>Day</th><th>Sales</th><th>Cost</th><th>Gross profit</th></tr></thead>
       <tbody>${recent.map(d => `<tr><td>${dayLabel(d.day)}</td><td>${peso(d.sales)}</td><td>${peso(d.cost)}</td><td class="makes ${cls(d.profit)}">${peso(d.profit)}</td></tr>`).join('')}</tbody>
     </table></div>` : ''}
     ${dishesHtml()}
-    ${lowStockHtml()}
-    ${forecastHtml()}`;
+    ${forecastHtml()}</details>`;
 }
 
+// Today's sales roll up from the last value shown (from 0 on first load) over 600 ms.
+let shownSales = 0;
+function countUp(el, to) {
+  const from = shownSales; shownSales = to;
+  if (from === to || reduceMotion()) return;
+  const t0 = performance.now();
+  const step = t => {
+    const k = Math.min(1, (t - t0) / 600);
+    if (el.isConnected) el.textContent = peso(from + (to - from) * (1 - (1 - k) ** 3));
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
 // today's money in, by payment method, and the cash-drawer closing
 function takingsSummary() {
   const t = data.takings, by = m => t.payments.filter(p => p.method === m).reduce((s, p) => s + Number(p.amount), 0);
@@ -644,14 +931,12 @@ function takingsSummary() {
            discount: sum('discount') + sum('vat_removed'), service: sum('service_charge') };
 }
 function takingsHtml() {
-  const s = takingsSummary(), c = data.takings.closing;
+  const s = takingsSummary();
   const row = (label, val, cls = '') => `<div class="${cls}"><span>${label}</span><span>${val}</span></div>`;
-  return `<h2>Today's takings</h2><div class="takings"><div class="breakdown">
+  return `<h2>${icon('cash')}Today's takings</h2><div class="breakdown">
       ${row('Cash', peso(s.cash))}${row('GCash', peso(s.gcash))}${row('Card', peso(s.card))}
-      ${s.discount ? row('Senior/PWD discounts given', `−${peso(s.discount)}`) : ''}${s.service ? row('Service charge collected', peso(s.service)) : ''}
-      ${row(`Total · ${s.bills} ${s.bills === 1 ? 'bill' : 'bills'} paid`, peso(s.total), 'grand')}</div>
-    ${c ? `<p class="closed-note">Closed at ${new Date(c.created_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}: counted ${peso(c.counted_cash)} vs expected ${peso(c.expected_cash)} — ${Number(c.difference) === 0 ? 'balanced' : `<span class="${c.difference < 0 ? 'loss' : 'gain'}">${c.difference < 0 ? 'short' : 'over'} ${peso(Math.abs(c.difference))}</span>`}.</p>` : ''}
-    <button type="button" class="btn" id="open-close-day">${c ? 'Close the day again' : 'Close the day'}</button></div>`;
+      ${s.discount ? row('Senior/PWD discounts given', `−${peso(s.discount)}`) : ''}${s.service ? row(`Service charge collected${q('service')}`, peso(s.service)) : ''}
+      ${row(`Total · ${s.bills} ${s.bills === 1 ? 'bill' : 'bills'} paid`, peso(s.total), 'grand')}</div>`;
 }
 // Running low: forecast days of cover under the reorder point (lead time + 1 safety day).
 function lowStockHtml() {
@@ -694,9 +979,9 @@ function forecastHtml() {
   const tomorrow = tomorrowDate();
   const day = tomorrow.toLocaleDateString([], { weekday: 'long' });
   const f = forecastBuy(data.orders, menuItems(), data.ingredients, tomorrow, 4, dayKey);
-  if (!f.days) return `${guessHtml(day)}<h2>Tomorrow (${day}) · forecast</h2><p class="footnote" style="margin-top:0">Not enough ${day} history yet.</p>`;
+  if (!f.days) return `${guessHtml(day)}<h2>Tomorrow (${day}) · forecast${q('forecast')}</h2><p class="footnote" style="margin-top:0">Not enough ${day} history yet.</p>`;
   const rows = f.ingredients.filter(i => i.batch_tracked);
-  return `${guessHtml(day)}<h2>Tomorrow (${day}) · forecast</h2>
+  return `${guessHtml(day)}<h2>Tomorrow (${day}) · forecast${q('forecast')}</h2>
     ${rows.length ? `<ul class="list shopping">${rows.map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">Have ${fmt(i.stock)} ${i.unit}</span></span>
       <span class="buy-qty">Expect ~${fmt(i.need)} ${i.unit}</span></li>`).join('')}</ul>` : ''}
     <p class="footnote">Based on the last ${f.days} ${day}${f.days === 1 ? '' : 's'}, recent weeks counting more.</p>`;
@@ -711,21 +996,56 @@ function dishesHtml() {
   </table></div>`;
 }
 const closeDlg = document.getElementById('close-day'), closeForm = document.getElementById('close-day-form');
-document.getElementById('profit').addEventListener('click', e => {
-  if (e.target.id !== 'open-close-day') return;
+document.getElementById('profit').addEventListener('click', e => { if (e.target.closest('#open-close-day')) openCloseDay(); });
+// Philippine money, drawn in its own colours (New Generation notes; ₱20 comes as both note and coin)
+const CASH = [
+  { v: 1000, kind: 'bill', c: '#3d6db3', t: '#fff' }, { v: 500, kind: 'bill', c: '#e8b928', t: '#3a2a00' },
+  { v: 200, kind: 'bill', c: '#5b9a4a', t: '#fff' }, { v: 100, kind: 'bill', c: '#8a68a6', t: '#fff' },
+  { v: 50, kind: 'bill', c: '#c8413a', t: '#fff' }, { v: 20, kind: 'bill', c: '#e07a28', t: '#2e1400' },
+  { v: 20, kind: 'coin', c: '#d6b04a', ring: '#c4c6c8' }, { v: 10, kind: 'coin', c: '#c4c6c8' }, { v: 5, kind: 'coin', c: '#c4c6c8' },
+  { v: 1, kind: 'coin', c: '#c4c6c8' }, { v: 0.25, kind: 'coin', c: '#d2a84a' },
+];
+const cashName = d => `${d.v < 1 ? '25¢' : peso(d.v).replace(/\.00$/, '')} ${d.kind === 'bill' ? 'bills' : 'coins'}`;
+function openCloseDay() {
   const s = takingsSummary();
   document.getElementById('close-day-summary').innerHTML = `<div><span>Cash sales</span><span>${peso(s.cash)}</span></div>
     <div><span>GCash</span><span>${peso(s.gcash)}</span></div><div><span>Card</span><span>${peso(s.card)}</span></div>
-    <div class="grand"><span>Expected cash in drawer</span><span>${peso(s.cash)}</span></div>`;
+    <div class="grand"><span>Cash that should be in the drawer</span><span>${peso(s.cash)}</span></div>`;
+  document.getElementById('cash-count').innerHTML = CASH.map((d, k) => `<li class="denom">
+    ${d.kind === 'bill' ? `<span class="note-pic" style="background:${d.c};color:${d.t}" aria-hidden="true">${d.v}</span>`
+      : `<span class="coin-pic" style="background:${d.c};${d.ring ? `box-shadow:inset 0 0 0 5px ${d.ring}` : ''}" aria-hidden="true">${d.v < 1 ? '25¢' : d.v}</span>`}
+    <label for="cash-${k}">${cashName(d)}</label>
+    <span class="editor"><button type="button" class="step" data-cash="${k}" data-dir="-1" aria-label="One fewer ${cashName(d)}">−</button>
+      <input id="cash-${k}" data-cash-n="${k}" type="number" min="0" step="1" inputmode="numeric" value="0">
+      <button type="button" class="step" data-cash="${k}" data-dir="1" aria-label="One more ${cashName(d)}">+</button></span>
+    <span class="cash-sub" id="cash-sub-${k}">₱0</span></li>`).join('');
   closeForm.reset(); updateCloseDiff();
-  closeDlg.showModal(); closeForm.counted.focus();
+  closeDlg.showModal(); document.getElementById('cash-0').focus();
+}
+// the drawer count fills "Cash counted"; typing a total there yourself still works
+function sumCash() {
+  let total = 0;
+  CASH.forEach((d, k) => {
+    const n = Math.max(0, Math.floor(Number(document.getElementById(`cash-${k}`).value) || 0));
+    total += n * d.v;
+    document.getElementById(`cash-sub-${k}`).textContent = n ? peso(n * d.v).replace(/\.00$/, '') : '₱0';
+  });
+  closeForm.counted.value = total.toFixed(2);
+  updateCloseDiff();
+}
+document.getElementById('cash-count').addEventListener('click', e => {
+  const b = e.target.closest('[data-cash]'); if (!b) return;
+  const input = document.getElementById(`cash-${b.dataset.cash}`);
+  input.value = Math.max(0, (Number(input.value) || 0) + Number(b.dataset.dir));
+  sumCash();
 });
+document.getElementById('cash-count').addEventListener('input', sumCash);
 function updateCloseDiff() {
   const expected = takingsSummary().cash, v = closeForm.counted.value, diff = Number(v) - expected;
   document.getElementById('close-day-diff').innerHTML = v === '' ? 'Count the cash in the drawer (sales only, without your starting float).'
     : Math.abs(diff) < 0.005 ? '<strong>Balanced.</strong>' : `<span class="${diff < 0 ? 'loss' : 'gain'}"><strong>${diff < 0 ? 'Short' : 'Over'} by ${peso(Math.abs(diff))}</strong></span>`;
 }
-closeForm.addEventListener('input', updateCloseDiff);
+closeForm.counted.addEventListener('input', updateCloseDiff);
 closeDlg.querySelector('.cancel').addEventListener('click', () => closeDlg.close());
 closeDlg.addEventListener('click', e => { if (e.target === closeDlg) closeDlg.close(); });
 closeForm.addEventListener('submit', async e => {
@@ -735,15 +1055,18 @@ closeForm.addEventListener('submit', async e => {
   try {
     const r = await api('rpc/close_day', { method: 'POST', body: JSON.stringify({ counted_cash: counted }) });
     closeDlg.close();
-    showToast(Number(r.difference) === 0 ? 'Day closed — cash balanced' : `Day closed — ${r.difference < 0 ? 'short' : 'over'} ${peso(Math.abs(r.difference))}`);
+    done(Number(r.difference) === 0 ? 'Day closed · cash balanced' : `Day closed · ${r.difference < 0 ? 'short' : 'over'} ${peso(Math.abs(r.difference))}`);
     await load();
   } catch { showToast('Could not close the day', true); }
 });
 
 const sheet = document.getElementById('sheet');
 document.getElementById('meals').addEventListener('click', e => {
-  const r = meals[e.target.closest('.tile')?.dataset.i];
-  if (!r) return;
+  const t = e.target.closest('.tile'), r = meals[t?.dataset.i];
+  if (r) morph(t, sheet, () => openMeal(r));
+});
+function openMeal(r) {
+  const most = Math.max(1, r.servings * 4); // bar scale: the limiting line sits at 25%, plentiful ones cap at 100%
   document.getElementById('sheet-title').textContent = r.name;
   document.getElementById('sheet-body').innerHTML = `
     <div class="${level(r.servings)}"><span class="count">${portions(r.servings)}</span></div>
@@ -755,27 +1078,31 @@ document.getElementById('meals').addEventListener('click', e => {
           <td>${esc(l.name)}${l.portions === r.servings ? '<span class="badge">Limits</span>' : ''}</td>
           <td>${fmt(l.qty)} <span class="u">${l.unit}</span></td>
           <td>${fmt(l.stock)} <span class="u">${l.unit}</span></td>
-          <td class="makes">${l.portions}</td>
+          <td class="makes"><span class="mbar" style="--w:${Math.round(Math.min(l.portions, most) / most * 100)}" aria-hidden="true"></span>${l.portions}</td>
         </tr>`).join('')}
       </tbody></table></div>
-    <p class="footnote">Needs: per portion. Makes: portions it alone covers.</p>
+    <p class="footnote">Needs: per portion. Makes: portions it alone covers. The shortest bar sets the dish total.</p>
     <button type="button" class="btn soldout-btn${isSoldOut(r) ? ' on' : ''}" data-soldout="${r.id}">${isSoldOut(r) ? 'Back on the menu' : 'Mark sold out for today'}</button>
     <p class="footnote">Sold out lasts until tomorrow.</p>`;
   sheet.showModal();
-});
+}
 document.getElementById('sheet-done').addEventListener('click', () => sheet.close());
 document.getElementById('sheet-body').addEventListener('click', async e => {
   const b = e.target.closest('[data-soldout]'); if (!b) return;
   const r = data.recipes.find(x => x.id === b.dataset.soldout), on = !isSoldOut(r);
   b.disabled = true;
   try {
-    await api('rpc/set_sold_out', { method: 'POST', body: JSON.stringify({ recipe_id: r.id, sold_out: on }) });
-    r.sold_out_on = on ? todayISO() : null;
+    await setSoldOut(r, on);
     sheet.close();
-    showToast(on ? `${r.name} marked sold out for today` : `${r.name} is back on the menu`);
-    renderMeals(); renderOrder();
+    showToast(on ? `${r.name} marked sold out for today` : `${r.name} is back on the menu`, false,
+      () => setSoldOut(r, !on).catch(() => showToast('Could not undo that', true)));
   } catch { showToast('Could not change that', true); b.disabled = false; }
 });
+async function setSoldOut(r, on) {
+  await api('rpc/set_sold_out', { method: 'POST', body: JSON.stringify({ recipe_id: r.id, sold_out: on }) });
+  r.sold_out_on = on ? todayISO() : null;
+  renderMeals(); renderOrder();
+}
 sheet.addEventListener('click', e => { if (e.target === sheet) sheet.close(); }); // tap outside to close
 
 let role = null;
@@ -790,13 +1117,19 @@ function showTab() {
 addEventListener('hashchange', showTab);
 showTab();
 
+// Ring = forecast days of cover ÷ the days a restock buys; red when it's time to reorder.
+function gauge(i, c) {
+  const frac = c ? Math.min(1, c.cover / restockDays(i)) : 0;
+  return `<svg class="gauge${c?.reorder ? ' low' : ''}" viewBox="0 0 32 32" role="img" aria-label="${c ? `About ${c.cover >= 60 ? '60+' : fmt(c.cover)} days of cover` : 'Not used yet'}">
+    <circle class="track" cx="16" cy="16" r="12"/><circle class="arc" cx="16" cy="16" r="12" pathLength="100" stroke-dasharray="${frac * 100} 100" transform="rotate(-90 16 16)"/></svg>`;
+}
 function renderStock() {
-  const low = new Set(coverNow().filter(c => c.reorder).map(c => c.id));
+  const cover = Object.fromEntries(coverNow().map(c => [c.id, c]));
   document.getElementById('stock').innerHTML = data.ingredients.map(i => {
     const [perLabel, f] = per(i.unit);
-    return `<li class="inv-row" data-id="${i.id}">
+    return `<li class="inv-row" data-id="${i.id}" data-swipe-label="Add stock">${gauge(i, cover[i.id])}
       <span class="inv-name">${esc(i.name)}</span>
-      <span class="inv-meta"><span class="stock">${fmt(i.stock)} ${i.unit}${low.has(i.id) ? '<span class="low-tag">Low</span>' : ''}</span>
+      <span class="inv-meta"><span class="stock">${fmt(i.stock)} ${i.unit}${cover[i.id]?.reorder ? '<span class="low-tag">Low</span>' : ''}</span>
         <span class="cost">${peso(Number(i.cost || 0) * f)}/${perLabel}</span></span>
       <button type="button" class="inv-btn add" data-act="buy" aria-haspopup="dialog" aria-label="Add stock of ${esc(i.name)}">+</button>
       <button type="button" class="inv-btn edit" data-act="edit" aria-haspopup="dialog" aria-label="Edit count and price of ${esc(i.name)}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg></button></li>`;
@@ -882,20 +1215,24 @@ document.getElementById('stock-history').addEventListener('click', e => {
   document.getElementById('purchase-sub').textContent = `${ing?.name || p.ingredient_id} · ${new Date(p.created_at).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })}`;
   document.getElementById('purchase-unit').textContent = ing?.unit || '';
   purchaseForm.qty.value = fmt(p.qty); purchaseForm.cost.value = fmt(p.total_cost);
-  const del = document.getElementById('purchase-delete'); del.classList.remove('confirm'); del.textContent = 'Delete purchase';
   purchaseDlg.showModal(); purchaseForm.qty.focus(); purchaseForm.qty.select();
 });
-// takes its amount back out of stock; tap twice to confirm
+// takes its amount back out of stock; Undo records the same purchase again (dated now)
 document.getElementById('purchase-delete').addEventListener('click', async e => {
-  const btn = e.currentTarget;
-  if (!btn.classList.contains('confirm')) { btn.classList.add('confirm'); btn.textContent = 'Tap again to delete'; return; }
+  const btn = e.currentTarget, p = editingPurchase;
   btn.disabled = true;
   try {
-    const r = await api('rpc/delete_purchase', { method: 'POST', body: JSON.stringify({ purchase_id: editingPurchase.id }) });
-    const ing = data.ingredients.find(i => i.id === editingPurchase.ingredient_id);
+    const r = await api('rpc/delete_purchase', { method: 'POST', body: JSON.stringify({ purchase_id: p.id }) });
+    const ing = data.ingredients.find(i => i.id === p.ingredient_id);
     if (ing) Object.assign(ing, { stock: Number(r.stock), cost: Number(r.cost) });
     purchaseDlg.close();
-    showToast('Purchase deleted');
+    showToast('Purchase deleted', false, async () => {
+      try {
+        const back = await api('rpc/add_purchase', { method: 'POST', body: JSON.stringify({ ingredient_id: p.ingredient_id, qty: Number(p.qty), total_cost: Number(p.total_cost) }) });
+        if (ing) Object.assign(ing, { stock: Number(back.stock), cost: Number(back.cost) });
+        afterInventoryChange(); loadStockHistory();
+      } catch { showToast('Couldn\'t bring it back. Add the purchase again from Inventory.', true); }
+    });
     afterInventoryChange(); loadStockHistory();
   } catch (err) { showToast(/less than 0/.test(err?.message) ? 'That would leave less than 0 in stock' : 'Could not delete that purchase', true); }
   finally { btn.disabled = false; }
@@ -1013,6 +1350,7 @@ function drawFloor() {
   const mins = n => Math.max(0, Math.round((Date.now() - new Date(open[n].since)) / 60000));
   const t = ({ n, x, y, round }) => `<g class="tbl${open[n] ? ' busy' : ''}" role="radio" tabindex="${(table ?? 1) === n ? 0 : -1}" aria-checked="${table === n}" aria-label="Table ${n}${open[n] ? `, open bill, ${mins(n)} minutes` : ', free'}" data-n="${n}">
     <rect x="${x - 40}" y="${y - 41}" width="80" height="82" fill="transparent"/>
+    ${open[n] ? `<circle class="ring${mins(n) >= 60 ? ' late' : ''}" cx="${x}" cy="${y}" r="46" pathLength="100" stroke-dasharray="${Math.min(mins(n), 90) / 90 * 100} 100" transform="rotate(-90 ${x} ${y})"/>` : ''}
     ${round
       ? `<circle class="chair" cx="${x}" cy="${y - 30}" r="8"/><circle class="chair" cx="${x}" cy="${y + 30}" r="8"/><circle class="top" cx="${x}" cy="${y}" r="21"/>`
       : `<circle class="chair" cx="${x - 14}" cy="${y - 30}" r="8"/><circle class="chair" cx="${x + 14}" cy="${y - 30}" r="8"/>
@@ -1041,9 +1379,21 @@ floor.addEventListener('keydown', e => {
 });
 drawFloor();
 const toast = document.getElementById('toast');
-function showToast(msg, err) {
-  toast.textContent = msg; toast.className = `toast show${err ? ' err' : ''}`;
-  clearTimeout(showToast.t); showToast.t = setTimeout(() => toast.className = 'toast', 3000);
+// Big tick (and a short buzz on phones that can) when an order or payment goes through.
+const doneEl = document.getElementById('done');
+function done(msg) {
+  doneEl.querySelector('span').textContent = msg;
+  if (doneEl.matches(':popover-open')) doneEl.hidePopover();
+  doneEl.showPopover(); // top layer, so it shows over the receipt too
+  navigator.vibrate?.(40);
+  clearTimeout(done.t); done.t = setTimeout(() => doneEl.hidePopover(), 1600);
+}
+// undo: optional function; adds an Undo button and keeps the toast up 5 s
+function showToast(msg, err, undo) {
+  toast.innerHTML = `<span>${esc(msg)}</span>${undo ? `<button type="button" class="undo">${icon('undo')}Undo</button><i class="timer"></i>` : ''}`;
+  toast.className = `toast show${err ? ' err' : ''}${undo ? ' has-undo' : ''}`;
+  toast.onclick = undo ? e => { if (e.target.closest('.undo')) { toast.className = 'toast'; clearTimeout(showToast.t); undo(); } } : null;
+  clearTimeout(showToast.t); showToast.t = setTimeout(() => toast.className = 'toast', undo ? 5000 : 3000);
 }
 
 function renderOrder() {
@@ -1067,7 +1417,7 @@ function renderOrder() {
   };
   document.getElementById('menu').innerHTML = MENU_SECTIONS.map(([cat, title]) => {
     const rows = left.filter(r => r.category === cat);
-    return rows.length ? `<h2>${title}</h2><ul class="list menu">${rows.map(item).join('')}</ul>` : '';
+    return rows.length ? `<h2>${icon(cat)}${title}</h2><ul class="list menu">${rows.map(item).join('')}</ul>` : '';
   }).join('');
   renderCartSummary();
 }
@@ -1092,17 +1442,46 @@ function renderHistory() {
     `<h2><span>${dayLabel(k)}</span><span>${orders.length} ${orders.length === 1 ? 'order' : 'orders'}</span></h2>
       <ul class="list">${orders.map(o => `<li><span class="what"><strong>Table ${o.table_no}</strong><br>${o.order_items.map(i => `${i.qty}× ${esc(names[i.recipe_id] || i.recipe_id)}${i.note ? ` <span class="note">— ${esc(i.note)}</span>` : ''}`).join('<br>')}</span>
         <span class="when">${time(o.created_at)}<br>${peso(total(o))}<br>${o.paid_at ? '<span class="paid-tag">Paid</span>' : '<span class="open-tag">Open</span>'}</span></li>`).join('')}</ul>`).join('')
-    || '<p class="empty">No orders yet.</p>';
+    || emptyHtml('No orders yet', 'Orders from the last 30 days show up here.', '<a class="btn" href="#order">Start an order</a>');
 }
 
-document.getElementById('menu').addEventListener('click', e => {
-  const btn = e.target.closest('.step[data-dir]'); // − and + only; the note button has its own handler
-  if (!btn || btn.disabled) return;
-  const n = (cart[btn.dataset.id] || 0) + Number(btn.dataset.dir);
-  if (n > 0) cart[btn.dataset.id] = n; else { delete cart[btn.dataset.id]; delete notes[btn.dataset.id]; delete weights[btn.dataset.id]; }
+const menuEl = document.getElementById('menu');
+const stepBtn = (id, dir) => menuEl.querySelector(`.step[data-id="${id}"][data-dir="${dir}"]`);
+function bump(id, dir) {
+  const n = (cart[id] || 0) + dir;
+  if (n > 0) cart[id] = n;
+  else {
+    const kept = { note: notes[id], weight: weights[id] }, name = data.recipes.find(r => r.id === id)?.name;
+    delete cart[id]; delete notes[id]; delete weights[id];
+    showToast(`Removed ${name} from the order`, false, () => {
+      cart[id] = 1; if (kept.note) notes[id] = kept.note; if (kept.weight) weights[id] = kept.weight;
+      renderOrder();
+    });
+  }
   renderOrder();
-  document.querySelector(`#menu .step[data-id="${btn.dataset.id}"][data-dir="${btn.dataset.dir}"]`)?.focus();
+}
+let holdTimer = null, held = false;
+menuEl.addEventListener('click', e => {
+  const btn = e.target.closest('.step[data-dir]'); // − and + only; the note button has its own handler
+  if (held) { held = false; return; } // the hold already added them
+  if (!btn || btn.disabled) return;
+  bump(btn.dataset.id, Number(btn.dataset.dir));
+  stepBtn(btn.dataset.id, btn.dataset.dir)?.focus();
 });
+// hold + or − to keep adding or removing, about 6 a second; the button is redrawn each step, so look it up again
+menuEl.addEventListener('pointerdown', e => {
+  const btn = e.target.closest('.step[data-dir]');
+  if (!btn || btn.disabled) return;
+  const { id, dir } = btn.dataset;
+  held = false; clearTimeout(holdTimer);
+  holdTimer = setTimeout(function repeat() {
+    const b = stepBtn(id, dir);
+    if (!b || b.disabled) return;
+    held = true; bump(id, Number(dir));
+    holdTimer = setTimeout(repeat, 160);
+  }, 450);
+});
+for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) menuEl.addEventListener(ev, () => clearTimeout(holdTimer));
 
 document.getElementById('menu').addEventListener('input', e => {
   const t = e.target;
@@ -1147,60 +1526,80 @@ noteForm.addEventListener('submit', e => {
 noteDlg.querySelector('.cancel').addEventListener('click', () => noteDlg.close());
 noteDlg.addEventListener('click', e => { if (e.target === noteDlg) noteDlg.close(); });
 
-document.getElementById('finish').addEventListener('click', async e => {
-  const btn = e.target;
-  const items = Object.entries(cart).map(([recipe_id, qty]) => ({ recipe_id, qty, note: (notes[recipe_id] || '').trim(), weight: weights[recipe_id] || '' }));
+// Finish Order reads the order back in plain words first; Send to kitchen places it.
+const readbackDlg = document.getElementById('readback');
+document.getElementById('finish').addEventListener('click', () => {
   if (!table) { showToast('Pick a table first', true); document.getElementById('floor').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
   const unweighed = data.recipes.find(r => r.pricing === 'per_kg' && cart[r.id] && !(Number(weights[r.id]) > 0));
   if (unweighed) { showToast(`Enter the weight for ${unweighed.name}`, true); document.querySelector(`[data-weight="${unweighed.id}"]`)?.focus(); return; }
-  btn.disabled = true; btn.textContent = 'Placing…';
+  const lines = data.recipes.filter(r => cart[r.id]);
+  document.getElementById('readback-title').textContent = `Table ${table}`;
+  document.getElementById('readback-body').innerHTML = `
+    <p class="sentence">Send this to the kitchen for <strong>table ${table}</strong>?</p>
+    <div class="breakdown">${lines.map(r => `<div><span><strong>${cart[r.id]}×</strong> ${esc(r.name)}${r.pricing === 'per_kg' ? ` · ${fmt(weights[r.id])} kg` : ''}${notes[r.id]?.trim() ? `<span class="note" style="display:block">${esc(notes[r.id].trim())}</span>` : ''}</span><span>${peso(lineTotal(r))}</span></div>`).join('')}
+      <div class="grand"><span>Total</span><span>${peso(lines.reduce((s, r) => s + lineTotal(r), 0))}</span></div></div>
+    <button type="button" class="btn wide" id="send-order">Send to kitchen</button>
+    <button type="button" class="btn wide quiet" id="edit-order">Change something</button>`;
+  readbackDlg.showModal();
+  document.getElementById('send-order').focus();
+});
+readbackDlg.addEventListener('click', e => {
+  if (e.target === readbackDlg || e.target.closest('#edit-order, .cancel')) readbackDlg.close();
+  else if (e.target.closest('#send-order')) placeOrder(e.target.closest('#send-order'));
+});
+async function placeOrder(btn) {
+  const items = Object.entries(cart).map(([recipe_id, qty]) => ({ recipe_id, qty, note: (notes[recipe_id] || '').trim(), weight: weights[recipe_id] || '' }));
+  const finish = document.getElementById('finish');
+  btn.disabled = finish.disabled = true; btn.textContent = 'Sending…';
   try {
     await api('rpc/place_order', { method: 'POST', body: JSON.stringify({ table_no: table, items }) });
+    readbackDlg.close();
     for (const o of [cart, notes, weights]) for (const k in o) delete o[k];
     const n = items.reduce((a, i) => a + i.qty, 0);
-    showToast(`Table ${table} order placed · ${n} ${n === 1 ? 'item' : 'items'} taken from inventory`);
+    done(`Sent · table ${table}, ${n} ${n === 1 ? 'item' : 'items'}`);
     table = null; drawFloor();
     await load();
   } catch (err) {
+    readbackDlg.close();
     const soldOut = /sold out today: ([a-z0-9_]+)/.exec(err.message);
-    showToast(soldOut ? `${data.recipes.find(r => r.id === soldOut[1])?.name || 'An item'} is sold out today — remove it from the order.`
-      : /Not enough stock/.test(err.message) ? 'Not enough stock — inventory changed. Check the order.' : 'Order failed. Nothing was taken from inventory.', true);
+    showToast(soldOut ? `${data.recipes.find(r => r.id === soldOut[1])?.name || 'An item'} is sold out today. Remove it and send again.`
+      : /Not enough stock/.test(err.message) ? 'Not enough stock for this order any more. Check the order and send again.' : 'The order didn\'t go through. Nothing was taken from stock. Try again.', true);
     await load();
-  } finally { btn.textContent = 'Finish Order'; renderOrder(); }
-});
+  } finally { renderOrder(); }
+}
 
 // --- billing ---
 const billsEl = document.getElementById('bills');
 function renderBills() {
   const bills = openBills(data.orders, data.recipes);
   const time = d => new Date(d).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  billsEl.innerHTML = bills.map(b => `<article class="bill">
+  billsEl.innerHTML = bills.map(b => `<article class="bill" data-table="${b.table_no}" data-swipe-label="Take payment">
       <header><h3>Table ${b.table_no}</h3><span class="since">${b.orders} ${b.orders === 1 ? 'order' : 'orders'} · since ${time(b.since)}</span></header>
       <ul class="list">${b.lines.map(l => `<li><span class="line-name">${l.qty}× ${esc(l.name)}${l.notes ? `<br><span class="note">${esc(l.notes.join('; '))}</span>` : ''}</span>
         <span class="amt">${peso(l.qty * l.price)}</span>
         <button type="button" class="void" data-table="${b.table_no}" data-recipe="${l.recipe_id}" aria-label="Void one ${esc(l.name)}">−</button></li>`).join('')}</ul>
       <footer><span>Total</span><strong>${peso(b.total)}</strong></footer>
       <button type="button" class="btn pay" data-table="${b.table_no}">Take payment</button>
-    </article>`).join('') || '<p class="empty">No open bills. New orders show up here by table.</p>';
+    </article>`).join('') || emptyHtml('All tables are settled', 'New orders show up here by table.', '<a class="btn" href="#order">Start an order</a>');
   const all = bills.reduce((s, b) => s + b.total, 0);
   document.getElementById('bills-total').innerHTML = bills.length ? `<span>${bills.length} open ${bills.length === 1 ? 'table' : 'tables'}</span><strong>${peso(all)}</strong>` : '';
 }
 billsEl.addEventListener('click', async e => {
   const pay = e.target.closest('.pay');
-  if (pay) return openPay(Number(pay.dataset.table));
+  if (pay) return morph(pay.closest('.bill'), payDlg, () => openPay(Number(pay.dataset.table)));
   const v = e.target.closest('.void');
   if (!v) return;
-  // two taps to void, so a stray tap can't remove an item
-  if (!v.classList.contains('confirm')) {
-    v.classList.add('confirm'); v.textContent = 'Void 1?';
-    setTimeout(() => { if (v.isConnected) { v.classList.remove('confirm'); v.textContent = '−'; } }, 3000);
-    return;
-  }
+  // one tap voids; Undo orders the item again for that table (its kitchen note isn't kept)
+  const table_no = Number(v.dataset.table), recipe_id = v.dataset.recipe, name = data.recipes.find(r => r.id === recipe_id)?.name || 'item';
   v.disabled = true;
   try {
-    await api('rpc/void_item', { method: 'POST', body: JSON.stringify({ table_no: Number(v.dataset.table), recipe_id: v.dataset.recipe, qty: 1 }) });
-    showToast('Voided 1 — ingredients put back in stock');
-  } catch { showToast('Could not void that item', true); }
+    await api('rpc/void_item', { method: 'POST', body: JSON.stringify({ table_no, recipe_id, qty: 1 }) });
+    showToast(`Removed 1 ${name} from table ${table_no}`, false, async () => {
+      try { await api('rpc/place_order', { method: 'POST', body: JSON.stringify({ table_no, items: [{ recipe_id, qty: 1, note: '', weight: '' }] }) }); }
+      catch { showToast(`Couldn't add ${name} back. Order it again from Order.`, true); }
+      await load();
+    });
+  } catch { showToast('Could not remove that item', true); }
   await load();
 });
 
@@ -1213,7 +1612,7 @@ function openPay(tableNo) {
   payBill = openBills(data.orders, data.recipes).find(b => b.table_no === tableNo);
   if (!payBill) return;
   document.getElementById('pay-title').textContent = `Table ${tableNo}`;
-  payForm.reset();
+  payForm.reset(); setSeniors(false);
   updatePay(true);
   payDlg.showModal();
   payForm.guests.focus(); payForm.guests.select();
@@ -1227,7 +1626,7 @@ function updatePay(resplit) {
     row('Subtotal (VAT included)', peso(payTotals.gross))
     + (payTotals.vatRemoved ? row(`VAT exemption · ${seniors} Senior/PWD`, `−${peso(payTotals.vatRemoved)}`) : '')
     + (payTotals.discount ? row('20% Senior/PWD discount', `−${peso(payTotals.discount)}`) : '')
-    + (payTotals.serviceCharge ? row('Service charge 10%', peso(payTotals.serviceCharge)) : '')
+    + (payTotals.serviceCharge ? row(`Service charge 10%${q('service')}`, peso(payTotals.serviceCharge)) : '')
     + row('Total', peso(payTotals.total), 'grand');
   if (resplit) {
     const n = Math.min(20, Math.max(1, Math.floor(Number(payForm.split.value) || 1)));
@@ -1236,17 +1635,28 @@ function updatePay(resplit) {
       <span class="editor"><span class="peso">₱</span><input name="amount" type="number" min="0" step="0.01" inputmode="decimal" value="${amt.toFixed(2)}" aria-label="Amount ${n > 1 ? `for person ${k + 1}` : ''}"></span>
       <select class="field" name="method" aria-label="Payment method">${METHODS.map(([v, t]) => `<option value="${v}">${t}</option>`).join('')}</select>
       <span class="editor cash-only"><span class="peso">₱</span><input name="received" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Received" aria-label="Cash received"></span>
+      <span class="quick" role="group" aria-label="Cash handed over"></span>
       <span class="change"></span></li>`).join('');
   }
   updatePayParts();
 }
 function updatePayParts() {
+  const parts = [...document.querySelectorAll('#pay-parts .part')];
+  // split pie: one slice per person, sized by what they pay
+  document.getElementById('pay-pie').innerHTML = parts.length > 1 ? `<div class="donut-wrap">${donut(
+    parts.map((li, k) => ({ value: Number(li.querySelector('[name="amount"]').value) || 0, color: DONUT_COLORS[k % 4] })),
+    peso(payTotals.total).replace(/\.00$/, ''), `${parts.length} people`, `Bill split between ${parts.length} people`)}
+    <ul class="key">${parts.map((li, k) => `<li><i style="background:${DONUT_COLORS[k % 4]}"></i><span>Person ${k + 1}</span><strong>${peso(Number(li.querySelector('[name="amount"]').value) || 0)}</strong></li>`).join('')}</ul></div>` : '';
   let sum = 0;
   for (const li of document.querySelectorAll('#pay-parts .part')) {
     const amt = Number(li.querySelector('[name="amount"]').value) || 0, method = li.querySelector('[name="method"]').value;
     const recv = li.querySelector('[name="received"]').value, cash = method === 'cash';
     sum += amt;
-    li.querySelector('.cash-only').hidden = !cash;
+    li.querySelector('.cash-only').hidden = li.querySelector('.quick').hidden = !cash;
+    // quick cash: exact, then the next round notes up (₱100, ₱500, ₱1,000 steps)
+    const ups = [...new Set([100, 500, 1000].map(s => Math.ceil(amt / s) * s))].filter(v => v > amt).slice(0, 3);
+    li.querySelector('.quick').innerHTML = amt > 0 ? [[amt, 'Exact'], ...ups.map(v => [v, peso(v).replace(/\.00$/, '')])]
+      .map(([v, t]) => `<button type="button" class="chip" data-recv="${v.toFixed(2)}" aria-pressed="${recv !== '' && Number(recv) === Number(v.toFixed(2))}">${t}</button>`).join('') : '';
     li.querySelector('.change').innerHTML = cash && recv !== ''
       ? (Number(recv) >= amt ? `Change: <strong>${peso(Number(recv) - amt)}</strong>` : '<span class="loss">Received is less than the amount</span>') : '';
   }
@@ -1259,6 +1669,18 @@ payForm.addEventListener('input', e => {
   if (['guests', 'seniors', 'split'].includes(e.target.name)) updatePay(true); else updatePayParts();
 });
 payForm.addEventListener('change', e => { if (e.target.name === 'method') updatePayParts(); });
+// "Any senior or PWD?" No hides the count and sets it to 0; Yes shows it, starting at 1
+function setSeniors(on) {
+  for (const b of payForm.querySelectorAll('[data-seniors]')) b.setAttribute('aria-pressed', (b.dataset.seniors === 'yes') === on);
+  document.getElementById('seniors-row').hidden = !on;
+  payForm.seniors.value = on ? Math.max(1, Number(payForm.seniors.value) || 0) : 0;
+}
+payForm.addEventListener('click', e => {
+  const s = e.target.closest('[data-seniors]');
+  if (s) { setSeniors(s.dataset.seniors === 'yes'); updatePay(true); if (s.dataset.seniors === 'yes') payForm.seniors.select(); return; }
+  const c = e.target.closest('[data-recv]');
+  if (c) { c.closest('.part').querySelector('[name="received"]').value = c.dataset.recv; updatePayParts(); }
+});
 payDlg.querySelector('.cancel').addEventListener('click', () => payDlg.close());
 payDlg.addEventListener('click', e => { if (e.target === payDlg) payDlg.close(); });
 payForm.addEventListener('submit', async e => {
@@ -1279,6 +1701,7 @@ payForm.addEventListener('submit', async e => {
     await api('rpc/close_table', { method: 'POST', body: JSON.stringify({ table_no: payBill.table_no, guests, seniors, service_rate: SERVICE_RATE, payments }) });
     payDlg.close();
     showReceipt(payBill, payTotals, payments, seniors);
+    done(`Paid · table ${payBill.table_no}`);
   } catch (err) { showToast(/add up/.test(err.message) ? 'The bill changed — check the total and try again' : 'Could not close that bill', true); }
   finally { btn.disabled = false; }
   await load();
@@ -1364,7 +1787,7 @@ function renderRecipes() {
   };
   recipesEl.innerHTML = MENU_SECTIONS.map(([cat, title]) => {
     const rows = onMenu().filter(r => r.category === cat);
-    return rows.length ? `<h2>${title}</h2>${rows.map(card).join('')}` : '';
+    return rows.length ? `<h2>${icon(cat)}${title}</h2>${rows.map(card).join('')}` : '';
   }).join('');
 }
 
@@ -1405,18 +1828,22 @@ recipesEl.addEventListener('change', async e => {
     renderOrder();
   } catch { note.className = 'saved err'; note.textContent = '!'; note.title = 'Not saved'; showToast('Could not save that price', true); }
 });
-// delete a menu item: tap twice; it's hidden, not removed, so its past sales stay in History and Reports
+// delete a menu item (Undo brings it back); it's hidden, not removed, so its past sales stay in History and Reports
 recipesEl.addEventListener('click', async e => {
   const btn = e.target.closest('[data-delete-item]'); if (!btn) return;
   const id = btn.closest('.recipe').dataset.id, r = data.recipes.find(r => r.id === id);
-  if (!btn.classList.contains('confirm')) { btn.classList.add('confirm'); btn.textContent = `Tap again to delete ${r.name}`; return; }
   btn.disabled = true;
   try {
     const at = new Date().toISOString();
     await api(`recipes?id=eq.${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ archived_at: at }), headers: { ...headers, Prefer: 'return=minimal' } });
     r.archived_at = at; delete cart[id]; openRecipes.delete(id);
     refreshAll(); renderCartSummary();
-    showToast(`${r.name} deleted from the menu`);
+    showToast(`${r.name} deleted from the menu`, false, async () => {
+      try {
+        await api(`recipes?id=eq.${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ archived_at: null }), headers: { ...headers, Prefer: 'return=minimal' } });
+        r.archived_at = null; refreshAll();
+      } catch { showToast('Could not bring it back', true); }
+    });
   } catch { btn.disabled = false; showToast('Could not delete that menu item', true); }
 });
 const lineUrl = (r, i) => `recipe_ingredients?recipe_id=eq.${encodeURIComponent(r)}&ingredient_id=eq.${encodeURIComponent(i)}`;
@@ -1513,7 +1940,10 @@ async function startSession(session) {
   userId = session.user.id; role = r;
   loginEl.hidden = true;
   document.getElementById('who').textContent = `${nameFromEmail(session.user.email)} · ${role === 'owner' ? 'Owner' : 'Staff'}`;
+  status.hidden = role !== 'owner'; // staff don't need the "Updated 10:32" sync line
   document.getElementById('signout').hidden = false;
+  document.getElementById('open-palette').hidden = false;
+  if (!/Mac|iPhone|iPad/.test(navigator.platform)) document.querySelector('#open-palette kbd').textContent = 'Ctrl K';
   document.getElementById('staff-link').hidden = role !== 'owner' || DEMO; // logins are shared; manage them in the main version
   for (const a of document.querySelectorAll('.segmented a')) a.hidden = role !== 'owner' && !['#order', '#billing'].includes(a.hash);
   document.getElementById('add-ingredient-block').hidden = role !== 'owner';
@@ -1543,7 +1973,13 @@ const monthEl = document.getElementById('report-month'), expenseForm = document.
 monthEl.value = todayISO().slice(0, 7);
 expenseForm.date.value = todayISO();
 const EXPENSE_NAMES = { rent: 'Rent', wages: 'Wages', gas: 'Gas / LPG', electricity: 'Electricity', water: 'Water', supplies: 'Supplies', repairs: 'Repairs', other: 'Other' };
+// quick month chips; the month box stays for any other month (the report is monthly in the database)
+const monthsAgo = k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - k); return d.toLocaleDateString('en-CA').slice(0, 7); };
+const presetsEl = document.getElementById('month-presets');
+presetsEl.addEventListener('click', e => { const b = e.target.closest('[data-month]'); if (b) { monthEl.value = b.dataset.month; loadReport(); } });
 async function loadReport() {
+  presetsEl.innerHTML = [['This month', 0], ['Last month', 1], ['2 months ago', 2]].map(([t, k]) =>
+    `<button type="button" class="chip" data-month="${monthsAgo(k)}" aria-pressed="${monthEl.value === monthsAgo(k)}">${t}</button>`).join('');
   const month = `${monthEl.value || todayISO().slice(0, 7)}-01`, end = new Date(month); end.setMonth(end.getMonth() + 1);
   const next = end.toLocaleDateString('en-CA');
   try {
@@ -1588,7 +2024,7 @@ function renderKpis(r) {
       ${crab ? stat(`${esc(crab.ingredient)} spoilage`, Number(crab.bought) ? pct(crab.dead / crab.bought) : '—', `${fmt(crab.dead)} of ${fmt(crab.bought)} lost`)
         + stat(`Loss per ${esc(crab.ingredient.toLowerCase())} sold`, Number(crab.sold) ? peso(crab.dead_value / crab.sold) : '—', `${fmt(crab.sold)} sold`) : ''}
       ${stat('Reorder now', due.length, `under ${LEAD_DAYS + 1} days left`)}
-      ${'collected' in r ? stat('Break-even sales', !Number(r.expense_total) ? '—' : breakEven === null ? '—' : peso(breakEven),
+      ${'collected' in r ? stat(`Break-even sales${q('breakeven')}`, !Number(r.expense_total) ? '—' : breakEven === null ? '—' : peso(breakEven),
         !Number(r.expense_total) ? 'add expenses below' : breakEven === null ? 'no sales yet' : `${pct(Math.min(collected / breakEven, 9.99))} reached`) : ''}
       ${fe[0] ? stat(`Forecast error · ${esc(fe[0].ingredient)}`, off(fe[0].model), `you ${off(fe[0].staff)} · target ±15%`) : ''}
     </div>
@@ -1596,11 +2032,13 @@ function renderKpis(r) {
     ${fe.length ? `<h2>Forecast vs your estimate · this month</h2><ul class="list shopping">${fe.map(g => `<li><span>${esc(g.ingredient)}<span class="line-sub" style="display:block">Forecast ${lean(g.model) || 'not saved'}${g.staff ? ` · you ${lean(g.staff)}` : ' · no estimates yet'}</span></span>
       <span class="buy-qty${g.model && g.staff ? (g.model.avg <= g.staff.avg ? ' gain' : ' loss') : ''}">${off(g.model)} vs ${off(g.staff)}</span></li>`).join('')}</ul>
     <p class="footnote">Average daily miss. Green: forecast beat you.</p>` : ''}
-    ${cover.length ? `<h2>Days of cover · now</h2><ul class="list shopping">${cover.slice(0, 8).map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">${fmt(i.stock)} ${i.unit} · ~${fmt(i.perDay)}/day</span></span>
+    ${cover.length ? `<h2>Days of cover · now${q('cover')}</h2><ul class="list shopping">${cover.slice(0, 8).map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">${fmt(i.stock)} ${i.unit} · ~${fmt(i.perDay)}/day</span></span>
       <span class="buy-qty${i.reorder ? ' loss' : ''}">${i.cover >= 60 ? '60+' : i.cover < 10 ? i.cover.toFixed(1) : Math.round(i.cover)} days${i.reorder ? ' · reorder' : ''}</span></li>`).join('')}</ul>
     <p class="footnote">From the forecast, starting tomorrow.</p>` : ''}`;
 }
+let lastExps = [];
 function renderReport(r, exps) {
+  lastExps = exps;
   if (data) renderKpis(r);
   const row =(label, val, cls = '') => `<div class="${cls}"><span>${label}</span><span>${val}</span></div>`;
   const net = Number(r.collected) - Number(r.ingredient_cost) - Number(r.loss_value) - Number(r.expense_total);
@@ -1617,7 +2055,14 @@ function renderReport(r, exps) {
   document.getElementById('expense-list').innerHTML = exps.map(x => `<li data-expense="${x.id}"><span class="line-name">${EXPENSE_NAMES[x.category]}${x.note ? ` · ${esc(x.note)}` : ''}<span class="line-sub" style="display:block">${new Date(x.spent_on + 'T00:00').toLocaleDateString([], { month: 'short', day: 'numeric' })}</span></span>
     <span class="buy-qty">${peso(x.amount)}</span><button type="button" class="void" data-del-expense aria-label="Delete this expense">−</button></li>`).join('')
     || '<li><span class="line-name" style="color:var(--label2)">No expenses this month yet.</span></li>';
-  document.getElementById('losses').innerHTML = r.losses.length ? `<div class="detail"><table>
+  // donut: the four costliest losses, the rest as Other
+  const lost = [...r.losses].sort((a, b) => b.value - a.value), lostTotal = lost.reduce((s, l) => s + Number(l.value), 0);
+  const slices = lost.slice(0, 4).map((l, k) => ({ label: l.ingredient, value: Number(l.value), color: DONUT_COLORS[k] }));
+  if (lost.length > 4) slices.push({ label: 'Other', value: lost.slice(4).reduce((s, l) => s + Number(l.value), 0), color: DONUT_COLORS[4] });
+  document.getElementById('losses').innerHTML = r.losses.length ? `<div class="donut-wrap">
+      ${donut(slices, peso(lostTotal).replace(/\.\d\d$/, ''), 'lost', `Stock losses ${peso(lostTotal)}: ${slices.map(s => `${s.label} ${Math.round(s.value / (lostTotal || 1) * 100)}%`).join(', ')}`)}
+      <ul class="key">${slices.map(s => `<li><i style="background:${s.color}"></i><span>${esc(s.label)}</span><strong>${Math.round(s.value / (lostTotal || 1) * 100)}%</strong></li>`).join('')}</ul></div>
+    <div class="detail"><table>
       <thead><tr><th>Ingredient</th><th>Lost</th><th>Value</th></tr></thead>
       <tbody>${r.losses.map(l => `<tr><td>${esc(l.ingredient)}${l.dead ? ' <span class="u">(dead)</span>' : ''}</td><td>${fmt(l.qty)} <span class="u">${l.unit}</span></td><td class="makes loss">${peso(l.value)}</td></tr>`).join('')}</tbody>
     </table></div>` : '<p class="footnote" style="margin-top:0">No stock losses recorded this month.</p>';
@@ -1633,8 +2078,10 @@ function renderHeatmap() {
   let best = [0, 0]; for (const d of DAYS) for (const h of span) if (grid[d][h] > grid[best[0]][best[1]]) best = [d, h];
   el.innerHTML = `<div class="heat"><table><thead><tr><th></th>${span.map(h => `<th>${hl(h)}</th>`).join('')}</tr></thead><tbody>
     ${DAYS.map(d => `<tr><th>${dn(d)}</th>${span.map(h => { const v = grid[d][h];
-      return `<td class="${v ? 'has' : ''}" style="${v ? `background:color-mix(in srgb, var(--blue-fill) ${Math.round(15 + 85 * v / max)}%, var(--card));${v / max > .5 ? 'color:#fff' : ''}` : ''}" title="${dn(d)} ${hl(h)}: ${peso(v)}">${v ? (v < 1000 ? Math.round(v) : `${(v / 1000).toFixed(v < 10000 ? 1 : 0)}k`) : ''}</td>`; }).join('')}</tr>`).join('')}
-  </tbody></table></div><p class="footnote">Busiest: <strong>${dn(best[0])} ${hl(best[1])}</strong> (${peso(grid[best[0]][best[1]])}). Darker = more sales.</p>`;
+      return `<td class="${v ? 'has' : ''}" style="${v ? `background:color-mix(in srgb, var(--blue-fill) ${Math.round(15 + 85 * v / max)}%, var(--card));${v / max > .5 ? 'color:var(--on-accent)' : ''}` : ''}" title="${dn(d)} ${hl(h)}: ${peso(v)}">${v ? (v < 1000 ? Math.round(v) : `${(v / 1000).toFixed(v < 10000 ? 1 : 0)}k`) : ''}</td>`; }).join('')}</tr>`).join('')}
+  </tbody></table></div>
+  <div class="heat-key" aria-hidden="true">Fewer sales${[15, 40, 65, 100].map(p => `<i style="background:color-mix(in srgb, var(--blue-fill) ${p}%, var(--card))"></i>`).join('')}More</div>
+  <p class="footnote">Busiest: <strong>${dn(best[0])} ${hl(best[1])}</strong> (${peso(grid[best[0]][best[1]])}).</p>`;
 }
 monthEl.addEventListener('change', loadReport);
 expenseForm.addEventListener('submit', async e => {
@@ -1651,8 +2098,17 @@ expenseForm.addEventListener('submit', async e => {
 });
 document.getElementById('expense-list').addEventListener('click', async e => {
   const b = e.target.closest('[data-del-expense]'); if (!b) return;
-  if (!b.classList.contains('confirm')) { b.classList.add('confirm'); b.textContent = 'Delete?'; return; }
-  try { await api(`expenses?id=eq.${b.closest('li').dataset.expense}`, { method: 'DELETE', headers: { ...headers, Prefer: 'return=minimal' } }); showToast('Expense deleted'); }
+  b.disabled = true;
+  const x = lastExps.find(x => String(x.id) === b.closest('li').dataset.expense);
+  try {
+    await api(`expenses?id=eq.${x.id}`, { method: 'DELETE', headers: { ...headers, Prefer: 'return=minimal' } });
+    // undo adds it back as a new row with the same details
+    showToast('Expense deleted', false, async () => {
+      try { await api('expenses', { method: 'POST', body: JSON.stringify({ spent_on: x.spent_on, category: x.category, amount: x.amount, note: x.note }), headers: { ...headers, Prefer: 'return=minimal' } }); }
+      catch { showToast('Could not bring it back', true); }
+      loadReport();
+    });
+  }
   catch { showToast('Could not delete that', true); }
   loadReport();
 });
@@ -1723,6 +2179,71 @@ document.getElementById('staff-add').addEventListener('submit', async e => {
     renderStaff();
   } catch (err) { showToast(err.message, true); }
 });
+
+// --- swipe (touch only): a bill left to take payment, a stock row right to add stock ---
+// dir: -1 = left, 1 = right. Mouse and keyboard keep using the buttons.
+function swipe(container, selector, dir, action) {
+  let s = null;
+  const reset = () => { if (s) { s.el.style.transform = ''; s.el.classList.remove('swiping'); } s = null; };
+  container.addEventListener('pointerdown', e => {
+    const el = e.target.closest(selector);
+    if (e.pointerType === 'touch' && el && !e.target.closest('button, input, select')) s = { el, x: e.clientX, y: e.clientY, dx: 0 };
+  });
+  container.addEventListener('pointermove', e => {
+    if (!s) return;
+    s.dx = (e.clientX - s.x) * dir;
+    if (!s.on && Math.abs(e.clientY - s.y) > Math.abs(e.clientX - s.x)) return reset(); // scrolling, not swiping
+    if (s.dx > 10) { s.on = true; s.el.classList.add('swiping'); s.el.style.transform = `translateX(${Math.min(s.dx, 128) * dir}px)`; }
+  });
+  container.addEventListener('pointerup', () => { const go = s?.on && s.dx > 90 && s.el; reset(); if (go) action(go); });
+  container.addEventListener('pointercancel', reset);
+}
+swipe(billsEl, '.bill', -1, el => openPay(Number(el.dataset.table)));
+swipe(document.getElementById('stock'), '.inv-row', 1, el => openBuy(el.dataset.id));
+
+// --- command palette: ⌘K / Ctrl+K or the Search button ---
+const palette = document.getElementById('palette'), palQ = document.getElementById('palette-q'), palList = document.getElementById('palette-list');
+let palItems = [], palHits = [], palAt = 0;
+function go(hash) { location.hash = hash; showTab(); }
+function paletteItems() {
+  const items = [...document.querySelectorAll('.segmented a:not([hidden])')].map(a =>
+    ({ icon: a.hash.slice(1), label: a.textContent.trim(), hint: 'Go to', run: () => go(a.hash) }));
+  if (!data) return items;
+  for (const t of TABLES) items.push({ icon: 'order', label: `Table ${t.n}`, hint: 'Take an order', run: () => { go('#order'); pickTable(t.n); } });
+  // presses the real + button, so sold-out and out-of-stock rules still apply
+  for (const r of onMenu()) items.push({ icon: r.category, label: r.name, hint: 'Add 1 to the order', run: () => {
+    go('#order'); const b = stepBtn(r.id, 1);
+    b && !b.disabled ? b.click() : showToast(`${r.name} can't be added right now`, true);
+  } });
+  if (role === 'owner') {
+    for (const i of data.ingredients) items.push({ icon: 'inventory', label: i.name, hint: `Add stock · ${fmt(i.stock)} ${i.unit} now`, run: () => { go('#inventory'); openBuy(i.id); } });
+    items.push({ icon: 'cash', label: 'Close the day', hint: 'Count the cash drawer', run: () => { go('#dashboard'); openCloseDay(); } });
+  }
+  return items;
+}
+function renderPalette() {
+  const q = palQ.value.trim().toLowerCase();
+  palHits = palItems.filter(i => i.label.toLowerCase().includes(q)).slice(0, 8);
+  palAt = Math.min(palAt, Math.max(0, palHits.length - 1));
+  palList.innerHTML = palHits.map((i, k) => `<li role="option" id="pal-${k}" data-k="${k}" aria-selected="${k === palAt}">${icon(i.icon)}<span>${esc(i.label)}</span><span class="hint">${esc(i.hint)}</span></li>`).join('')
+    || '<li aria-disabled="true"><span class="hint" style="margin:0">Nothing matches</span></li>';
+  palQ.setAttribute('aria-activedescendant', palHits.length ? `pal-${palAt}` : '');
+}
+function openPalette() {
+  if (!role || palette.open) return;
+  palItems = paletteItems(); palQ.value = ''; palAt = 0; renderPalette();
+  palette.showModal(); palQ.focus();
+}
+function runPalette(k) { const it = palHits[k]; if (!it) return; palette.close(); it.run(); }
+palQ.addEventListener('input', () => { palAt = 0; renderPalette(); });
+palQ.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); palAt = (palAt + (e.key === 'ArrowDown' ? 1 : -1) + palHits.length) % (palHits.length || 1); renderPalette(); palList.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' }); }
+  else if (e.key === 'Enter') { e.preventDefault(); runPalette(palAt); }
+});
+palList.addEventListener('click', e => { const li = e.target.closest('[data-k]'); if (li) runPalette(Number(li.dataset.k)); });
+palette.addEventListener('click', e => { if (e.target === palette) palette.close(); });
+document.getElementById('open-palette').addEventListener('click', openPalette);
+addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openPalette(); } });
 
 // pick up changes made on other devices, but don't wipe a number someone is typing
 setInterval(() => { if (role && !['INPUT', 'SELECT'].includes(document.activeElement?.tagName)) load(); }, 60000);
