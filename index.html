@@ -552,7 +552,6 @@
   <section id="inventory" hidden>
     <h2><svg class="ic" aria-hidden="true"><use href="#i-inventory"/></svg>Stock · average price paid<button type="button" class="q" popovertarget="help-avgprice" aria-label="What is average price paid?">?</button></h2>
     <ul class="list" id="stock"></ul>
-    <p class="footnote">Tap + to add a purchase, or the pencil to fix a count.</p>
     <h2><svg class="ic" aria-hidden="true"><use href="#i-billing"/></svg>Purchase history</h2>
     <div class="breakdown"><ul class="history-list" id="stock-history"></ul></div>
     <div id="add-ingredient-block" hidden>
@@ -570,7 +569,6 @@
     <div class="floor"><div id="floor"></div>
       <div class="floor-legend"><span><i></i>Free</span><span><i class="busy"></i>Has an open bill (minutes since first order; the ring fills over 90 min, red after 60)</span></div></div>
     <div id="menu"></div>
-    <p class="footnote">Finish Order shows the order for one last check before it goes to the kitchen.</p>
     <div class="checkout">
       <div class="checkout-inner">
         <div class="checkout-summary" id="cart-summary" aria-live="polite">No items yet</div>
@@ -587,7 +585,6 @@
       <button class="btn" type="submit">Add</button>
     </form>
     <div id="recipes"></div>
-    <p class="footnote">Amounts are per portion. Changes save automatically.</p>
   </section>
 
   <section id="billing" hidden>
@@ -603,7 +600,6 @@
     <div id="kpis"></div>
     <h2><svg class="ic" aria-hidden="true"><use href="#i-reports"/></svg>Profit &amp; loss</h2>
     <div class="breakdown" id="pnl"><div><span>Loading…</span></div></div>
-    <p class="footnote">Sales are bills paid this month. Service charge counts as income.</p>
     <h2><svg class="ic" aria-hidden="true"><use href="#i-cash"/></svg>Expenses</h2>
     <form class="form" id="expense-add" novalidate>
       <input class="field" name="date" type="date" aria-label="Date">
@@ -644,7 +640,6 @@
       <div id="batch-block" hidden>
         <h2>Batches on hand · oldest first</h2>
         <ul class="list" id="batch-list"></ul>
-        <p class="footnote" style="margin-left:4px">Use the oldest batch first.</p>
       </div>
       <h2>Recent purchases</h2>
       <div class="breakdown"><ul class="history-list" id="buy-history"></ul></div>
@@ -664,7 +659,6 @@
           <input id="purchase-cost" name="cost" type="number" min="0" step="any" inputmode="decimal">
           <span class="unit"></span></span></li>
       </ul>
-      <p class="footnote">For miscounts. Not counted as waste.</p>
       <button type="button" class="link-btn danger" id="purchase-delete">Delete purchase</button>
     </div>
   </form>
@@ -683,7 +677,7 @@
           <span class="unit" id="edit-per"></span></span></li>
         <li><span>Low-stock level<button type="button" class="q" popovertarget="help-lowlevel" aria-label="What is the low-stock level?">?</button></span><span class="buy-qty" id="edit-level" style="margin-left:auto"></span></li>
       </ul>
-      <p class="footnote">A lower count is logged as waste. Low-stock level is forecast use for the next 3 days.</p>
+      <p class="footnote">A lower count is logged as waste.</p>
       <p class="buy-preview" id="edit-preview" aria-live="polite"></p>
     </div>
   </form>
@@ -722,7 +716,6 @@
       <h2>Note for the kitchen</h2>
       <textarea id="note-text" name="note" maxlength="120" placeholder="Type a note, or tap a suggestion below" aria-label="Note"></textarea>
       <div class="quick-notes" id="quick-notes"></div>
-      <p class="footnote" style="margin-left:0">Leave it empty to remove the note.</p>
     </div>
   </form>
 </dialog>
@@ -733,7 +726,7 @@
       <h2>1 · Today's money</h2>
       <div class="breakdown" id="close-day-summary"></div>
       <h2>2 · Count the cash drawer</h2>
-      <p class="footnote" style="margin-top:0">Count each kind of bill and coin. Sales cash only, without your starting float.</p>
+      <p class="footnote" style="margin-top:0">Sales cash only, not your starting float.</p>
       <ul class="list" id="cash-count"></ul>
       <ul class="list">
         <li><label for="close-counted"><strong>Cash counted</strong></label><span class="editor"><span class="peso">₱</span><input id="close-counted" name="counted" type="number" min="0" step="any" inputmode="decimal" placeholder="0.00" aria-describedby="close-day-diff"></span></li>
@@ -773,7 +766,7 @@
 <div popover class="help" id="help-profit"><strong>Money left after ingredients</strong>What you sold, minus what the ingredients in those dishes cost. Rent, wages and other bills aren't taken out yet.</div>
 <div popover class="help" id="help-service"><strong>Service charge</strong>An extra 10% added to every bill, on top of the menu prices.</div>
 <div popover class="help" id="help-forecast"><strong>Forecast</strong>A guess at what tomorrow needs, from the same day of the week in the last few weeks. Recent weeks count more.</div>
-<div popover class="help" id="help-cover"><strong>Days of cover</strong>How many days the stock you have now will last if you keep selling at the usual pace.</div>
+<div popover class="help" id="help-cover"><strong>Days of cover</strong>Each square is a day from tomorrow, filled while the stock lasts at the usual pace. If a row ends on an underlined day, order now: deliveries take about 2 days.</div>
 <div popover class="help" id="help-breakeven"><strong>Break-even sales</strong>How much you need to sell this month to pay for all the month's expenses and stock losses. Anything above it is profit.</div>
 <div popover class="help" id="help-avgprice"><strong>Average price paid</strong>What you've paid per kg, litre or piece, averaged over the stock you have now. Old and new deliveries are mixed.</div>
 <div popover class="help" id="help-lowlevel"><strong>Low-stock level</strong>About 3 days of use. When stock drops below it, the item shows as Low and goes on the shopping list.</div>
@@ -997,8 +990,7 @@ function lowStockHtml() {
   if (!low.length) return cover.length ? '' : `<h2>${icon('inventory')}Running low</h2><p class="footnote" style="margin-top:0">Fills in once there are orders.</p>`;
   const days = c => c >= 60 ? '60+ days' : `${c < 10 ? c.toFixed(1) : Math.round(c)} day${c === 1 ? '' : 's'}`;
   return `<h2>${icon('inventory')}Running low · shopping list</h2><ul class="list shopping">${low.map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">${fmt(i.stock)} ${i.unit} · ~${days(i.cover)} left</span></span>
-    <span class="buy-qty loss">Buy ${fmt(i.buy)} ${i.unit}</span></li>`).join('')}</ul>
-    <p class="footnote">Runs out within ${LEAD_DAYS + 1} days. Buys ${TARGET_DAYS} days' worth (crab: ${HOLD_DAYS}).</p>`;
+    <span class="buy-qty loss">Buy ${fmt(i.buy)} ${i.unit}</span></li>`).join('')}</ul>`;
 }
 const tomorrowDate = () => { const d = new Date(); d.setDate(d.getDate() + 1); return d; };
 const tomorrowISO = () => tomorrowDate().toLocaleDateString('en-CA');
@@ -1007,8 +999,7 @@ function guessHtml(day) {
   const tracked = data.ingredients.filter(i => i.batch_tracked);
   return tracked.length ? `<h2>${icon('calendar')}Tomorrow (${day}) · your estimate</h2><ul class="list">${tracked.map(i => `<li><label for="guess-${i.id}">${esc(i.name)} you expect to use</label>
     <span class="editor"><input id="guess-${i.id}" data-guess="${i.id}" type="number" min="0" step="any" inputmode="decimal" placeholder="—" value="${data.guesses?.[i.id] ?? ''}">
-    <span class="unit">${i.unit}</span></span></li>`).join('')}</ul>
-    <p class="footnote">Enter before reading the forecast.</p>` : '';
+    <span class="unit">${i.unit}</span></span></li>`).join('')}</ul>` : '';
 }
 // Save tomorrow's model forecast so Reports can measure its error; same numbers every load, so saving again is harmless.
 async function saveModelForecast() {
@@ -1036,8 +1027,7 @@ function forecastHtml() {
   const rows = f.ingredients.filter(i => i.batch_tracked);
   return `${guessHtml(day)}<h2>${icon('calendar')}Tomorrow (${day}) · forecast${q('forecast')}</h2>
     ${rows.length ? `<ul class="list shopping">${rows.map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">Have ${fmt(i.stock)} ${i.unit}</span></span>
-      <span class="buy-qty">Expect ~${fmt(i.need)} ${i.unit}</span></li>`).join('')}</ul>` : ''}
-    <p class="footnote">Based on the last ${f.days} ${day}${f.days === 1 ? '' : 's'}, recent weeks counting more.</p>`;
+      <span class="buy-qty">Expect ~${fmt(i.need)} ${i.unit}</span></li>`).join('')}</ul>` : ''}`;
 }
 function dishesHtml() {
   const stats = dishStats(data.orders, data.recipes, data.items, data.ingredients);
@@ -1134,9 +1124,7 @@ function openMeal(r) {
           <td class="makes"><span class="mbar" style="--w:${Math.round(Math.min(l.portions, most) / most * 100)}" aria-hidden="true"></span>${l.portions}</td>
         </tr>`).join('')}
       </tbody></table></div>
-    <p class="footnote">Needs: per portion. Makes: portions it alone covers. The shortest bar sets the dish total.</p>
-    <button type="button" class="btn soldout-btn${isSoldOut(r) ? ' on' : ''}" data-soldout="${r.id}">${isSoldOut(r) ? 'Back on the menu' : 'Mark sold out for today'}</button>
-    <p class="footnote">Sold out lasts until tomorrow.</p>`;
+    <button type="button" class="btn soldout-btn${isSoldOut(r) ? ' on' : ''}" data-soldout="${r.id}">${isSoldOut(r) ? 'Back on the menu' : 'Mark sold out for today'}</button>`;
   sheet.showModal();
 }
 document.getElementById('sheet-done').addEventListener('click', () => sheet.close());
@@ -2069,7 +2057,6 @@ const pct = n => `${Math.round(n * 100)}%`;
 function renderKpis(r) {
   const crab = r.batch?.[0], stat = (label, val, sub) => `<div class="stat"><span class="stat-label">${label}</span><span class="stat-val">${val}</span><span class="stat-sub">${sub}</span></div>`;
   const cover = coverNow(), due = cover.filter(i => i.reorder);
-  const ages = crab ? Object.entries(crab.dead_by_age) : [];
   // forecast vs guesswork: the batch-tracked ingredient (crab) first, then the rest
   const fe = forecastError(r.forecasts || []).sort((a, b) => (b.ingredient_id === crab?.ingredient_id) - (a.ingredient_id === crab?.ingredient_id) || b.model?.days - a.model?.days);
   const off = e => e ? `±${Math.round(e.avg * 100)}%` : '—';
@@ -2086,10 +2073,8 @@ function renderKpis(r) {
         !Number(r.expense_total) ? 'add expenses below' : breakEven === null ? 'no sales yet' : `${pct(Math.min(collected / breakEven, 9.99))} reached`) : ''}
       ${fe[0] ? stat(`Forecast error · ${esc(fe[0].ingredient)}`, off(fe[0].model), `you ${off(fe[0].staff)} · target ±15%`) : ''}
     </div>
-    ${ages.length ? `<p class="footnote">Lost by days held: ${ages.sort().map(([a, q]) => `${a === 'unknown' ? 'batch not known' : a === '4' ? '4+ days' : `day ${a}`} · ${fmt(q)}`).join(', ')}</p>` : ''}
     ${fe.length ? `<h2>${icon('reports')}Forecast vs your estimate · this month</h2><ul class="list shopping">${fe.map(g => `<li><span>${esc(g.ingredient)}<span class="line-sub" style="display:block">Forecast ${lean(g.model) || 'not saved'}${g.staff ? ` · you ${lean(g.staff)}` : ' · no estimates yet'}</span></span>
-      <span class="buy-qty${g.model && g.staff ? (g.model.avg <= g.staff.avg ? ' gain' : ' loss') : ''}">${off(g.model)} vs ${off(g.staff)}</span></li>`).join('')}</ul>
-    <p class="footnote">Average daily miss. Green: forecast beat you.</p>` : ''}
+      <span class="buy-qty${g.model && g.staff ? (g.model.avg <= g.staff.avg ? ' gain' : ' loss') : ''}">${off(g.model)} vs ${off(g.staff)}</span></li>`).join('')}</ul>` : ''}
     ${cover.length ? `<h2>${icon('calendar')}Days of cover · now${q('cover')}</h2>${calendarStrip(cover.slice(0, 8))}` : ''}`;
 }
 // Days of cover as a two-week calendar: one square per day from tomorrow, filled while the stock lasts.
@@ -2110,8 +2095,7 @@ function calendarStrip(items) {
       <span class="cal-days" aria-hidden="true">${cells}</span>
       <span class="cal-left">${days(i.cover)}${i.reorder ? '<small>reorder</small>' : i.cover < CAL_DAYS ? `<small>till ${outShort}</small>` : ''}</span></div>`;
   };
-  return `<div class="cal" role="list"><div class="cal-row cal-head" aria-hidden="true"><span></span><span class="cal-days">${head}</span><span></span></div>${items.map(row).join('')}</div>
-    <p class="footnote">Each square is one day, starting tomorrow, filled while the stock lasts. Underlined days: if a row ends there, order now (deliveries take about ${LEAD_DAYS} days).</p>`;
+  return `<div class="cal" role="list"><div class="cal-row cal-head" aria-hidden="true"><span></span><span class="cal-days">${head}</span><span></span></div>${items.map(row).join('')}</div>`;
 }
 let lastExps = [];
 function renderReport(r, exps) {
