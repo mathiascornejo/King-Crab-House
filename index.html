@@ -449,7 +449,7 @@
   /* "?" help: a small mark with a 44px tap area, opening a plain-language note */
   .q { position:relative; width:22px; height:22px; margin-left:6px; padding:0; border:1.5px solid var(--label2); border-radius:50%; background:none; color:var(--label2); font:700 12px/1 var(--font); cursor:pointer; vertical-align:middle; flex:none; text-transform:none; letter-spacing:0; }
   .q::before { content:""; position:absolute; inset:-11px; }
-  .help { max-width:min(320px, calc(100% - 32px)); margin:auto; border:0; border-top:3px solid var(--label); background:var(--bg); color:var(--label); padding:14px 16px; font-size:15px; line-height:1.45; box-shadow:0 12px 40px rgba(58,20,0,.25); }
+  .help { position:fixed; inset:auto; margin:0; width:max-content; max-width:min(320px, calc(100vw - 32px)); border:0; border-top:3px solid var(--label); background:var(--bg); color:var(--label); padding:14px 16px; font-size:15px; line-height:1.45; box-shadow:0 12px 40px rgba(58,20,0,.25); }
   .help strong { display:block; margin-bottom:4px; }
   /* short dashboard */
   .sentence { font-size:19px; line-height:1.45; margin:4px 0 16px; }
@@ -819,6 +819,23 @@ const esc = s => String(s).replace(/[&<>"]/g, c => `&#${c.charCodeAt(0)};`);
 const icon = name => `<svg class="ic" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 // "?" next to a term opens its plain-language explanation (popovers at the end of <body>)
 const q = term => `<button type="button" class="q" popovertarget="help-${term}" aria-label="What does this mean?">?</button>`;
+// Each note opens beside the "?" that was tapped: to its right, or below it when there's no room on the right.
+// Placed before it shows (from the button), then nudged to stay on screen once its real size is known.
+function placeHelp(h, b) {
+  const r = b.getBoundingClientRect(), pad = 8, w = h.offsetWidth || Math.min(320, innerWidth - 32), ht = h.offsetHeight;
+  let x = r.right + pad, y = r.top - 6;
+  if (x + w > innerWidth - pad) { x = Math.min(Math.max(pad, r.left - 8), innerWidth - w - pad); y = r.bottom + pad; }
+  h.style.left = `${Math.max(pad, x)}px`;
+  h.style.top = `${Math.max(pad, Math.min(y, innerHeight - ht - pad))}px`;
+}
+let helpFrom = null;
+document.addEventListener('click', e => {
+  const b = e.target.closest('.q'); if (!b) return;
+  helpFrom = b; placeHelp(document.getElementById(b.getAttribute('popovertarget')), b);
+}, true);
+for (const h of document.querySelectorAll('.help')) h.addEventListener('toggle', e => { if (e.newState === 'open' && helpFrom) placeHelp(h, helpFrom); });
+// a note stays put while the page moves, so close it on scroll
+addEventListener('scroll', () => { for (const h of document.querySelectorAll('.help:popover-open')) h.hidePopover(); }, { passive: true });
 const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Donut on a circumference-100 circle, so each dash length is its percentage. parts: [{ label, value, color }]
 const DONUT_COLORS = ['var(--red)', 'var(--label)', 'var(--orange)', 'var(--label2)', 'var(--sep)'];
