@@ -302,8 +302,14 @@
   .segmented a { flex:none; display:flex; align-items:center; gap:6px; padding:8px 0 6px; border-radius:0; border-bottom:2px solid transparent; color:var(--label2); font-size:13px; }
   .segmented a[aria-current] { background:none; box-shadow:none; color:var(--label); font-weight:700; border-bottom-color:var(--red); }
   @media (max-width:500px) { .segmented { gap:16px; } .segmented a { padding:8px 0 6px; } }
-  h2 { margin:28px 0 10px; padding-top:8px; border-top:1px solid var(--label); color:var(--label); font-size:12px; font-weight:700; letter-spacing:.1em; display:flex; align-items:center; gap:8px; }
-  .sheet h2 { margin:20px 0 8px; }
+  /* section titles: big sentence-case title with a burnt-orange icon tile; dialogs keep small ruled labels */
+  h2 { margin:44px 0 14px; padding:0; border:0; color:var(--label); font-size:22px; font-weight:800; letter-spacing:-.01em; text-transform:none; display:flex; align-items:center; gap:12px; }
+  h2 > .ic { width:38px; height:38px; padding:9px; flex:none; background:var(--blue-fill); color:var(--on-accent); }
+  main section > h2:first-child, #profit > h2:first-child, #kpis > h2:first-child, #meals > h2:first-child { margin-top:24px; }
+  .sheet h2 { margin:20px 0 8px; padding-top:8px; border-top:1px solid var(--label); font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; gap:8px; }
+  .sheet h2 > .ic { width:16px; height:16px; padding:0; background:none; color:inherit; }
+  .history h2 { justify-content:flex-start; }
+  .history h2 span:last-child { margin-left:auto; font-size:15px; font-weight:500; color:var(--label2); }
   .footnote { margin-left:0; }
   .grid { gap:24px 16px; }
   .tile { background:none; border-top:3px solid var(--label); padding:10px 0 4px; min-height:112px; }
@@ -353,7 +359,6 @@
 
   /* icons (sprite at the top of <body>) */
   .ic { width:18px; height:18px; flex:none; vertical-align:-3px; }
-  h2 .ic { width:16px; height:16px; }
   .icon-btn { display:inline-flex; align-items:center; gap:6px; }
   kbd { font:600 11px var(--font); border:1px solid var(--sep); padding:1px 5px; color:var(--label2); }
   @media (max-width:500px), (pointer:coarse) { kbd { display:none; } }
@@ -363,6 +368,27 @@
   .gauge { grid-area:gauge; width:32px; height:32px; }
   .gauge .track { stroke:var(--sep); } .gauge .arc { stroke:var(--label); } .gauge.low .arc { stroke:var(--red); } .gauge.low .track { stroke:color-mix(in srgb, var(--red) 25%, var(--card)); }
   .gauge circle { fill:none; stroke-width:4; }
+  .inv-name, .hist-name { display:flex; align-items:center; gap:10px; }
+  /* days of cover calendar strip */
+  .cal { border-top:1px solid var(--label); }
+  .cal-row { display:grid; grid-template-columns:minmax(150px, 1.1fr) minmax(0, 3fr) 92px; gap:14px; align-items:center; padding:10px 0; border-bottom:1px solid var(--sep); }
+  .cal-head { padding:8px 0 4px; }
+  .cal-days { display:grid; grid-template-columns:repeat(14, minmax(0, 1fr)); gap:3px; }
+  .cal-days i { height:24px; background:var(--fill); }
+  .cal-days i.f { background:var(--label); } .low .cal-days i.f { background:var(--red); }
+  .cal-days i.p { background:linear-gradient(90deg, var(--label) calc(var(--part) * 100%), var(--fill) 0); }
+  .low .cal-days i.p { background:linear-gradient(90deg, var(--red) calc(var(--part) * 100%), var(--fill) 0); }
+  .cal-head .cal-days span { display:flex; flex-direction:column; align-items:center; font-size:11px; color:var(--label2); padding-bottom:4px; border-bottom:3px solid transparent; }
+  .cal-head .cal-days span b { font-size:13px; color:var(--label); }
+  .cal-head .cal-days span.zone { border-bottom-color:var(--red); }
+  .cal-name { display:flex; align-items:center; gap:10px; font-weight:600; }
+  .cal-name .ic { width:22px; height:22px; color:var(--label2); flex:none; }
+  .cal-name small, .cal-left small { display:block; font-size:12px; font-weight:400; color:var(--label2); }
+  .cal-left { text-align:right; font-weight:700; }
+  .low .cal-left { color:var(--red-text); } .low .cal-left small { color:var(--red-text); font-weight:600; }
+  @media (max-width:500px) { .cal-row { grid-template-columns:1fr auto; gap:8px 12px; } .cal-days { grid-column:1 / -1; grid-row:2; } .cal-head > span:not(.cal-days) { display:none; } .cal-days i { height:18px; } }
+  .inv-name .ic { width:24px; height:24px; color:var(--label2); }
+  .hist-name .ic { width:18px; height:18px; color:var(--label2); }
   @media (max-width:500px) { #stock .inv-row { grid-template-columns:auto 1fr auto auto; grid-template-areas:"gauge name add edit" "gauge meta add edit"; } }
 
   /* 3: what runs out first, on each dish tile, and bars in the dish sheet */
@@ -498,6 +524,16 @@
   <symbol id="i-waste" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 7h14l-1 14H6zM9 7V4h6v3M3 7h18M10 11v6M14 11v6"/></symbol>
   <symbol id="i-undo" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3"/></symbol>
   <symbol id="i-limit" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M3 4h18l-7 8v6l-4 2v-8z"/></symbol>
+  <symbol id="i-shrimp" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 16C4 9 8 5 13 5c5 0 7 3 6 6-1 3-4 3-6 3-2 0-3 1-3 3l-3 3M13 5l2-3M9 9v3M13 9v4"/></symbol>
+  <symbol id="i-egg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3c4 0 7 6 7 11a7 7 0 0 1-14 0c0-5 3-11 7-11z"/></symbol>
+  <symbol id="i-meat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 3a6 6 0 0 1 6 6c0 4-4 6-7 6l-3 3a2.5 2.5 0 1 1-4-1 2.5 2.5 0 1 1 1-4l3-3c0-4 1-7 4-7z"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3c0 3-6 5-6 11a6 6 0 0 0 12 0c0-6-6-8-6-11zM12 9v11M9 13c0 3 1 5 3 7M15 13c0 3-1 5-3 7"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 19C5 9 11 4 20 4c0 9-5 15-15 15zM5 19l9-9"/></symbol>
+  <symbol id="i-noodles" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 12h18c-1 5-4 8-9 8s-8-3-9-8zM8 9c1-2-1-3 0-5M12 9c1-2-1-3 0-5M16 9c1-2-1-3 0-5"/></symbol>
+  <symbol id="i-bottle" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 2h4v4l2 3v12H8V9l2-3zM8 13h8"/></symbol>
+  <symbol id="i-jar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 8h10v12a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1zM6 4h12v4H6zM10 13h4"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v14H4zM4 10h16M8 3v5M16 3v5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></symbol>
 </svg>
 <header class="bar">
   <div class="bar-inner">
@@ -514,13 +550,13 @@
   </section>
 
   <section id="inventory" hidden>
-    <h2>Stock · average price paid<button type="button" class="q" popovertarget="help-avgprice" aria-label="What is average price paid?">?</button></h2>
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-inventory"/></svg>Stock · average price paid<button type="button" class="q" popovertarget="help-avgprice" aria-label="What is average price paid?">?</button></h2>
     <ul class="list" id="stock"></ul>
     <p class="footnote">Tap + to add a purchase, or the pencil to fix a count.</p>
-    <h2>Purchase history</h2>
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-billing"/></svg>Purchase history</h2>
     <div class="breakdown"><ul class="history-list" id="stock-history"></ul></div>
     <div id="add-ingredient-block" hidden>
-    <h2>Add ingredient</h2>
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>Add ingredient</h2>
     <form class="form" id="new-ingredient">
       <input class="field grow" name="name" type="text" maxlength="80" required placeholder="Ingredient name" aria-label="Ingredient name">
       <select class="field" name="unit" aria-label="Unit"><option value="g">g (grams)</option><option value="pcs">pcs (pieces)</option><option value="mL">mL (millilitres)</option></select>
@@ -530,7 +566,7 @@
   </section>
 
   <section id="order" hidden>
-    <h2>Table</h2>
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-order"/></svg>Table</h2>
     <div class="floor"><div id="floor"></div>
       <div class="floor-legend"><span><i></i>Free</span><span><i class="busy"></i>Has an open bill (minutes since first order; the ring fills over 90 min, red after 60)</span></div></div>
     <div id="menu"></div>
@@ -544,7 +580,7 @@
   </section>
 
   <section id="portions" hidden>
-    <h2>New menu item</h2>
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>New menu item</h2>
     <form class="form" id="new-item">
       <input class="field grow" name="name" type="text" maxlength="80" required placeholder="Menu item name" aria-label="Menu item name">
       <select class="field" name="category" aria-label="Category"><option value="crab">Crab</option><option value="platters">Platters</option><option value="drinks">Drinks</option></select>
@@ -555,7 +591,7 @@
   </section>
 
   <section id="billing" hidden>
-    <h2>Open bills</h2>
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-billing"/></svg>Open bills</h2>
     <div class="bills" id="bills"></div>
     <div class="bills-total" id="bills-total"></div>
   </section>
@@ -565,10 +601,10 @@
       <label for="report-month" style="font-weight:600">Other month</label>
       <input class="field" id="report-month" type="month" aria-label="Report month"></div>
     <div id="kpis"></div>
-    <h2>Profit &amp; loss</h2>
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-reports"/></svg>Profit &amp; loss</h2>
     <div class="breakdown" id="pnl"><div><span>Loading…</span></div></div>
     <p class="footnote">Sales are bills paid this month. Service charge counts as income.</p>
-    <h2>Expenses</h2>
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-cash"/></svg>Expenses</h2>
     <form class="form" id="expense-add" novalidate>
       <input class="field" name="date" type="date" aria-label="Date">
       <select class="field" name="category" aria-label="Category">
@@ -581,7 +617,7 @@
     <ul class="list" id="expense-list" style="margin-top:12px"></ul>
     <h2><svg class="ic" aria-hidden="true"><use href="#i-waste"/></svg>Stock losses (waste report)</h2>
     <div id="losses"></div>
-    <h2>Busiest hours · last 30 days</h2>
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-history"/></svg>Busiest hours · last 30 days</h2>
     <div id="heatmap"></div>
   </section>
 
@@ -886,7 +922,7 @@ function renderProfit() {
   const weekAgo = dayKey(Date.now() - 6 * 864e5), recent = days.filter(d => new Date(d.day) >= new Date(weekAgo));
   const low = coverNow().filter(i => i.reorder && i.buy > 0).length, c = data.takings.closing;
   document.getElementById('profit').innerHTML = `
-    <h2>Today</h2>
+    <h2>${icon('dashboard')}Today</h2>
     <p class="sentence">${todaySentence(today)}</p>
     <div class="stats">
       <div class="stat hero"><span class="stat-label">Sales</span><span class="stat-val" id="sales-now">${peso(today.sales)}</span><span class="stat-sub">${today.orders} ${today.orders === 1 ? 'order' : 'orders'}</span></div>
@@ -901,7 +937,7 @@ function renderProfit() {
     ${lowStockHtml()}
     <details class="more"><summary>See more · takings, last 7 days, best dishes, tomorrow</summary>
     ${takingsHtml()}
-    ${recent.length ? `<h2>Last 7 days</h2>
+    ${recent.length ? `<h2>${icon('reports')}Last 7 days</h2>
     <div class="detail"><table>
       <thead><tr><th>Day</th><th>Sales</th><th>Cost</th><th>Gross profit</th></tr></thead>
       <tbody>${recent.map(d => `<tr><td>${dayLabel(d.day)}</td><td>${peso(d.sales)}</td><td>${peso(d.cost)}</td><td class="makes ${cls(d.profit)}">${peso(d.profit)}</td></tr>`).join('')}</tbody>
@@ -941,9 +977,9 @@ function takingsHtml() {
 // Running low: forecast days of cover under the reorder point (lead time + 1 safety day).
 function lowStockHtml() {
   const cover = coverNow(), low = cover.filter(i => i.reorder && i.buy > 0);
-  if (!low.length) return cover.length ? '' : '<h2>Running low</h2><p class="footnote" style="margin-top:0">Fills in once there are orders.</p>';
+  if (!low.length) return cover.length ? '' : `<h2>${icon('inventory')}Running low</h2><p class="footnote" style="margin-top:0">Fills in once there are orders.</p>`;
   const days = c => c >= 60 ? '60+ days' : `${c < 10 ? c.toFixed(1) : Math.round(c)} day${c === 1 ? '' : 's'}`;
-  return `<h2>Running low · shopping list</h2><ul class="list shopping">${low.map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">${fmt(i.stock)} ${i.unit} · ~${days(i.cover)} left</span></span>
+  return `<h2>${icon('inventory')}Running low · shopping list</h2><ul class="list shopping">${low.map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">${fmt(i.stock)} ${i.unit} · ~${days(i.cover)} left</span></span>
     <span class="buy-qty loss">Buy ${fmt(i.buy)} ${i.unit}</span></li>`).join('')}</ul>
     <p class="footnote">Runs out within ${LEAD_DAYS + 1} days. Buys ${TARGET_DAYS} days' worth (crab: ${HOLD_DAYS}).</p>`;
 }
@@ -952,7 +988,7 @@ const tomorrowISO = () => tomorrowDate().toLocaleDateString('en-CA');
 // The manager's own guess for tomorrow, compared later with the model in Reports (forecast vs guesswork).
 function guessHtml(day) {
   const tracked = data.ingredients.filter(i => i.batch_tracked);
-  return tracked.length ? `<h2>Tomorrow (${day}) · your estimate</h2><ul class="list">${tracked.map(i => `<li><label for="guess-${i.id}">${esc(i.name)} you expect to use</label>
+  return tracked.length ? `<h2>${icon('calendar')}Tomorrow (${day}) · your estimate</h2><ul class="list">${tracked.map(i => `<li><label for="guess-${i.id}">${esc(i.name)} you expect to use</label>
     <span class="editor"><input id="guess-${i.id}" data-guess="${i.id}" type="number" min="0" step="any" inputmode="decimal" placeholder="—" value="${data.guesses?.[i.id] ?? ''}">
     <span class="unit">${i.unit}</span></span></li>`).join('')}</ul>
     <p class="footnote">Enter before reading the forecast.</p>` : '';
@@ -979,9 +1015,9 @@ function forecastHtml() {
   const tomorrow = tomorrowDate();
   const day = tomorrow.toLocaleDateString([], { weekday: 'long' });
   const f = forecastBuy(data.orders, menuItems(), data.ingredients, tomorrow, 4, dayKey);
-  if (!f.days) return `${guessHtml(day)}<h2>Tomorrow (${day}) · forecast${q('forecast')}</h2><p class="footnote" style="margin-top:0">Not enough ${day} history yet.</p>`;
+  if (!f.days) return `${guessHtml(day)}<h2>${icon('calendar')}Tomorrow (${day}) · forecast${q('forecast')}</h2><p class="footnote" style="margin-top:0">Not enough ${day} history yet.</p>`;
   const rows = f.ingredients.filter(i => i.batch_tracked);
-  return `${guessHtml(day)}<h2>Tomorrow (${day}) · forecast${q('forecast')}</h2>
+  return `${guessHtml(day)}<h2>${icon('calendar')}Tomorrow (${day}) · forecast${q('forecast')}</h2>
     ${rows.length ? `<ul class="list shopping">${rows.map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">Have ${fmt(i.stock)} ${i.unit}</span></span>
       <span class="buy-qty">Expect ~${fmt(i.need)} ${i.unit}</span></li>`).join('')}</ul>` : ''}
     <p class="footnote">Based on the last ${f.days} ${day}${f.days === 1 ? '' : 's'}, recent weeks counting more.</p>`;
@@ -989,7 +1025,7 @@ function forecastHtml() {
 function dishesHtml() {
   const stats = dishStats(data.orders, data.recipes, data.items, data.ingredients);
   if (!stats.length) return '';
-  return `<h2>Dishes · last 30 days</h2><div class="detail"><table>
+  return `<h2>${icon('platters')}Dishes · last 30 days</h2><div class="detail"><table>
     <thead><tr><th>Dish</th><th>Sold</th><th>Sales</th><th>Gross profit</th></tr></thead>
     <tbody>${stats.slice(0, 12).map(d => `<tr><td>${esc(d.name)}</td><td>${d.qty}</td><td>${peso(d.sales)}</td>
       <td class="makes ${d.profit > 0 ? 'gain' : d.profit < 0 ? 'loss' : ''}">${peso(d.profit)}<br><span class="u">${d.sales ? Math.round(d.profit / d.sales * 100) : 0}% margin</span></td></tr>`).join('')}</tbody>
@@ -1123,12 +1159,17 @@ function gauge(i, c) {
   return `<svg class="gauge${c?.reorder ? ' low' : ''}" viewBox="0 0 32 32" role="img" aria-label="${c ? `About ${c.cover >= 60 ? '60+' : fmt(c.cover)} days of cover` : 'Not used yet'}">
     <circle class="track" cx="16" cy="16" r="12"/><circle class="arc" cx="16" cy="16" r="12" pathLength="100" stroke-dasharray="${frac * 100} 100" transform="rotate(-90 16 16)"/></svg>`;
 }
+// A picture for each ingredient, guessed from its id and name; new ingredients fall back by unit.
+const ING_ICONS = [[/crab/, 'crab'], [/shrimp|hebi|prawn/, 'shrimp'], [/egg/, 'egg'], [/chicken_leg|pork|chorizo|beef|meat/, 'meat'],
+  [/garlic|onion|ginger|luya|shallot/, 'bulb'], [/carrot|pechay|leek|cabbage|veg/, 'leaf'], [/canton|noodle|sotanghon|bihon/, 'noodles'],
+  [/coke|sprite|royal|soda|juice|water/, 'drinks'], [/sauce|oil|vinegar/, 'bottle'], [/salt|sugar|powder|starch|vetsin|msg|pepper/, 'jar']];
+const ingIcon = i => (ING_ICONS.find(([re]) => re.test(`${i.id} ${i.name}`.toLowerCase())) || [, { pcs: 'inventory', mL: 'bottle' }[i.unit] || 'jar'])[1];
 function renderStock() {
   const cover = Object.fromEntries(coverNow().map(c => [c.id, c]));
   document.getElementById('stock').innerHTML = data.ingredients.map(i => {
     const [perLabel, f] = per(i.unit);
     return `<li class="inv-row" data-id="${i.id}" data-swipe-label="Add stock">${gauge(i, cover[i.id])}
-      <span class="inv-name">${esc(i.name)}</span>
+      <span class="inv-name">${icon(ingIcon(i))}${esc(i.name)}</span>
       <span class="inv-meta"><span class="stock">${fmt(i.stock)} ${i.unit}${cover[i.id]?.reorder ? '<span class="low-tag">Low</span>' : ''}</span>
         <span class="cost">${peso(Number(i.cost || 0) * f)}/${perLabel}</span></span>
       <button type="button" class="inv-btn add" data-act="buy" aria-haspopup="dialog" aria-label="Add stock of ${esc(i.name)}">+</button>
@@ -1262,7 +1303,7 @@ async function loadStockHistory() {
     stockHistory = await api('purchases?select=id,ingredient_id,qty,total_cost,created_at&order=created_at.desc&limit=200');
     el.innerHTML = stockHistory.map((p, n) => {
       const ing = data.ingredients.find(i => i.id === p.ingredient_id);
-      return `<li><span>${new Date(p.created_at).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })} · ${esc(ing?.name || p.ingredient_id)}</span>
+      return `<li><span class="hist-name">${ing ? icon(ingIcon(ing)) : ''}${new Date(p.created_at).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })} · ${esc(ing?.name || p.ingredient_id)}</span>
         <span>${fmt(p.qty)} ${ing?.unit || ''} · <strong>${peso(p.total_cost)}</strong>
           <button type="button" class="link-btn" data-n="${n}" aria-haspopup="dialog">Edit</button></span></li>`;
     }).join('') || '<li>No purchases recorded yet.</li>';
@@ -1439,7 +1480,7 @@ function renderHistory() {
   const prices = Object.fromEntries(data.recipes.map(r => [r.id, Number(r.price)]));
   const total = o => o.order_items.reduce((s, i) => s + i.qty * Number(i.price ?? prices[i.recipe_id] ?? 0), 0);
   document.getElementById('history-list').innerHTML = [...groups].map(([k, orders]) =>
-    `<h2><span>${dayLabel(k)}</span><span>${orders.length} ${orders.length === 1 ? 'order' : 'orders'}</span></h2>
+    `<h2>${icon('history')}<span>${dayLabel(k)}</span><span>${orders.length} ${orders.length === 1 ? 'order' : 'orders'}</span></h2>
       <ul class="list">${orders.map(o => `<li><span class="what"><strong>Table ${o.table_no}</strong><br>${o.order_items.map(i => `${i.qty}× ${esc(names[i.recipe_id] || i.recipe_id)}${i.note ? ` <span class="note">— ${esc(i.note)}</span>` : ''}`).join('<br>')}</span>
         <span class="when">${time(o.created_at)}<br>${peso(total(o))}<br>${o.paid_at ? '<span class="paid-tag">Paid</span>' : '<span class="open-tag">Open</span>'}</span></li>`).join('')}</ul>`).join('')
     || emptyHtml('No orders yet', 'Orders from the last 30 days show up here.', '<a class="btn" href="#order">Start an order</a>');
@@ -2019,7 +2060,7 @@ function renderKpis(r) {
   const collected = Number(r.collected) || 0, fixed = Number(r.expense_total || 0) + Number(r.loss_value || 0);
   const ratio = collected > 0 ? (collected - Number(r.ingredient_cost || 0)) / collected : 0, breakEven = ratio > 0 ? fixed / ratio : null;
   const lean = e => e ? (Math.abs(e.bias) < 0.005 ? 'on target' : `${Math.round(Math.abs(e.bias) * 100)}% ${e.bias > 0 ? 'over' : 'under'}`) : '';
-  document.getElementById('kpis').innerHTML = `<h2>KPIs</h2>
+  document.getElementById('kpis').innerHTML = `<h2>${icon('reports')}KPIs</h2>
     <div class="stats kpi-stats">
       ${crab ? stat(`${esc(crab.ingredient)} spoilage`, Number(crab.bought) ? pct(crab.dead / crab.bought) : '—', `${fmt(crab.dead)} of ${fmt(crab.bought)} lost`)
         + stat(`Loss per ${esc(crab.ingredient.toLowerCase())} sold`, Number(crab.sold) ? peso(crab.dead_value / crab.sold) : '—', `${fmt(crab.sold)} sold`) : ''}
@@ -2029,12 +2070,31 @@ function renderKpis(r) {
       ${fe[0] ? stat(`Forecast error · ${esc(fe[0].ingredient)}`, off(fe[0].model), `you ${off(fe[0].staff)} · target ±15%`) : ''}
     </div>
     ${ages.length ? `<p class="footnote">Lost by days held: ${ages.sort().map(([a, q]) => `${a === 'unknown' ? 'batch not known' : a === '4' ? '4+ days' : `day ${a}`} · ${fmt(q)}`).join(', ')}</p>` : ''}
-    ${fe.length ? `<h2>Forecast vs your estimate · this month</h2><ul class="list shopping">${fe.map(g => `<li><span>${esc(g.ingredient)}<span class="line-sub" style="display:block">Forecast ${lean(g.model) || 'not saved'}${g.staff ? ` · you ${lean(g.staff)}` : ' · no estimates yet'}</span></span>
+    ${fe.length ? `<h2>${icon('reports')}Forecast vs your estimate · this month</h2><ul class="list shopping">${fe.map(g => `<li><span>${esc(g.ingredient)}<span class="line-sub" style="display:block">Forecast ${lean(g.model) || 'not saved'}${g.staff ? ` · you ${lean(g.staff)}` : ' · no estimates yet'}</span></span>
       <span class="buy-qty${g.model && g.staff ? (g.model.avg <= g.staff.avg ? ' gain' : ' loss') : ''}">${off(g.model)} vs ${off(g.staff)}</span></li>`).join('')}</ul>
     <p class="footnote">Average daily miss. Green: forecast beat you.</p>` : ''}
-    ${cover.length ? `<h2>Days of cover · now${q('cover')}</h2><ul class="list shopping">${cover.slice(0, 8).map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">${fmt(i.stock)} ${i.unit} · ~${fmt(i.perDay)}/day</span></span>
-      <span class="buy-qty${i.reorder ? ' loss' : ''}">${i.cover >= 60 ? '60+' : i.cover < 10 ? i.cover.toFixed(1) : Math.round(i.cover)} days${i.reorder ? ' · reorder' : ''}</span></li>`).join('')}</ul>
-    <p class="footnote">From the forecast, starting tomorrow.</p>` : ''}`;
+    ${cover.length ? `<h2>${icon('calendar')}Days of cover · now${q('cover')}</h2>${calendarStrip(cover.slice(0, 8))}` : ''}`;
+}
+// Days of cover as a two-week calendar: one square per day from tomorrow, filled while the stock lasts.
+// The first LEAD_DAYS + 1 days are underlined: a row that ends there needs ordering now.
+const CAL_DAYS = 14;
+function calendarStrip(items) {
+  const start = tomorrowDate(), day = k => { const d = new Date(start); d.setDate(d.getDate() + k); return d; };
+  const days = c => c >= CAL_DAYS ? `${CAL_DAYS}+ days` : `${c < 10 ? fmt(Math.round(c * 10) / 10) : Math.round(c)} ${c === 1 ? 'day' : 'days'}`;
+  const head = Array.from({ length: CAL_DAYS }, (_, k) => { const d = day(k);
+    return `<span class="${k <= LEAD_DAYS ? 'zone' : ''}">${d.toLocaleDateString([], { weekday: 'narrow' })}<b>${d.getDate()}</b></span>`; }).join('');
+  const row = i => {
+    const od = day(Math.floor(i.cover)), out = od.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+    const outShort = `${od.toLocaleDateString([], { weekday: 'short' })} ${od.getDate()}`;
+    const cells = Array.from({ length: CAL_DAYS }, (_, k) => { const f = Math.max(0, Math.min(1, i.cover - k));
+      return f >= 1 ? '<i class="f"></i>' : f > 0 ? `<i class="p" style="--part:${f.toFixed(2)}"></i>` : '<i></i>'; }).join('');
+    return `<div class="cal-row${i.reorder ? ' low' : ''}" role="listitem" aria-label="${esc(i.name)}: about ${days(i.cover)}${i.cover < CAL_DAYS ? `, runs out around ${out}` : ''}${i.reorder ? ', reorder now' : ''}">
+      <span class="cal-name">${icon(ingIcon(i))}<span>${esc(i.name)}<small>${fmt(i.stock)} ${i.unit} · ~${fmt(i.perDay)}/day</small></span></span>
+      <span class="cal-days" aria-hidden="true">${cells}</span>
+      <span class="cal-left">${days(i.cover)}${i.reorder ? '<small>reorder</small>' : i.cover < CAL_DAYS ? `<small>till ${outShort}</small>` : ''}</span></div>`;
+  };
+  return `<div class="cal" role="list"><div class="cal-row cal-head" aria-hidden="true"><span></span><span class="cal-days">${head}</span><span></span></div>${items.map(row).join('')}</div>
+    <p class="footnote">Each square is one day, starting tomorrow, filled while the stock lasts. Underlined days: if a row ends there, order now (deliveries take about ${LEAD_DAYS} days).</p>`;
 }
 let lastExps = [];
 function renderReport(r, exps) {
