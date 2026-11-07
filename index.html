@@ -307,7 +307,7 @@
   /* section titles: big sentence-case title with a burnt-orange icon tile; dialogs keep small ruled labels */
   h2 { margin:44px 0 14px; padding:0; border:0; color:var(--label); font-size:22px; font-weight:800; letter-spacing:-.01em; text-transform:none; display:flex; align-items:center; gap:12px; }
   h2 > .ic { width:38px; height:38px; padding:9px; flex:none; background:var(--blue-fill); color:var(--on-accent); }
-  main section > h2:first-child, #profit > h2:first-child, #kpis > h2:first-child, #meals > h2:first-child { margin-top:24px; }
+  main section > h2:first-child, #recipes > h2:first-child, #profit > h2:first-child, #kpis > h2:first-child, #meals > h2:first-child { margin-top:24px; }
   .sheet h2 { margin:20px 0 8px; padding-top:8px; border-top:1px solid var(--label); font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; gap:8px; }
   .sheet h2 > .ic { width:16px; height:16px; padding:0; background:none; color:inherit; }
   .history h2 { justify-content:flex-start; }
@@ -634,17 +634,17 @@
   </section>
 
   <section id="portions" hidden>
+    <div id="recipes"></div>
     <h2><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg>New menu item</h2>
     <form class="form" id="new-item">
       <input class="field grow" name="name" type="text" maxlength="80" required placeholder="Menu item name" aria-label="Menu item name">
       <select class="field" name="category" aria-label="Category"><option value="crab">Crab</option><option value="platters">Platters</option><option value="drinks">Drinks</option></select>
       <button class="btn" type="submit">Add</button>
     </form>
-    <div id="recipes"></div>
   </section>
 
   <section id="billing" hidden>
-    <h2><svg class="ic" aria-hidden="true"><use href="#i-billing"/></svg>Open bills</h2>
+    <h2 data-nofold><svg class="ic" aria-hidden="true"><use href="#i-billing"/></svg>Open bills</h2>
     <div class="bills" id="bills"></div>
     <div class="bills-total" id="bills-total"></div>
   </section>
