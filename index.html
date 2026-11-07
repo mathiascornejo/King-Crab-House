@@ -535,7 +535,7 @@
   .shake { animation:shake .35s; }
   @keyframes shake { 20%, 60% { transform:translateX(-4px); } 40%, 80% { transform:translateX(4px); } }
   /* fold a section: tap its title; the arrowhead points down when open, right when folded */
-  main section h2 { cursor:pointer; -webkit-user-select:none; user-select:none; }
+  main section h2:not([data-nofold]) { cursor:pointer; -webkit-user-select:none; user-select:none; }
   .fold { position:relative; width:28px; height:28px; margin-left:-6px; padding:0; border:0; background:none; color:var(--label2); display:grid; place-items:center; cursor:pointer; flex:none; }
   .fold::before { content:""; position:absolute; inset:-8px; }
   .fold svg { width:20px; height:20px; transition:transform .2s ease; }
@@ -621,7 +621,7 @@
   </section>
 
   <section id="order" hidden>
-    <h2><svg class="ic" aria-hidden="true"><use href="#i-order"/></svg>Table</h2>
+    <h2 data-nofold><svg class="ic" aria-hidden="true"><use href="#i-order"/></svg>Table</h2>
     <div class="floor"><div id="floor"></div>
       <div class="floor-legend"><span><i></i>Free</span><span><i class="busy"></i>Has an open bill (minutes since first order; the ring fills over 90 min, red after 60)</span></div></div>
     <div id="menu"></div>
@@ -935,11 +935,11 @@ new MutationObserver(() => {
   setupFolds();
 }).observe(document.querySelector('main'), { childList: true, subtree: true });
 // Folding: a section title hides what follows it, up to the next title (or a block holding titles of its own).
-// Remembered on this device by tab + title, so a folded section stays folded after reloads and redraws.
+// Titles marked data-nofold always stay open. Remembered on this device by tab + title, so a folded section stays folded after reloads and redraws.
 const folded = new Set(JSON.parse(localStorage.getItem('folded') || '[]'));
 const foldKey = h => `${h.closest('section')?.id}:${(h.querySelector('.ic')?.nextSibling || h).textContent.replace(/\(.*?\)/g, '').replace(/[\d₱,.]+/g, '').replace(/\s+/g, ' ').trim()}`;
 function setupFolds() {
-  for (const h of document.querySelectorAll('main section h2')) {
+  for (const h of document.querySelectorAll('main section h2:not([data-nofold])')) {
     let b = h.querySelector('.fold');
     if (!b) {
       b = document.createElement('button');
@@ -954,7 +954,7 @@ function setupFolds() {
   }
 }
 document.querySelector('main').addEventListener('click', e => {
-  const h = e.target.closest('main section h2');
+  const h = e.target.closest('main section h2:not([data-nofold])');
   if (!h || e.target.closest('.q, a, input, select')) return;
   const k = foldKey(h);
   folded.has(k) ? folded.delete(k) : folded.add(k);
@@ -1087,7 +1087,7 @@ function renderProfit() {
   const weekAgo = dayKey(Date.now() - 6 * 864e5), recent = days.filter(d => new Date(d.day) >= new Date(weekAgo));
   const low = coverNow().filter(i => i.reorder && i.buy > 0).length, c = data.takings.closing;
   document.getElementById('profit').innerHTML = `
-    <h2>${icon('dashboard')}Today</h2>
+    <h2>${icon('dashboard')}Summary</h2>
     <p class="sentence">${todaySentence(today)}</p>
     <div class="stats">
       <div class="stat hero"><span class="stat-label">Sales</span><span class="stat-val" id="sales-now">${peso(today.sales)}</span><span class="stat-sub">${today.orders} ${today.orders === 1 ? 'order' : 'orders'}</span></div>
