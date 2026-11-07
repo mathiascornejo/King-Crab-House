@@ -542,6 +542,9 @@
   .fold[aria-expanded="false"] svg { transform:rotate(-90deg); }
   .fold:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
   .folded { display:none !important; }
+  /* while a pop-up is open the page behind it stays still, and scrolling inside it doesn't spill over */
+  html:has(dialog:modal) { overflow:hidden; }
+  dialog, .sheet-body { overscroll-behavior:contain; }
   /* phone: keep the desktop layout, just narrower */
   .floor-legend span:first-child { flex:none; }
   @media (max-width:500px) {
@@ -558,7 +561,15 @@
     .recipe summary { flex-wrap:wrap; row-gap:2px; padding:10px 0; }
     .recipe summary::after { margin-left:auto; }
     .recipe .sub { order:1; flex-basis:100%; margin-left:0; font-size:14px; }
+    /* a dish's pop-up slides up from the bottom edge */
+    #sheet[open] { animation:sheet-up .32s cubic-bezier(.2,.8,.2,1); }
+    /* a grab bar shows the pop-up can be dragged down to close */
+    .sheet:not(.palette) .sheet-head { padding-top:20px; }
+    .sheet:not(.palette) .sheet-head::before { content:""; position:absolute; top:7px; left:50%; width:40px; height:4px; margin-left:-20px; border-radius:2px; background:var(--sep); }
+    /* no focus box around Done and the other header buttons on a touch screen */
+    .sheet-head button:focus-visible { outline:none; }
   }
+  @keyframes sheet-up { from { transform:translateY(100%); } }
   @media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } .more::details-content { transition:none; } }
 </style>
 </head>
@@ -1005,6 +1016,45 @@ function morph(from, to, open) {
   document.startViewTransition(() => { from.style.viewTransitionName = ''; to.style.viewTransitionName = 'morph'; open(); })
     .finished.finally(() => { to.style.viewTransitionName = ''; });
 }
+// Phone: a pop-up closes by sliding down, either dragged (from its header, or from anywhere while its content
+// is scrolled to the top) or from its Done/Cancel button. Desktop keeps the plain close.
+const phone = () => matchMedia('(max-width:500px)').matches;
+function slideClose(d) {
+  if (reduceMotion()) return d.close();
+  const from = getComputedStyle(d).transform;
+  const a = d.animate({ transform: [from === 'none' ? 'none' : from, 'translateY(100%)'] }, { duration: 220, easing: 'ease-in', fill: 'forwards' });
+  d.style.transform = '';
+  settle(a, 300).then(() => { d.close(); a.cancel(); });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.sheet:not(.palette) .sheet-head .cancel, #sheet-done');
+  if (!b || !phone()) return;
+  e.stopPropagation(); // the button's own handler would close it without the slide
+  slideClose(b.closest('dialog'));
+}, true);
+for (const d of document.querySelectorAll('dialog.sheet:not(.palette)')) {
+  let y0 = null, dy = 0, t0 = 0;
+  d.addEventListener('touchstart', e => {
+    y0 = null;
+    if (!phone() || e.touches.length > 1 || e.target.closest('input, textarea, select')) return;
+    for (let el = e.target; el && el !== d.parentElement; el = el.parentElement) if (el.scrollTop > 0) return; // mid-scroll: let it scroll
+    y0 = e.touches[0].clientY; dy = 0; t0 = e.timeStamp;
+  }, { passive: true });
+  d.addEventListener('touchmove', e => {
+    if (y0 === null) return;
+    dy = e.touches[0].clientY - y0;
+    if (dy < 0 && !d.style.transform) { y0 = null; return; } // pushing up: that's a scroll, not a close
+    e.preventDefault();
+    d.style.transition = 'none'; d.style.transform = `translateY(${Math.max(0, dy)}px)`;
+  }, { passive: false });
+  d.addEventListener('touchend', e => {
+    if (y0 === null) return;
+    y0 = null;
+    if (dy > 110 || (dy > 40 && dy / (e.timeStamp - t0) > 0.5)) return slideClose(d); // far enough, or a quick flick
+    d.style.transition = 'transform .2s ease-out'; d.style.transform = '';
+  });
+  d.addEventListener('close', () => { d.style.transform = ''; d.style.transition = ''; });
+}
 const status = document.getElementById('status');
 let data, lastReport = null;
 
@@ -1262,7 +1312,7 @@ closeForm.addEventListener('submit', async e => {
 const sheet = document.getElementById('sheet');
 document.getElementById('meals').addEventListener('click', e => {
   const t = e.target.closest('.tile'), r = meals[t?.dataset.i];
-  if (r) morph(t, sheet, () => openMeal(r));
+  if (r) matchMedia('(max-width:500px)').matches ? openMeal(r) : morph(t, sheet, () => openMeal(r)); // phone: slides up instead
 });
 function openMeal(r) {
   const most = Math.max(1, r.servings * 4); // bar scale: the limiting line sits at 25%, plentiful ones cap at 100%
