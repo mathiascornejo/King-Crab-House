@@ -533,6 +533,23 @@
   /* can't add any more of this dish */
   .shake { animation:shake .35s; }
   @keyframes shake { 20%, 60% { transform:translateX(-4px); } 40%, 80% { transform:translateX(4px); } }
+  /* phone: keep the desktop layout, just narrower */
+  .floor-legend span:first-child { flex:none; }
+  @media (max-width:500px) {
+    /* header: the "Updated" line on its own, then name and buttons on one row */
+    .meta { column-gap:14px; row-gap:0; }
+    #status { flex-basis:100%; }
+    /* stats stack label, number, note as on desktop (they were squeezed into label | number rows) */
+    .stat { display:flex; align-items:stretch; padding:10px 0 0; }
+    .stat.hero { text-align:left; }
+    /* stock: the amount never splits from its unit */
+    .inv-meta { flex-wrap:wrap; gap:0 10px; }
+    .inv-meta .stock { white-space:nowrap; }
+    /* Portions: dish name on the first line with the arrow, cost and markup underneath */
+    .recipe summary { flex-wrap:wrap; row-gap:2px; padding:10px 0; }
+    .recipe summary::after { margin-left:auto; }
+    .recipe .sub { order:1; flex-basis:100%; margin-left:0; font-size:14px; }
+  }
   @media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } .more::details-content { transition:none; } }
 </style>
 </head>
@@ -1255,6 +1272,9 @@ function moveInk(slide) {
   if (!a) return;
   ink.style.transition = slide && !reduceMotion() ? '' : 'none';
   ink.style.width = `${a.offsetWidth}px`; ink.style.transform = `translateX(${a.offsetLeft}px)`;
+  // on a phone the tabs scroll sideways: bring the current one to the middle
+  const nav = a.parentElement;
+  if (nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: a.offsetLeft + a.offsetWidth / 2 - nav.clientWidth / 2, behavior: slide && !reduceMotion() ? 'smooth' : 'auto' });
 }
 // tab widths change once the font loads and when the window resizes
 document.fonts.ready.then(() => moveInk(false));
