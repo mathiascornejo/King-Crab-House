@@ -64,7 +64,7 @@
   /* meal detail sheet: bottom sheet on phones, centered card on wider screens */
   .sheet { border:0; padding:0; background:var(--bg); color:var(--label); width:min(520px, 100%); max-height:85vh; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
   .sheet::backdrop { background:rgba(0,0,0,.4); }
-  .sheet[open] { animation:rise .38s ease-out; }
+  .sheet[open] { animation:rise .25s ease-out; }
   @keyframes rise { from { transform:translateY(24px); opacity:0; } }
   .sheet-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px 4px; position:sticky; top:0; background:var(--bg); }
   .sheet-head h3 { margin:0; font-size:17px; font-weight:600; }
@@ -496,16 +496,16 @@
   .btn.quiet { background:none; color:var(--label); border:1.5px solid var(--label); margin-top:10px; }
   /* tick shown when an order or payment goes through */
   .done { border:0; flex-direction:column; align-items:center; gap:10px; padding:24px 28px; background:var(--label); color:var(--on-accent); font-weight:700; font-size:17px; pointer-events:none; }
-  .done:popover-open { display:flex; animation:pop .3s ease-out; }
+  .done:popover-open { display:flex; animation:pop .2s ease-out; }
   @keyframes pop { from { transform:scale(.9); opacity:0; } }
   .done svg { width:64px; height:64px; fill:none; stroke:var(--on-accent); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
   .done circle { stroke-dasharray:151; stroke-dashoffset:151; } .done path { stroke-dasharray:40; stroke-dashoffset:40; }
-  .done:popover-open circle { animation:draw .6s ease-out forwards; } .done:popover-open path { animation:draw .45s .45s ease-out forwards; }
+  .done:popover-open circle { animation:draw .4s ease-out forwards; } .done:popover-open path { animation:draw .3s .3s ease-out forwards; }
   @keyframes draw { to { stroke-dashoffset:0; } }
   @media (prefers-reduced-motion: reduce) { .done circle, .done path { stroke-dashoffset:0; } }
 
   /* 27: a dish tile grows into its sheet (View Transitions, where supported) */
-  ::view-transition-group(morph) { animation-duration:.42s; }
+  ::view-transition-group(morph) { animation-duration:.28s; }
 
   /* --- motion: all of it is off under reduced motion (the rule below, and reduceMotion() in the script) --- */
   /* Running low went up, or an order just reached Billing: one soft pulse */
@@ -910,7 +910,7 @@ function play(el, cls) {
   el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
   el.addEventListener('animationend', function off(e) { if (e.target === el) { el.classList.remove(cls); el.removeEventListener('animationend', off); } });
 }
-// A number inside el's text counts from its old value to the new one over 900 ms, keeping the new text's format
+// A number inside el's text counts from its old value to the new one over 600 ms, keeping the new text's format
 // (decimals, thousands commas, ₱ and units). data-t holds the final text so the watcher never reads a half-way number.
 const NUM = /-?\d[\d,]*(?:\.\d+)?/;
 function countText(el, oldText) {
@@ -928,7 +928,7 @@ function countText(el, oldText) {
   const t0 = performance.now();
   const step = t => {
     if (!node.isConnected) return;
-    const k = Math.min(1, (t - t0) / 900);
+    const k = Math.min(1, (t - t0) / 600);
     node.data = head + show(from + (to - from) * (1 - (1 - k) ** 3)) + tail;
     if (k < 1) requestAnimationFrame(step);
   };
@@ -991,7 +991,7 @@ async function flyTo(el, target) {
   if (reduceMotion() || !target) return;
   const a = el.getBoundingClientRect(), b = target.getBoundingClientRect();
   await settle(el.animate([{ transform: 'none', opacity: 1 }, { transform: `translate(${b.x + b.width / 2 - a.x - a.width / 2}px, ${b.y + b.height / 2 - a.y - a.height / 2}px) scale(.08)`, opacity: .3 }],
-    { duration: 630, easing: 'cubic-bezier(.5,0,.8,.4)', fill: 'forwards' }), 750);
+    { duration: 420, easing: 'cubic-bezier(.5,0,.8,.4)', fill: 'forwards' }), 500);
   play(target, 'pulse');
 }
 // after signing in, the screen's blocks come in one after another
@@ -1169,14 +1169,14 @@ function renderProfit() {
     ${dishesHtml()}</details>`;
 }
 
-// Today's sales roll up from the last value shown (from 0 on first load) over 900 ms.
+// Today's sales roll up from the last value shown (from 0 on first load) over 600 ms.
 let shownSales = 0;
 function countUp(el, to) {
   const from = shownSales; shownSales = to;
   if (from === to || reduceMotion()) return;
   const t0 = performance.now();
   const step = t => {
-    const k = Math.min(1, (t - t0) / 900);
+    const k = Math.min(1, (t - t0) / 600);
     if (el.isConnected) el.textContent = peso(from + (to - from) * (1 - (1 - k) ** 3));
     if (k < 1) requestAnimationFrame(step);
   };
@@ -1680,7 +1680,7 @@ function done(msg) {
   if (doneEl.matches(':popover-open')) doneEl.hidePopover();
   doneEl.showPopover(); // top layer, so it shows over the receipt too
   navigator.vibrate?.(40);
-  clearTimeout(done.t); done.t = setTimeout(() => doneEl.hidePopover(), 2000);
+  clearTimeout(done.t); done.t = setTimeout(() => doneEl.hidePopover(), 1600);
 }
 // undo: optional function; adds an Undo button and keeps the toast up 5 s
 function showToast(msg, err, undo) {
