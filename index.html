@@ -301,7 +301,7 @@
   h1 .dot { color:var(--red); }
   .segmented { background:none; padding:0; gap:22px; margin-top:10px; max-width:none; }
   .segmented a { flex:none; display:flex; align-items:center; gap:6px; padding:8px 0 6px; border-radius:0; border-bottom:2px solid transparent; color:var(--label2); font-size:13px; }
-  .segmented a[aria-current] { background:none; box-shadow:none; color:var(--label); font-weight:700; border-bottom-color:var(--red); }
+  .segmented a[aria-current] { background:none; box-shadow:none; color:var(--label); font-weight:700; }
   @media (max-width:500px) { .segmented { gap:16px; } .segmented a { padding:8px 0 6px; } }
   /* section titles: big sentence-case title with a burnt-orange icon tile; dialogs keep small ruled labels */
   h2 { margin:44px 0 14px; padding:0; border:0; color:var(--label); font-size:22px; font-weight:800; letter-spacing:-.01em; text-transform:none; display:flex; align-items:center; gap:12px; }
@@ -507,20 +507,15 @@
   ::view-transition-group(morph) { animation-duration:.28s; }
 
   /* --- motion: all of it is off under reduced motion (the rule below, and reduceMotion() in the script) --- */
-  /* a number that just changed glows gold, then fades back */
-  .flash { animation:flash 1.2s ease-out; }
-  @keyframes flash { from { background-color:color-mix(in srgb, var(--orange) 40%, transparent); } }
   /* Running low went up, or an order just reached Billing: one soft pulse */
   .pulse { animation:pulse .6s ease-out; }
   @keyframes pulse { 40% { transform:scale(1.15); } }
   /* new rows slide in from above */
   .enter { animation:enter .3s cubic-bezier(.2,.8,.2,1); }
   @keyframes enter { from { opacity:0; transform:translateY(-10px); } }
-  /* tab change: the page slides the way the tabs run (--dir is 1 going right, -1 going left) */
-  ::view-transition-old(tab) { animation:tab-out .2s ease-in both; }
-  ::view-transition-new(tab) { animation:tab-in .26s cubic-bezier(.2,.8,.2,1) both; }
-  @keyframes tab-out { to { opacity:0; transform:translateX(calc(var(--dir, 1) * -40px)); } }
-  @keyframes tab-in { from { opacity:0; transform:translateX(calc(var(--dir, 1) * 40px)); } }
+  /* tab change: the red underline slides to the new tab (one bar, moved under whichever tab is current) */
+  .segmented { position:relative; }
+  .tab-ink { position:absolute; left:0; bottom:0; height:2px; width:0; background:var(--red); pointer-events:none; transition:transform .3s cubic-bezier(.2,.8,.2,1), width .3s cubic-bezier(.2,.8,.2,1); }
   /* days of cover: squares fill left to right when Reports opens */
   .cal.fill .cal-days i:is(.f, .p) { animation:fill-in .3s ease-out both; animation-delay:calc(var(--k) * 35ms); }
   @keyframes fill-in { from { clip-path:inset(0 100% 0 0); } }
@@ -574,7 +569,7 @@
   <div class="bar-inner">
     <div class="title-row"><h1>King Crab House<span class="dot">.</span></h1>
       <div class="meta"><span id="status" role="status">Loading…</span><span class="who" id="who"></span><button type="button" class="signout icon-btn" id="open-palette" hidden><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>Search <kbd>⌘K</kbd></button><button type="button" class="signout" id="staff-link" hidden>Staff</button><button type="button" class="signout" id="signout" hidden>Sign out</button></div></div>
-    <nav class="segmented" aria-label="Sections"><a href="#dashboard"><svg class="ic" aria-hidden="true"><use href="#i-dashboard"/></svg>Dashboard</a><a href="#order"><svg class="ic" aria-hidden="true"><use href="#i-order"/></svg>Order</a><a href="#billing"><svg class="ic" aria-hidden="true"><use href="#i-billing"/></svg>Billing</a><a href="#history"><svg class="ic" aria-hidden="true"><use href="#i-history"/></svg>History</a><a href="#inventory"><svg class="ic" aria-hidden="true"><use href="#i-inventory"/></svg>Inventory</a><a href="#portions"><svg class="ic" aria-hidden="true"><use href="#i-portions"/></svg>Portions</a><a href="#reports"><svg class="ic" aria-hidden="true"><use href="#i-reports"/></svg>Reports</a></nav>
+    <nav class="segmented" aria-label="Sections"><a href="#dashboard"><svg class="ic" aria-hidden="true"><use href="#i-dashboard"/></svg>Dashboard</a><a href="#order"><svg class="ic" aria-hidden="true"><use href="#i-order"/></svg>Order</a><a href="#billing"><svg class="ic" aria-hidden="true"><use href="#i-billing"/></svg>Billing</a><a href="#history"><svg class="ic" aria-hidden="true"><use href="#i-history"/></svg>History</a><a href="#inventory"><svg class="ic" aria-hidden="true"><use href="#i-inventory"/></svg>Inventory</a><a href="#portions"><svg class="ic" aria-hidden="true"><use href="#i-portions"/></svg>Portions</a><a href="#reports"><svg class="ic" aria-hidden="true"><use href="#i-reports"/></svg>Reports</a><span class="tab-ink" aria-hidden="true"></span></nav>
   </div>
 </header>
 <main>
@@ -800,6 +795,7 @@
 <div popover="manual" class="done" id="done" role="status"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-16"/></svg><span></span></div>
 <div popover class="help" id="help-profit"><strong>Money left after ingredients</strong>What you sold, minus what the ingredients in those dishes cost. Rent, wages and other bills aren't taken out yet.</div>
 <div popover class="help" id="help-service"><strong>Service charge</strong>An extra 10% added to every bill, on top of the menu prices.</div>
+<div popover class="help" id="help-forecast"><strong>Forecast</strong>A guess at what tomorrow needs, from the same day of the week in the last few weeks. Recent weeks count more.</div>
 <div popover class="help" id="help-cover"><strong>Days of cover</strong>Each square is a day from tomorrow, filled while the stock lasts at the usual pace. If a row ends on an underlined day, order now: deliveries take about 2 days.</div>
 <div popover class="help" id="help-breakeven"><strong>Break-even sales</strong>How much you need to sell this month to pay for all the month's expenses and stock losses. Anything above it is profit.</div>
 <div popover class="help" id="help-avgprice"><strong>Average price paid</strong>What you've paid per kg, litre or piece, averaged over the stock you have now. Old and new deliveries are mixed.</div>
@@ -870,18 +866,42 @@ function play(el, cls) {
   el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
   el.addEventListener('animationend', function off(e) { if (e.target === el) { el.classList.remove(cls); el.removeEventListener('animationend', off); } });
 }
+// A number inside el's text counts from its old value to the new one over 600 ms, keeping the new text's format
+// (decimals, thousands commas, ₱ and units). data-t holds the final text so the watcher never reads a half-way number.
+const NUM = /-?\d[\d,]*(?:\.\d+)?/;
+function countText(el, oldText) {
+  const m = el.textContent.match(NUM), o = oldText.match(NUM);
+  if (!m || !o) return;
+  const from = parseFloat(o[0].replace(/,/g, '')), to = parseFloat(m[0].replace(/,/g, ''));
+  if (from === to) return;
+  const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  let node; while ((node = walk.nextNode()) && !NUM.test(node.data));
+  if (!node) return;
+  const at = node.data.search(NUM), len = node.data.match(NUM)[0].length, head = node.data.slice(0, at), tail = node.data.slice(at + len);
+  const dec = (m[0].split('.')[1] || '').length, grouping = /,/.test(m[0] + o[0]);
+  const show = v => v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: grouping });
+  el.dataset.t = el.textContent;
+  const t0 = performance.now();
+  const step = t => {
+    if (!node.isConnected) return;
+    const k = Math.min(1, (t - t0) / 600);
+    node.data = head + show(from + (to - from) * (1 - (1 - k) ** 3)) + tail;
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
 // Screens are redrawn wholesale, so after each redraw compare tagged elements (data-k = stable key) with the last ones:
-// a changed number flashes gold; data-anim="pulse" pulses when the number rises; "gauge" sweeps from the old level
+// a changed number counts to its new value; data-anim="pulse" pulses when the number rises; "gauge" sweeps from the old level
 // (data-v); "enter" slides in a row that wasn't there before. Nothing animates on the first fill.
 let marks = new Map();
 new MutationObserver(() => {
   const now = new Map();
-  for (const el of document.querySelectorAll('main [data-k]')) now.set(el.dataset.k, el.dataset.v ?? el.textContent);
+  for (const el of document.querySelectorAll('main [data-k]')) now.set(el.dataset.k, el.dataset.v ?? el.dataset.t ?? el.textContent);
   if (marks.size && !reduceMotion()) for (const el of document.querySelectorAll('main [data-k]')) {
-    const k = el.dataset.k, v = now.get(k), old = marks.get(k), kind = el.dataset.anim || 'flash';
+    const k = el.dataset.k, v = now.get(k), old = marks.get(k), kind = el.dataset.anim || 'count';
     if (kind === 'enter') { if (old === undefined) play(el, 'enter'); continue; }
     if (old === undefined || old === v) continue;
-    if (kind === 'flash') play(el, 'flash');
+    if (kind === 'count') countText(el, old);
     else if (kind === 'pulse') { if (parseFloat(v) > parseFloat(old)) play(el, 'pulse'); }
     else if (kind === 'gauge') el.animate({ strokeDasharray: [`${old} 100`, `${v} 100`] }, { duration: 700, easing: 'cubic-bezier(.2,.8,.2,1)' });
   }
@@ -945,16 +965,18 @@ async function load() {
     for (const i of ingredients) i.cost = Number(i.ingredient_costs?.cost ?? 0);
     for (const o of orders) for (const it of o.order_items) it.unit_cost = o.order_item_costs?.find(c => c.recipe_id === it.recipe_id)?.unit_cost ?? null;
     // owner-only: today's bills, payments and closing for the Dashboard takings panel
-    let takings = { bills: [], payments: [], closing: null };
+    let takings = { bills: [], payments: [], closing: null }, guesses = {};
     if (role === 'owner') {
       const start = new Date(); start.setHours(0, 0, 0, 0);
       const t = start.toISOString(), today = start.toLocaleDateString('en-CA'); // YYYY-MM-DD, local
-      const [bills, payments, closing] = await Promise.all([
+      const [bills, payments, closing, saved] = await Promise.all([
         api(`bills?select=*&closed_at=gte.${t}`), api(`payments?select=*&created_at=gte.${t}`), api(`day_closings?select=*&day=eq.${today}`),
+        api(`forecasts?select=ingredient_id,staff&day=eq.${tomorrowISO()}`).catch(() => []),
       ]);
       takings = { bills, payments, closing: closing[0] || null };
+      for (const s of saved) if (s.staff !== null) guesses[s.ingredient_id] = Number(s.staff);
     }
-    data = { recipes, items, ingredients, orders, takings };
+    data = { recipes, items, ingredients, orders, takings, guesses };
     renderStock(); renderMeals(); renderOrder(); renderHistory(); renderRecipes(); renderBills(); renderProfit(); drawFloor();
     if (role === 'owner') { loadStockHistory(); saveModelForecast(); renderReportData(); }
     status.textContent = `Updated ${new Date().toLocaleTimeString()}`;
@@ -1024,6 +1046,7 @@ function renderProfit() {
   // below the crab/platters/drinks tiles
   document.getElementById('profit-more').innerHTML = `
     ${lowStockHtml()}
+    ${forecastHtml()}
     <details class="more"><summary>See more · takings, last 7 days, best dishes</summary>
     ${takingsHtml()}
     ${recent.length ? `<h2>${icon('reports')}Last 7 days</h2>
@@ -1073,6 +1096,33 @@ function lowStockHtml() {
 const tomorrowDate = () => { const d = new Date(); d.setDate(d.getDate() + 1); return d; };
 const tomorrowISO = () => tomorrowDate().toLocaleDateString('en-CA');
 // Save tomorrow's model forecast so Reports can measure its error; same numbers every load, so saving again is harmless.
+// The manager's own guess for tomorrow, compared later with the model in Reports (forecast vs guesswork).
+function guessHtml(day) {
+  const tracked = data.ingredients.filter(i => i.batch_tracked);
+  return tracked.length ? `<h2>${icon('calendar')}Tomorrow (${day}) · your estimate</h2><ul class="list">${tracked.map(i => `<li><label for="guess-${i.id}">${esc(i.name)} you expect to use</label>
+    <span class="editor"><input id="guess-${i.id}" data-guess="${i.id}" type="number" min="0" step="any" inputmode="decimal" placeholder="—" value="${data.guesses?.[i.id] ?? ''}">
+    <span class="unit">${i.unit}</span></span></li>`).join('')}</ul>` : '';
+}
+document.getElementById('profit-more').addEventListener('change', async e => {
+  const id = e.target.dataset.guess; if (!id) return;
+  const v = e.target.value === '' ? null : Number(e.target.value);
+  if (v === null || !(v >= 0)) return;
+  try {
+    await api('rpc/save_forecasts', { method: 'POST', body: JSON.stringify({ day: tomorrowISO(), rows: [{ ingredient_id: id, staff: v }] }) });
+    data.guesses[id] = v; showToast('Estimate saved');
+  } catch { showToast('Could not save the estimate', true); }
+});
+// Tomorrow's expected crab use; what to buy is on the Running low list.
+function forecastHtml() {
+  const tomorrow = tomorrowDate();
+  const day = tomorrow.toLocaleDateString([], { weekday: 'long' });
+  const f = forecastBuy(data.orders, menuItems(), data.ingredients, tomorrow, 4, dayKey);
+  if (!f.days) return `${guessHtml(day)}<h2>${icon('calendar')}Tomorrow (${day}) · forecast${q('forecast')}</h2><p class="footnote" style="margin-top:0">Not enough ${day} history yet.</p>`;
+  const rows = f.ingredients.filter(i => i.batch_tracked);
+  return `${guessHtml(day)}<h2>${icon('calendar')}Tomorrow (${day}) · forecast${q('forecast')}</h2>
+    ${rows.length ? `<ul class="list shopping">${rows.map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">Have ${fmt(i.stock)} ${i.unit}</span></span>
+      <span class="buy-qty">Expect ~${fmt(i.need)} ${i.unit}</span></li>`).join('')}</ul>` : ''}`;
+}
 async function saveModelForecast() {
   const f = forecastBuy(data.orders, menuItems(), data.ingredients, tomorrowDate(), 4, dayKey);
   if (!f.ingredients.length) return;
@@ -1199,6 +1249,16 @@ sheet.addEventListener('click', e => { if (e.target === sheet) sheet.close(); })
 
 let role = null;
 let shownTab = null;
+const ink = document.querySelector('.tab-ink');
+function moveInk(slide) {
+  const a = document.querySelector('.segmented a[aria-current]');
+  if (!a) return;
+  ink.style.transition = slide && !reduceMotion() ? '' : 'none';
+  ink.style.width = `${a.offsetWidth}px`; ink.style.transform = `translateX(${a.offsetLeft}px)`;
+}
+// tab widths change once the font loads and when the window resizes
+document.fonts.ready.then(() => moveInk(false));
+addEventListener('resize', () => moveInk(false));
 function showTab() {
   // staff take orders and payments; the owner sees everything
   const allowed = role === 'owner' ? ['#dashboard', '#order', '#billing', '#history', '#inventory', '#portions', '#reports'] : ['#order', '#billing'];
@@ -1207,16 +1267,8 @@ function showTab() {
     for (const s of document.querySelectorAll('main > section')) s.hidden = s.id !== tab;
     for (const a of document.querySelectorAll('.segmented a')) a.toggleAttribute('aria-current', a.hash === `#${tab}`);
   };
-  // slide the way the tabs run in the bar; only main gets a name, so the header stays still
-  const order = [...document.querySelectorAll('.segmented a')].map(a => a.hash.slice(1)), from = order.indexOf(shownTab), to = order.indexOf(tab);
-  if (document.startViewTransition && !reduceMotion() && !document.hidden && from > -1 && from !== to) {
-    const main = document.querySelector('main');
-    document.documentElement.style.setProperty('--dir', to > from ? 1 : -1);
-    main.style.viewTransitionName = 'tab';
-    const vt = document.startViewTransition(apply);
-    vt.ready.catch(() => {}); // a skipped transition still switches the tab; nothing to report
-    vt.finished.finally(() => { main.style.viewTransitionName = ''; });
-  } else apply();
+  apply();
+  moveInk(shownTab !== null && shownTab !== tab);
   if (tab === 'reports' && shownTab !== 'reports') calFill = true;
   shownTab = tab;
   if (tab === 'reports' && role === 'owner') loadReport();
