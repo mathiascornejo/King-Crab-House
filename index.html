@@ -64,7 +64,7 @@
   /* meal detail sheet: bottom sheet on phones, centered card on wider screens */
   .sheet { border:0; padding:0; background:var(--bg); color:var(--label); width:min(520px, 100%); max-height:85vh; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
   .sheet::backdrop { background:rgba(0,0,0,.4); }
-  .sheet[open] { animation:rise .25s ease-out; }
+  .sheet[open] { animation:rise .38s ease-out; }
   @keyframes rise { from { transform:translateY(24px); opacity:0; } }
   .sheet-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px 4px; position:sticky; top:0; background:var(--bg); }
   .sheet-head h3 { margin:0; font-size:17px; font-weight:600; }
@@ -103,8 +103,8 @@
   .floor-label { fill:var(--label2); font:600 9px -apple-system, system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; }
   .door { stroke:var(--card); stroke-width:4; }
   .tbl { cursor:pointer; outline:none; }
-  .tbl .top { fill:var(--card); stroke:var(--sep); stroke-width:1.5; transition:fill .3s, stroke .3s; }
-  .tbl .chair { fill:var(--fill); transition:fill .3s; }
+  .tbl .top { fill:var(--card); stroke:var(--sep); stroke-width:1.5; transition:fill .45s, stroke .45s; }
+  .tbl .chair { fill:var(--fill); transition:fill .45s; }
   .tbl text { fill:var(--label); font:600 15px -apple-system, system-ui, sans-serif; text-anchor:middle; dominant-baseline:central; pointer-events:none; }
   .tbl:hover .top { stroke:var(--blue); }
   .tbl:focus-visible .top { stroke:var(--blue); stroke-width:3; }
@@ -125,7 +125,7 @@
   .history .what { flex:1; padding:12px 0; }
   .history .when { padding-top:14px; }
   .empty { text-align:center; color:var(--label2); padding:48px 16px; }
-  .toast { position:fixed; left:50%; top:20px; transform:translate(-50%, -150%); background:var(--card); color:var(--label); padding:12px 18px; border-radius:14px; box-shadow:0 8px 30px rgba(0,0,0,.18); font-size:15px; font-weight:500; transition:transform .3s, opacity .3s; z-index:3; max-width:calc(100% - 32px); opacity:0; pointer-events:none; }
+  .toast { position:fixed; left:50%; top:20px; transform:translate(-50%, -150%); background:var(--card); color:var(--label); padding:12px 18px; border-radius:14px; box-shadow:0 8px 30px rgba(0,0,0,.18); font-size:15px; font-weight:500; transition:transform .45s, opacity .45s; z-index:3; max-width:calc(100% - 32px); opacity:0; pointer-events:none; }
   .toast.show { transform:translate(-50%, 0); opacity:1; }
   .toast.err { color:var(--red); }
   /* portions tab + add forms */
@@ -139,7 +139,7 @@
   .recipe { background:var(--card); border-radius:10px; margin-bottom:10px; overflow:hidden; }
   .recipe summary { list-style:none; display:flex; align-items:center; gap:8px; min-height:52px; padding:0 16px; cursor:pointer; font-weight:600; }
   .recipe summary::-webkit-details-marker { display:none; }
-  .recipe summary::after { content:"›"; color:var(--label2); font-size:22px; font-weight:400; transition:transform .2s; }
+  .recipe summary::after { content:"›"; color:var(--label2); font-size:22px; font-weight:400; transition:transform .3s; }
   .recipe[open] summary::after { transform:rotate(90deg); }
   .recipe .sub { margin-left:auto; color:var(--label2); font-weight:400; font-size:15px; }
   .recipe .list { border-radius:0; border-top:.5px solid var(--sep); }
@@ -429,7 +429,7 @@
   .palette .hint { margin-left:auto; font-size:13px; color:var(--label2); }
 
   /* 15: swipe a bill left to pay, a stock row right to add stock (touch only) */
-  .bill, #stock .inv-row { touch-action:pan-y; transition:transform .2s; }
+  .bill, #stock .inv-row { touch-action:pan-y; transition:transform .3s; }
   .swiping { transition:none !important; }
   .bill.swiping::after, #stock .inv-row.swiping::after { content:attr(data-swipe-label); position:absolute; top:0; bottom:0; width:120px; display:grid; place-items:center; background:var(--blue-fill); color:var(--on-accent); font-weight:700; font-size:14px; }
   .bill { position:relative; } .bill.swiping::after { right:-128px; }
@@ -496,52 +496,59 @@
   .btn.quiet { background:none; color:var(--label); border:1.5px solid var(--label); margin-top:10px; }
   /* tick shown when an order or payment goes through */
   .done { border:0; flex-direction:column; align-items:center; gap:10px; padding:24px 28px; background:var(--label); color:var(--on-accent); font-weight:700; font-size:17px; pointer-events:none; }
-  .done:popover-open { display:flex; animation:pop .2s ease-out; }
+  .done:popover-open { display:flex; animation:pop .3s ease-out; }
   @keyframes pop { from { transform:scale(.9); opacity:0; } }
   .done svg { width:64px; height:64px; fill:none; stroke:var(--on-accent); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
   .done circle { stroke-dasharray:151; stroke-dashoffset:151; } .done path { stroke-dasharray:40; stroke-dashoffset:40; }
-  .done:popover-open circle { animation:draw .4s ease-out forwards; } .done:popover-open path { animation:draw .3s .3s ease-out forwards; }
+  .done:popover-open circle { animation:draw .6s ease-out forwards; } .done:popover-open path { animation:draw .45s .45s ease-out forwards; }
   @keyframes draw { to { stroke-dashoffset:0; } }
   @media (prefers-reduced-motion: reduce) { .done circle, .done path { stroke-dashoffset:0; } }
 
   /* 27: a dish tile grows into its sheet (View Transitions, where supported) */
-  ::view-transition-group(morph) { animation-duration:.28s; }
+  ::view-transition-group(morph) { animation-duration:.42s; }
 
   /* --- motion: all of it is off under reduced motion (the rule below, and reduceMotion() in the script) --- */
   /* Running low went up, or an order just reached Billing: one soft pulse */
-  .pulse { animation:pulse .6s ease-out; }
+  .pulse { animation:pulse .9s ease-out; }
   @keyframes pulse { 40% { transform:scale(1.15); } }
   /* new rows slide in from above */
-  .enter { animation:enter .3s cubic-bezier(.2,.8,.2,1); }
+  .enter { animation:enter .45s cubic-bezier(.2,.8,.2,1); }
   @keyframes enter { from { opacity:0; transform:translateY(-10px); } }
   /* tab change: the red underline slides to the new tab (one bar, moved under whichever tab is current) */
   .segmented { position:relative; }
-  .tab-ink { position:absolute; left:0; bottom:0; height:2px; width:0; background:var(--red); pointer-events:none; transition:transform .3s cubic-bezier(.2,.8,.2,1), width .3s cubic-bezier(.2,.8,.2,1); }
+  .tab-ink { position:absolute; left:0; bottom:0; height:2px; width:0; background:var(--red); pointer-events:none; transition:transform .45s cubic-bezier(.2,.8,.2,1), width .45s cubic-bezier(.2,.8,.2,1); }
   /* days of cover: squares fill left to right when Reports opens */
-  .cal.fill .cal-days i:is(.f, .p) { animation:fill-in .3s ease-out both; animation-delay:calc(var(--k) * 35ms); }
+  .cal.fill .cal-days i:is(.f, .p) { animation:fill-in .45s ease-out both; animation-delay:calc(var(--k) * 50ms); }
   @keyframes fill-in { from { clip-path:inset(0 100% 0 0); } }
   /* See more opens and closes smoothly (Chrome 131+; elsewhere it just snaps) */
   .more { interpolate-size:allow-keywords; }
-  .more::details-content { height:0; overflow:clip; transition:height .3s ease, content-visibility .3s allow-discrete; }
+  .more::details-content { height:0; overflow:clip; transition:height .45s ease, content-visibility .45s allow-discrete; }
   .more[open]::details-content { height:auto; }
   /* swipe: past the point of no return the row snaps to the end and turns green, so letting go will act */
   .swiping.armed { transition:transform .12s ease-out !important; }
   .bill.swiping.armed::after, #stock .inv-row.swiping.armed::after { background:var(--green); }
   /* Close the day: the result builds up a piece at a time (after the tick), then the difference pulses */
-  .closed-note.reveal > span { display:inline-block; animation:enter .3s both; animation-delay:calc(1s + var(--i) * .25s); }
-  .closed-note.reveal .diff { animation:diff .7s 2.1s; }
+  .closed-note.reveal > span { display:inline-block; animation:enter .45s both; animation-delay:calc(1s + var(--i) * .35s); }
+  .closed-note.reveal .diff { animation:diff 1s 2.5s; }
   @keyframes diff { 50% { background-color:color-mix(in srgb, currentColor 18%, transparent); } }
   /* can't add any more of this dish */
-  .shake { animation:shake .35s; }
+  .shake { animation:shake .5s; }
   @keyframes shake { 20%, 60% { transform:translateX(-4px); } 40%, 80% { transform:translateX(4px); } }
   /* fold a section: tap its title; the arrowhead points down when open, right when folded */
   main section h2:not([data-nofold]) { cursor:pointer; -webkit-user-select:none; user-select:none; }
   .fold { position:relative; width:28px; height:28px; margin-left:-6px; padding:0; border:0; background:none; color:var(--label2); display:grid; place-items:center; cursor:pointer; flex:none; }
   .fold::before { content:""; position:absolute; inset:-8px; }
-  .fold svg { width:20px; height:20px; transition:transform .2s ease; }
+  .fold svg { width:20px; height:20px; transition:transform .3s ease; }
   .fold[aria-expanded="false"] svg { transform:rotate(-90deg); }
   .fold:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
   .folded { display:none !important; }
+  /* a closed-by-default fold inside a pop-up (Recent purchases), same arrowhead */
+  .sheet-fold > summary { list-style:none; cursor:pointer; }
+  .sheet-fold > summary::-webkit-details-marker { display:none; }
+  .sheet-fold .fold { width:20px; height:20px; margin-left:2px; }
+  .sheet-fold .fold svg { width:16px; height:16px; }
+  .sheet-fold:not([open]) .fold svg { transform:rotate(-90deg); }
+  .sheet-fold > summary:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
   /* while a pop-up is open the page behind it stays still, and scrolling inside it doesn't spill over */
   html:has(dialog:modal) { overflow:hidden; }
   dialog, .sheet-body { overscroll-behavior:contain; }
@@ -562,7 +569,7 @@
     .recipe summary::after { margin-left:auto; }
     .recipe .sub { order:1; flex-basis:100%; margin-left:0; font-size:14px; }
     /* a dish's pop-up slides up from the bottom edge */
-    #sheet[open] { animation:sheet-up .32s cubic-bezier(.2,.8,.2,1); }
+    #sheet[open] { animation:sheet-up .48s cubic-bezier(.2,.8,.2,1); }
     /* a grab bar shows the pop-up can be dragged down to close */
     .sheet:not(.palette) .sheet-head { padding-top:20px; }
     .sheet:not(.palette) .sheet-head::before { content:""; position:absolute; top:7px; left:50%; width:40px; height:4px; margin-left:-20px; border-radius:2px; background:var(--sep); }
@@ -708,8 +715,8 @@
         <h2>Batches on hand · oldest first</h2>
         <ul class="list" id="batch-list"></ul>
       </div>
-      <h2>Recent purchases</h2>
-      <div class="breakdown"><ul class="history-list" id="buy-history"></ul></div>
+      <details class="sheet-fold" id="buy-recent"><summary><h2>Recent purchases<span class="fold" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></h2></summary>
+        <div class="breakdown"><ul class="history-list" id="buy-history"></ul></div></details>
     </div>
   </form>
 </dialog>
@@ -903,7 +910,7 @@ function play(el, cls) {
   el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
   el.addEventListener('animationend', function off(e) { if (e.target === el) { el.classList.remove(cls); el.removeEventListener('animationend', off); } });
 }
-// A number inside el's text counts from its old value to the new one over 600 ms, keeping the new text's format
+// A number inside el's text counts from its old value to the new one over 900 ms, keeping the new text's format
 // (decimals, thousands commas, ₱ and units). data-t holds the final text so the watcher never reads a half-way number.
 const NUM = /-?\d[\d,]*(?:\.\d+)?/;
 function countText(el, oldText) {
@@ -921,7 +928,7 @@ function countText(el, oldText) {
   const t0 = performance.now();
   const step = t => {
     if (!node.isConnected) return;
-    const k = Math.min(1, (t - t0) / 600);
+    const k = Math.min(1, (t - t0) / 900);
     node.data = head + show(from + (to - from) * (1 - (1 - k) ** 3)) + tail;
     if (k < 1) requestAnimationFrame(step);
   };
@@ -940,7 +947,7 @@ new MutationObserver(() => {
     if (old === undefined || old === v) continue;
     if (kind === 'count') countText(el, old);
     else if (kind === 'pulse') { if (parseFloat(v) > parseFloat(old)) play(el, 'pulse'); }
-    else if (kind === 'gauge') el.animate({ strokeDasharray: [`${old} 100`, `${v} 100`] }, { duration: 700, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    else if (kind === 'gauge') el.animate({ strokeDasharray: [`${old} 100`, `${v} 100`] }, { duration: 1050, easing: 'cubic-bezier(.2,.8,.2,1)' });
   }
   marks = now;
   setupFolds();
@@ -978,13 +985,13 @@ const settle = (a, ms) => Promise.race([a.finished, new Promise(r => setTimeout(
 // a row shrinks closed before it's removed
 const collapse = el => reduceMotion() || !el ? null : (el.style.overflow = 'hidden', settle(el.animate(
   [{ height: `${el.offsetHeight}px`, minHeight: '0px', opacity: 1 }, { height: '0px', minHeight: '0px', paddingTop: '0px', paddingBottom: '0px', opacity: 0 }],
-  { duration: 220, easing: 'ease-in', fill: 'forwards' }), 300));
+  { duration: 330, easing: 'ease-in', fill: 'forwards' }), 450));
 // a dialog shrinks away toward where its result now lives, which then pulses
 async function flyTo(el, target) {
   if (reduceMotion() || !target) return;
   const a = el.getBoundingClientRect(), b = target.getBoundingClientRect();
   await settle(el.animate([{ transform: 'none', opacity: 1 }, { transform: `translate(${b.x + b.width / 2 - a.x - a.width / 2}px, ${b.y + b.height / 2 - a.y - a.height / 2}px) scale(.08)`, opacity: .3 }],
-    { duration: 420, easing: 'cubic-bezier(.5,0,.8,.4)', fill: 'forwards' }), 500);
+    { duration: 630, easing: 'cubic-bezier(.5,0,.8,.4)', fill: 'forwards' }), 750);
   play(target, 'pulse');
 }
 // after signing in, the screen's blocks come in one after another
@@ -992,7 +999,7 @@ function stagger() {
   if (reduceMotion()) return;
   [...document.querySelectorAll('main > section:not([hidden]) :is(h2, .sentence, .stat, .tile, .btn.wide, .closed-note, .more, .bill, .floor, .list, .cal)')]
     .filter(el => !el.parentElement.closest('.bill, .more, .tile, .stat')).slice(0, 24)
-    .forEach((el, k) => el.animate({ opacity: [0, 1], transform: ['translateY(8px)', 'none'] }, { duration: 300, delay: k * 40, easing: 'ease-out', fill: 'backwards' }));
+    .forEach((el, k) => el.animate({ opacity: [0, 1], transform: ['translateY(8px)', 'none'] }, { duration: 450, delay: k * 60, easing: 'ease-out', fill: 'backwards' }));
 }
 let staggerNext = false, justClosed = false, calFill = false;
 // Donut on a circumference-100 circle, so each dash length is its percentage. parts: [{ label, value, color }]
@@ -1022,9 +1029,9 @@ const phone = () => matchMedia('(max-width:500px)').matches;
 function slideClose(d) {
   if (reduceMotion()) return d.close();
   const from = getComputedStyle(d).transform;
-  const a = d.animate({ transform: [from === 'none' ? 'none' : from, 'translateY(100%)'] }, { duration: 220, easing: 'ease-in', fill: 'forwards' });
+  const a = d.animate({ transform: [from === 'none' ? 'none' : from, 'translateY(100%)'] }, { duration: 330, easing: 'ease-in', fill: 'forwards' });
   d.style.transform = '';
-  settle(a, 300).then(() => { d.close(); a.cancel(); });
+  settle(a, 450).then(() => { d.close(); a.cancel(); });
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('.sheet:not(.palette) .sheet-head .cancel, #sheet-done');
@@ -1051,7 +1058,7 @@ for (const d of document.querySelectorAll('dialog.sheet:not(.palette)')) {
     if (y0 === null) return;
     y0 = null;
     if (dy > 110 || (dy > 40 && dy / (e.timeStamp - t0) > 0.5)) return slideClose(d); // far enough, or a quick flick
-    d.style.transition = 'transform .2s ease-out'; d.style.transform = '';
+    d.style.transition = 'transform .3s ease-out'; d.style.transform = '';
   });
   d.addEventListener('close', () => { d.style.transform = ''; d.style.transition = ''; });
 }
@@ -1162,14 +1169,14 @@ function renderProfit() {
     ${dishesHtml()}</details>`;
 }
 
-// Today's sales roll up from the last value shown (from 0 on first load) over 600 ms.
+// Today's sales roll up from the last value shown (from 0 on first load) over 900 ms.
 let shownSales = 0;
 function countUp(el, to) {
   const from = shownSales; shownSales = to;
   if (from === to || reduceMotion()) return;
   const t0 = performance.now();
   const step = t => {
-    const k = Math.min(1, (t - t0) / 600);
+    const k = Math.min(1, (t - t0) / 900);
     if (el.isConnected) el.textContent = peso(from + (to - from) * (1 - (1 - k) ** 3));
     if (k < 1) requestAnimationFrame(step);
   };
@@ -1417,12 +1424,14 @@ const blendedCost = (ing, qty, total) => (Math.max(Number(ing.stock), 0) * ing.c
 
 function openBuy(id) {
   invIng = data.ingredients.find(i => i.id === id);
+  document.getElementById('buy-recent').open = false; // starts closed every time
   const [perLabel, f] = per(invIng.unit);
   document.getElementById('buy-title').textContent = invIng.name;
   document.getElementById('buy-unit').textContent = invIng.unit;
   document.getElementById('buy-now').innerHTML = `In stock: <strong>${fmt(invIng.stock)} ${invIng.unit}</strong> · Average paid: ${peso(invIng.cost * f)}/${perLabel}`;
   buyForm.reset(); updateBuyPreview();
-  buy.showModal(); buyForm.qty.focus();
+  buy.showModal();
+  if (!phone()) buyForm.qty.focus(); // on a phone, focusing would pop the keyboard up over the pop-up
   loadPurchaseHistory(invIng);
   document.getElementById('batch-block').hidden = !invIng.batch_tracked;
   if (invIng.batch_tracked) loadBatches(invIng);
@@ -1671,7 +1680,7 @@ function done(msg) {
   if (doneEl.matches(':popover-open')) doneEl.hidePopover();
   doneEl.showPopover(); // top layer, so it shows over the receipt too
   navigator.vibrate?.(40);
-  clearTimeout(done.t); done.t = setTimeout(() => doneEl.hidePopover(), 1600);
+  clearTimeout(done.t); done.t = setTimeout(() => doneEl.hidePopover(), 2000);
 }
 // undo: optional function; adds an Undo button and keeps the toast up 5 s
 function showToast(msg, err, undo) {
@@ -2235,7 +2244,7 @@ async function startSession(session) {
   }
   userId = session.user.id; role = r;
   staggerNext = !loginEl.hidden; // just signed in here, not a remembered session
-  if (staggerNext && !reduceMotion()) { loginEl.animate({ opacity: [1, 0] }, { duration: 250, fill: 'forwards' }); setTimeout(() => { loginEl.hidden = true; loginEl.getAnimations().forEach(a => a.cancel()); }, 250); }
+  if (staggerNext && !reduceMotion()) { loginEl.animate({ opacity: [1, 0] }, { duration: 375, fill: 'forwards' }); setTimeout(() => { loginEl.hidden = true; loginEl.getAnimations().forEach(a => a.cancel()); }, 375); }
   else loginEl.hidden = true;
   document.getElementById('who').textContent = `${nameFromEmail(session.user.email)} · ${role === 'owner' ? 'Owner' : 'Staff'}`;
   status.hidden = role !== 'owner'; // staff don't need the "Updated 10:32" sync line
@@ -2551,8 +2560,8 @@ function renderPalette() {
   // results that stay slide up into place; new ones fade in
   if (!reduceMotion()) for (const li of palList.children) {
     const was = before.get(li.textContent), top = li.getBoundingClientRect().top;
-    if (was === undefined) li.animate({ opacity: [0, 1] }, 180);
-    else if (was !== top) li.animate({ transform: [`translateY(${was - top}px)`, 'none'] }, { duration: 200, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    if (was === undefined) li.animate({ opacity: [0, 1] }, 270);
+    else if (was !== top) li.animate({ transform: [`translateY(${was - top}px)`, 'none'] }, { duration: 300, easing: 'cubic-bezier(.2,.8,.2,1)' });
   }
 }
 function openPalette() {
