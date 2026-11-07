@@ -517,7 +517,7 @@
   <symbol id="i-portions" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 11h16v1a8 8 0 0 1-16 0zM2 11h20M9 7c0-2 2-2 2-4M14 7c0-2 2-2 2-4"/></symbol>
   <symbol id="i-reports" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 20V4M4 20h16M9 16v-5M13 16V8M17 16v-3"/></symbol>
   <symbol id="i-crab" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="14" rx="6" ry="4"/><path d="M6 13L3 9l2-3M18 13l3-4-2-3M8 17l-2 3M16 17l2 3"/></g></symbol>
-  <symbol id="i-platters" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 11h18c-1 6-4 9-9 9s-8-3-9-9zM7 11c1-3 3-5 5-5s4 2 5 5"/></symbol>
+  <symbol id="i-platters" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 12h18a9 8 0 0 1-18 0zM9 4c-1 1.5 1 2.5 0 4M15 4c-1 1.5 1 2.5 0 4"/></symbol>
   <symbol id="i-drinks" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 5h10l-2 16H9zM13 5l2-4M8 10h8"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></g></symbol>
   <symbol id="i-cash" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12"/><circle cx="12" cy="12" r="3"/></g></symbol>
@@ -533,6 +533,7 @@
   <symbol id="i-bottle" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 2h4v4l2 3v12H8V9l2-3zM8 13h8"/></symbol>
   <symbol id="i-jar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 8h10v12a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1zM6 4h12v4H6zM10 13h4"/></symbol>
   <symbol id="i-calendar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v14H4zM4 10h16M8 3v5M16 3v5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM9 8h6M9 12h6M9 16h4"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></symbol>
 </svg>
 <header class="bar">
@@ -578,7 +579,7 @@
   </section>
 
   <section id="portions" hidden>
-    <h2><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg>New menu item</h2>
+    <h2><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg>New menu item</h2>
     <form class="form" id="new-item">
       <input class="field grow" name="name" type="text" maxlength="80" required placeholder="Menu item name" aria-label="Menu item name">
       <select class="field" name="category" aria-label="Category"><option value="crab">Crab</option><option value="platters">Platters</option><option value="drinks">Drinks</option></select>
@@ -765,7 +766,6 @@
 <div popover="manual" class="done" id="done" role="status"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-16"/></svg><span></span></div>
 <div popover class="help" id="help-profit"><strong>Money left after ingredients</strong>What you sold, minus what the ingredients in those dishes cost. Rent, wages and other bills aren't taken out yet.</div>
 <div popover class="help" id="help-service"><strong>Service charge</strong>An extra 10% added to every bill, on top of the menu prices.</div>
-<div popover class="help" id="help-forecast"><strong>Forecast</strong>A guess at what tomorrow needs, from the same day of the week in the last few weeks. Recent weeks count more.</div>
 <div popover class="help" id="help-cover"><strong>Days of cover</strong>Each square is a day from tomorrow, filled while the stock lasts at the usual pace. If a row ends on an underlined day, order now: deliveries take about 2 days.</div>
 <div popover class="help" id="help-breakeven"><strong>Break-even sales</strong>How much you need to sell this month to pay for all the month's expenses and stock losses. Anything above it is profit.</div>
 <div popover class="help" id="help-avgprice"><strong>Average price paid</strong>What you've paid per kg, litre or piece, averaged over the stock you have now. Old and new deliveries are mixed.</div>
@@ -866,18 +866,16 @@ async function load() {
     for (const i of ingredients) i.cost = Number(i.ingredient_costs?.cost ?? 0);
     for (const o of orders) for (const it of o.order_items) it.unit_cost = o.order_item_costs?.find(c => c.recipe_id === it.recipe_id)?.unit_cost ?? null;
     // owner-only: today's bills, payments and closing for the Dashboard takings panel
-    let takings = { bills: [], payments: [], closing: null }, guesses = {};
+    let takings = { bills: [], payments: [], closing: null };
     if (role === 'owner') {
       const start = new Date(); start.setHours(0, 0, 0, 0);
       const t = start.toISOString(), today = start.toLocaleDateString('en-CA'); // YYYY-MM-DD, local
-      const [bills, payments, closing, saved] = await Promise.all([
+      const [bills, payments, closing] = await Promise.all([
         api(`bills?select=*&closed_at=gte.${t}`), api(`payments?select=*&created_at=gte.${t}`), api(`day_closings?select=*&day=eq.${today}`),
-        api(`forecasts?select=ingredient_id,staff&day=eq.${tomorrowISO()}`).catch(() => []),
       ]);
       takings = { bills, payments, closing: closing[0] || null };
-      for (const s of saved) if (s.staff !== null) guesses[s.ingredient_id] = Number(s.staff);
     }
-    data = { recipes, items, ingredients, orders, takings, guesses };
+    data = { recipes, items, ingredients, orders, takings };
     renderStock(); renderMeals(); renderOrder(); renderHistory(); renderRecipes(); renderBills(); renderProfit(); drawFloor();
     if (role === 'owner') { loadStockHistory(); saveModelForecast(); renderReportData(); }
     status.textContent = `Updated ${new Date().toLocaleTimeString()}`;
@@ -945,15 +943,14 @@ function renderProfit() {
   // below the crab/platters/drinks tiles
   document.getElementById('profit-more').innerHTML = `
     ${lowStockHtml()}
-    <details class="more"><summary>See more · takings, last 7 days, best dishes, tomorrow</summary>
+    <details class="more"><summary>See more · takings, last 7 days, best dishes</summary>
     ${takingsHtml()}
     ${recent.length ? `<h2>${icon('reports')}Last 7 days</h2>
     <div class="detail"><table>
       <thead><tr><th>Day</th><th>Sales</th><th>Cost</th><th>Gross profit</th></tr></thead>
       <tbody>${recent.map(d => `<tr><td>${dayLabel(d.day)}</td><td>${peso(d.sales)}</td><td>${peso(d.cost)}</td><td class="makes ${cls(d.profit)}">${peso(d.profit)}</td></tr>`).join('')}</tbody>
     </table></div>` : ''}
-    ${dishesHtml()}
-    ${forecastHtml()}</details>`;
+    ${dishesHtml()}</details>`;
 }
 
 // Today's sales roll up from the last value shown (from 0 on first load) over 600 ms.
@@ -994,13 +991,6 @@ function lowStockHtml() {
 }
 const tomorrowDate = () => { const d = new Date(); d.setDate(d.getDate() + 1); return d; };
 const tomorrowISO = () => tomorrowDate().toLocaleDateString('en-CA');
-// The manager's own guess for tomorrow, compared later with the model in Reports (forecast vs guesswork).
-function guessHtml(day) {
-  const tracked = data.ingredients.filter(i => i.batch_tracked);
-  return tracked.length ? `<h2>${icon('calendar')}Tomorrow (${day}) · your estimate</h2><ul class="list">${tracked.map(i => `<li><label for="guess-${i.id}">${esc(i.name)} you expect to use</label>
-    <span class="editor"><input id="guess-${i.id}" data-guess="${i.id}" type="number" min="0" step="any" inputmode="decimal" placeholder="—" value="${data.guesses?.[i.id] ?? ''}">
-    <span class="unit">${i.unit}</span></span></li>`).join('')}</ul>` : '';
-}
 // Save tomorrow's model forecast so Reports can measure its error; same numbers every load, so saving again is harmless.
 async function saveModelForecast() {
   const f = forecastBuy(data.orders, menuItems(), data.ingredients, tomorrowDate(), 4, dayKey);
@@ -1008,26 +998,6 @@ async function saveModelForecast() {
   try {
     await api('rpc/save_forecasts', { method: 'POST', body: JSON.stringify({ day: tomorrowISO(), rows: f.ingredients.map(i => ({ ingredient_id: i.id, model: fmt(i.need) })) }) });
   } catch (e) { console.error('Could not save forecast', e); }
-}
-document.getElementById('profit-more').addEventListener('change', async e => {
-  const id = e.target.dataset.guess; if (!id) return;
-  const v = e.target.value === '' ? null : Number(e.target.value);
-  if (v === null || !(v >= 0)) return;
-  try {
-    await api('rpc/save_forecasts', { method: 'POST', body: JSON.stringify({ day: tomorrowISO(), rows: [{ ingredient_id: id, staff: v }] }) });
-    data.guesses[id] = v; showToast('Estimate saved');
-  } catch { showToast('Could not save the estimate', true); }
-});
-// Tomorrow's expected crab use; what to buy is on the Running low list.
-function forecastHtml() {
-  const tomorrow = tomorrowDate();
-  const day = tomorrow.toLocaleDateString([], { weekday: 'long' });
-  const f = forecastBuy(data.orders, menuItems(), data.ingredients, tomorrow, 4, dayKey);
-  if (!f.days) return `${guessHtml(day)}<h2>${icon('calendar')}Tomorrow (${day}) · forecast${q('forecast')}</h2><p class="footnote" style="margin-top:0">Not enough ${day} history yet.</p>`;
-  const rows = f.ingredients.filter(i => i.batch_tracked);
-  return `${guessHtml(day)}<h2>${icon('calendar')}Tomorrow (${day}) · forecast${q('forecast')}</h2>
-    ${rows.length ? `<ul class="list shopping">${rows.map(i => `<li><span>${esc(i.name)}<span class="line-sub" style="display:block">Have ${fmt(i.stock)} ${i.unit}</span></span>
-      <span class="buy-qty">Expect ~${fmt(i.need)} ${i.unit}</span></li>`).join('')}</ul>` : ''}`;
 }
 function dishesHtml() {
   const stats = dishStats(data.orders, data.recipes, data.items, data.ingredients);
