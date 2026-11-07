@@ -533,6 +533,14 @@
   /* can't add any more of this dish */
   .shake { animation:shake .35s; }
   @keyframes shake { 20%, 60% { transform:translateX(-4px); } 40%, 80% { transform:translateX(4px); } }
+  /* fold a section: tap its title; the arrowhead points down when open, right when folded */
+  main section h2 { cursor:pointer; -webkit-user-select:none; user-select:none; }
+  .fold { position:relative; width:28px; height:28px; margin-left:-6px; padding:0; border:0; background:none; color:var(--label2); display:grid; place-items:center; cursor:pointer; flex:none; }
+  .fold::before { content:""; position:absolute; inset:-8px; }
+  .fold svg { width:20px; height:20px; transition:transform .2s ease; }
+  .fold[aria-expanded="false"] svg { transform:rotate(-90deg); }
+  .fold:focus-visible { outline:2px solid var(--blue); outline-offset:2px; }
+  .folded { display:none !important; }
   /* phone: keep the desktop layout, just narrower */
   .floor-legend span:first-child { flex:none; }
   @media (max-width:500px) {
@@ -923,7 +931,36 @@ new MutationObserver(() => {
     else if (kind === 'gauge') el.animate({ strokeDasharray: [`${old} 100`, `${v} 100`] }, { duration: 700, easing: 'cubic-bezier(.2,.8,.2,1)' });
   }
   marks = now;
+  setupFolds();
 }).observe(document.querySelector('main'), { childList: true, subtree: true });
+// Folding: a section title hides what follows it, up to the next title (or a block holding titles of its own).
+// Remembered on this device by tab + title, so a folded section stays folded after reloads and redraws.
+const folded = new Set(JSON.parse(localStorage.getItem('folded') || '[]'));
+const foldKey = h => `${h.closest('section')?.id}:${(h.querySelector('.ic')?.nextSibling || h).textContent.replace(/\(.*?\)/g, '').replace(/[\d₱,.]+/g, '').replace(/\s+/g, ' ').trim()}`;
+function setupFolds() {
+  for (const h of document.querySelectorAll('main section h2')) {
+    let b = h.querySelector('.fold');
+    if (!b) {
+      b = document.createElement('button');
+      b.type = 'button'; b.className = 'fold';
+      b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      const after = h.querySelector('.ic')?.nextSibling;
+      after ? after.after(b) : h.append(b);
+    }
+    const shut = folded.has(foldKey(h)), name = (h.querySelector('.ic')?.nextSibling || h).textContent.trim();
+    if (b.getAttribute('aria-expanded') !== String(!shut)) { b.setAttribute('aria-expanded', !shut); b.setAttribute('aria-label', `${shut ? 'Show' : 'Hide'} ${name}`); }
+    for (let el = h.nextElementSibling; el && el.tagName !== 'H2' && !el.querySelector('h2'); el = el.nextElementSibling) el.classList.toggle('folded', shut);
+  }
+}
+document.querySelector('main').addEventListener('click', e => {
+  const h = e.target.closest('main section h2');
+  if (!h || e.target.closest('.q, a, input, select')) return;
+  const k = foldKey(h);
+  folded.has(k) ? folded.delete(k) : folded.add(k);
+  localStorage.setItem('folded', JSON.stringify([...folded]));
+  setupFolds();
+});
+setupFolds();
 // wait for an animation, but never longer than ms (a background tab pauses animations, and nothing must hang on them)
 const settle = (a, ms) => Promise.race([a.finished, new Promise(r => setTimeout(r, ms))]);
 // a row shrinks closed before it's removed
