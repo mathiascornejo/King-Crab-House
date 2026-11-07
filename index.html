@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>King Crab House Stock</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap">
 <style>
@@ -101,8 +102,8 @@
   .floor-label { fill:var(--label2); font:600 9px -apple-system, system-ui, sans-serif; letter-spacing:.08em; text-transform:uppercase; }
   .door { stroke:var(--card); stroke-width:4; }
   .tbl { cursor:pointer; outline:none; }
-  .tbl .top { fill:var(--card); stroke:var(--sep); stroke-width:1.5; transition:fill .15s, stroke .15s; }
-  .tbl .chair { fill:var(--fill); transition:fill .15s; }
+  .tbl .top { fill:var(--card); stroke:var(--sep); stroke-width:1.5; transition:fill .3s, stroke .3s; }
+  .tbl .chair { fill:var(--fill); transition:fill .3s; }
   .tbl text { fill:var(--label); font:600 15px -apple-system, system-ui, sans-serif; text-anchor:middle; dominant-baseline:central; pointer-events:none; }
   .tbl:hover .top { stroke:var(--blue); }
   .tbl:focus-visible .top { stroke:var(--blue); stroke-width:3; }
@@ -504,7 +505,40 @@
 
   /* 27: a dish tile grows into its sheet (View Transitions, where supported) */
   ::view-transition-group(morph) { animation-duration:.28s; }
-  @media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } }
+
+  /* --- motion: all of it is off under reduced motion (the rule below, and reduceMotion() in the script) --- */
+  /* a number that just changed glows gold, then fades back */
+  .flash { animation:flash 1.2s ease-out; }
+  @keyframes flash { from { background-color:color-mix(in srgb, var(--orange) 40%, transparent); } }
+  /* Running low went up, or an order just reached Billing: one soft pulse */
+  .pulse { animation:pulse .6s ease-out; }
+  @keyframes pulse { 40% { transform:scale(1.15); } }
+  /* new rows slide in from above */
+  .enter { animation:enter .3s cubic-bezier(.2,.8,.2,1); }
+  @keyframes enter { from { opacity:0; transform:translateY(-10px); } }
+  /* tab change: the page slides the way the tabs run (--dir is 1 going right, -1 going left) */
+  ::view-transition-old(tab) { animation:tab-out .2s ease-in both; }
+  ::view-transition-new(tab) { animation:tab-in .26s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes tab-out { to { opacity:0; transform:translateX(calc(var(--dir, 1) * -40px)); } }
+  @keyframes tab-in { from { opacity:0; transform:translateX(calc(var(--dir, 1) * 40px)); } }
+  /* days of cover: squares fill left to right when Reports opens */
+  .cal.fill .cal-days i:is(.f, .p) { animation:fill-in .3s ease-out both; animation-delay:calc(var(--k) * 35ms); }
+  @keyframes fill-in { from { clip-path:inset(0 100% 0 0); } }
+  /* See more opens and closes smoothly (Chrome 131+; elsewhere it just snaps) */
+  .more { interpolate-size:allow-keywords; }
+  .more::details-content { height:0; overflow:clip; transition:height .3s ease, content-visibility .3s allow-discrete; }
+  .more[open]::details-content { height:auto; }
+  /* swipe: past the point of no return the row snaps to the end and turns green, so letting go will act */
+  .swiping.armed { transition:transform .12s ease-out !important; }
+  .bill.swiping.armed::after, #stock .inv-row.swiping.armed::after { background:var(--green); }
+  /* Close the day: the result builds up a piece at a time (after the tick), then the difference pulses */
+  .closed-note.reveal > span { display:inline-block; animation:enter .3s both; animation-delay:calc(1s + var(--i) * .25s); }
+  .closed-note.reveal .diff { animation:diff .7s 2.1s; }
+  @keyframes diff { 50% { background-color:color-mix(in srgb, currentColor 18%, transparent); } }
+  /* can't add any more of this dish */
+  .shake { animation:shake .35s; }
+  @keyframes shake { 20%, 60% { transform:translateX(-4px); } 40%, 80% { transform:translateX(4px); } }
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } .more::details-content { transition:none; } }
 </style>
 </head>
 <body>
@@ -830,6 +864,51 @@ for (const h of document.querySelectorAll('.help')) h.addEventListener('toggle',
 // a note stays put while the page moves, so close it on scroll
 addEventListener('scroll', () => { for (const h of document.querySelectorAll('.help:popover-open')) h.hidePopover(); }, { passive: true });
 const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+// replay a CSS animation class on an element
+function play(el, cls) {
+  if (!el || reduceMotion()) return;
+  el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
+  el.addEventListener('animationend', function off(e) { if (e.target === el) { el.classList.remove(cls); el.removeEventListener('animationend', off); } });
+}
+// Screens are redrawn wholesale, so after each redraw compare tagged elements (data-k = stable key) with the last ones:
+// a changed number flashes gold; data-anim="pulse" pulses when the number rises; "gauge" sweeps from the old level
+// (data-v); "enter" slides in a row that wasn't there before. Nothing animates on the first fill.
+let marks = new Map();
+new MutationObserver(() => {
+  const now = new Map();
+  for (const el of document.querySelectorAll('main [data-k]')) now.set(el.dataset.k, el.dataset.v ?? el.textContent);
+  if (marks.size && !reduceMotion()) for (const el of document.querySelectorAll('main [data-k]')) {
+    const k = el.dataset.k, v = now.get(k), old = marks.get(k), kind = el.dataset.anim || 'flash';
+    if (kind === 'enter') { if (old === undefined) play(el, 'enter'); continue; }
+    if (old === undefined || old === v) continue;
+    if (kind === 'flash') play(el, 'flash');
+    else if (kind === 'pulse') { if (parseFloat(v) > parseFloat(old)) play(el, 'pulse'); }
+    else if (kind === 'gauge') el.animate({ strokeDasharray: [`${old} 100`, `${v} 100`] }, { duration: 700, easing: 'cubic-bezier(.2,.8,.2,1)' });
+  }
+  marks = now;
+}).observe(document.querySelector('main'), { childList: true, subtree: true });
+// wait for an animation, but never longer than ms (a background tab pauses animations, and nothing must hang on them)
+const settle = (a, ms) => Promise.race([a.finished, new Promise(r => setTimeout(r, ms))]);
+// a row shrinks closed before it's removed
+const collapse = el => reduceMotion() || !el ? null : (el.style.overflow = 'hidden', settle(el.animate(
+  [{ height: `${el.offsetHeight}px`, minHeight: '0px', opacity: 1 }, { height: '0px', minHeight: '0px', paddingTop: '0px', paddingBottom: '0px', opacity: 0 }],
+  { duration: 220, easing: 'ease-in', fill: 'forwards' }), 300));
+// a dialog shrinks away toward where its result now lives, which then pulses
+async function flyTo(el, target) {
+  if (reduceMotion() || !target) return;
+  const a = el.getBoundingClientRect(), b = target.getBoundingClientRect();
+  await settle(el.animate([{ transform: 'none', opacity: 1 }, { transform: `translate(${b.x + b.width / 2 - a.x - a.width / 2}px, ${b.y + b.height / 2 - a.y - a.height / 2}px) scale(.08)`, opacity: .3 }],
+    { duration: 420, easing: 'cubic-bezier(.5,0,.8,.4)', fill: 'forwards' }), 500);
+  play(target, 'pulse');
+}
+// after signing in, the screen's blocks come in one after another
+function stagger() {
+  if (reduceMotion()) return;
+  [...document.querySelectorAll('main > section:not([hidden]) :is(h2, .sentence, .stat, .tile, .btn.wide, .closed-note, .more, .bill, .floor, .list, .cal)')]
+    .filter(el => !el.parentElement.closest('.bill, .more, .tile, .stat')).slice(0, 24)
+    .forEach((el, k) => el.animate({ opacity: [0, 1], transform: ['translateY(8px)', 'none'] }, { duration: 300, delay: k * 40, easing: 'ease-out', fill: 'backwards' }));
+}
+let staggerNext = false, justClosed = false, calFill = false;
 // Donut on a circumference-100 circle, so each dash length is its percentage. parts: [{ label, value, color }]
 const DONUT_COLORS = ['var(--red)', 'var(--label)', 'var(--orange)', 'var(--label2)', 'var(--sep)'];
 function donut(parts, big, small, label) {
@@ -879,6 +958,7 @@ async function load() {
     renderStock(); renderMeals(); renderOrder(); renderHistory(); renderRecipes(); renderBills(); renderProfit(); drawFloor();
     if (role === 'owner') { loadStockHistory(); saveModelForecast(); renderReportData(); }
     status.textContent = `Updated ${new Date().toLocaleTimeString()}`;
+    if (staggerNext) { staggerNext = false; stagger(); }
   } catch (e) { status.hidden = false; status.textContent = 'No connection. Check the Wi-Fi, then reload the page.'; console.error(e); }
 }
 
@@ -934,12 +1014,13 @@ function renderProfit() {
     <p class="sentence">${todaySentence(today)}</p>
     <div class="stats">
       <div class="stat hero"><span class="stat-label">Sales</span><span class="stat-val" id="sales-now">${peso(today.sales)}</span><span class="stat-sub">${today.orders} ${today.orders === 1 ? 'order' : 'orders'}</span></div>
-      <div class="stat"><span class="stat-label">Money left after ingredients${q('profit')}</span><span class="stat-val ${cls(today.profit)}">${peso(today.profit)}</span><span class="stat-sub">${today.sales ? `keeps ${Math.round(today.profit / today.sales * 100)}% of sales` : '—'}</span></div>
-      <div class="stat"><span class="stat-label">Running low</span><span class="stat-val ${low ? 'loss' : ''}">${low} ${low === 1 ? 'item' : 'items'}</span><span class="stat-sub">${low ? 'see the list below' : 'nothing to buy'}</span></div>
+      <div class="stat"><span class="stat-label">Money left after ingredients${q('profit')}</span><span class="stat-val ${cls(today.profit)}" data-k="profit">${peso(today.profit)}</span><span class="stat-sub">${today.sales ? `keeps ${Math.round(today.profit / today.sales * 100)}% of sales` : '—'}</span></div>
+      <div class="stat"><span class="stat-label">Running low</span><span class="stat-val ${low ? 'loss' : ''}" data-k="low" data-anim="pulse" data-v="${low}">${low} ${low === 1 ? 'item' : 'items'}</span><span class="stat-sub">${low ? 'see the list below' : 'nothing to buy'}</span></div>
     </div>
-    ${c ? `<p class="closed-note">Closed at ${new Date(c.created_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}: counted ${peso(c.counted_cash)} vs expected ${peso(c.expected_cash)} — ${Number(c.difference) === 0 ? 'balanced' : `<span class="${c.difference < 0 ? 'loss' : 'gain'}">${c.difference < 0 ? 'short' : 'over'} ${peso(Math.abs(c.difference))}</span>`}.</p>` : ''}
+    ${c ? `<p class="closed-note${justClosed ? ' reveal' : ''}"><span style="--i:0">Closed at ${new Date(c.created_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}:</span> <span style="--i:1">counted ${peso(c.counted_cash)}</span> <span style="--i:2">vs expected ${peso(c.expected_cash)}</span> <span style="--i:3">— <span class="diff ${Number(c.difference) === 0 ? 'gain' : c.difference < 0 ? 'loss' : 'gain'}">${Number(c.difference) === 0 ? 'balanced' : `${c.difference < 0 ? 'short' : 'over'} ${peso(Math.abs(c.difference))}`}</span>.</span></p>` : ''}
     <button type="button" class="btn wide" id="open-close-day">${icon('cash')}${c ? 'Close the day again' : 'Close the day'}</button>`;
   countUp(document.getElementById('sales-now'), today.sales);
+  justClosed = false;
   // below the crab/platters/drinks tiles
   document.getElementById('profit-more').innerHTML = `
     ${lowStockHtml()}
@@ -1067,7 +1148,7 @@ closeForm.addEventListener('submit', async e => {
   if (closeForm.counted.value === '' || !(counted >= 0)) return showToast('Enter the cash counted', true);
   try {
     const r = await api('rpc/close_day', { method: 'POST', body: JSON.stringify({ counted_cash: counted }) });
-    closeDlg.close();
+    closeDlg.close(); justClosed = true;
     done(Number(r.difference) === 0 ? 'Day closed · cash balanced' : `Day closed · ${r.difference < 0 ? 'short' : 'over'} ${peso(Math.abs(r.difference))}`);
     await load();
   } catch { showToast('Could not close the day', true); }
@@ -1117,12 +1198,27 @@ async function setSoldOut(r, on) {
 sheet.addEventListener('click', e => { if (e.target === sheet) sheet.close(); }); // tap outside to close
 
 let role = null;
+let shownTab = null;
 function showTab() {
   // staff take orders and payments; the owner sees everything
   const allowed = role === 'owner' ? ['#dashboard', '#order', '#billing', '#history', '#inventory', '#portions', '#reports'] : ['#order', '#billing'];
   const tab = allowed.includes(location.hash) ? location.hash.slice(1) : allowed[0].slice(1);
-  for (const s of document.querySelectorAll('main > section')) s.hidden = s.id !== tab;
-  for (const a of document.querySelectorAll('.segmented a')) a.toggleAttribute('aria-current', a.hash === `#${tab}`);
+  const apply = () => {
+    for (const s of document.querySelectorAll('main > section')) s.hidden = s.id !== tab;
+    for (const a of document.querySelectorAll('.segmented a')) a.toggleAttribute('aria-current', a.hash === `#${tab}`);
+  };
+  // slide the way the tabs run in the bar; only main gets a name, so the header stays still
+  const order = [...document.querySelectorAll('.segmented a')].map(a => a.hash.slice(1)), from = order.indexOf(shownTab), to = order.indexOf(tab);
+  if (document.startViewTransition && !reduceMotion() && !document.hidden && from > -1 && from !== to) {
+    const main = document.querySelector('main');
+    document.documentElement.style.setProperty('--dir', to > from ? 1 : -1);
+    main.style.viewTransitionName = 'tab';
+    const vt = document.startViewTransition(apply);
+    vt.ready.catch(() => {}); // a skipped transition still switches the tab; nothing to report
+    vt.finished.finally(() => { main.style.viewTransitionName = ''; });
+  } else apply();
+  if (tab === 'reports' && shownTab !== 'reports') calFill = true;
+  shownTab = tab;
   if (tab === 'reports' && role === 'owner') loadReport();
 }
 addEventListener('hashchange', showTab);
@@ -1132,7 +1228,7 @@ showTab();
 function gauge(i, c) {
   const frac = c ? Math.min(1, c.cover / restockDays(i)) : 0;
   return `<svg class="gauge${c?.reorder ? ' low' : ''}" viewBox="0 0 32 32" role="img" aria-label="${c ? `About ${c.cover >= 60 ? '60+' : fmt(c.cover)} days of cover` : 'Not used yet'}">
-    <circle class="track" cx="16" cy="16" r="12"/><circle class="arc" cx="16" cy="16" r="12" pathLength="100" stroke-dasharray="${frac * 100} 100" transform="rotate(-90 16 16)"/></svg>`;
+    <circle class="track" cx="16" cy="16" r="12"/><circle class="arc" cx="16" cy="16" r="12" pathLength="100" stroke-dasharray="${frac * 100} 100" transform="rotate(-90 16 16)" data-k="gauge:${i.id}" data-anim="gauge" data-v="${(frac * 100).toFixed(1)}"/></svg>`;
 }
 // A picture for each ingredient, guessed from its id and name; new ingredients fall back by unit.
 const ING_ICONS = [[/crab/, 'crab'], [/shrimp|hebi|prawn/, 'shrimp'], [/egg/, 'egg'], [/chicken_leg|pork|chorizo|beef|meat/, 'meat'],
@@ -1145,7 +1241,7 @@ function renderStock() {
     const [perLabel, f] = per(i.unit);
     return `<li class="inv-row" data-id="${i.id}" data-swipe-label="Add stock">${gauge(i, cover[i.id])}
       <span class="inv-name">${icon(ingIcon(i))}${esc(i.name)}</span>
-      <span class="inv-meta"><span class="stock">${fmt(i.stock)} ${i.unit}${cover[i.id]?.reorder ? '<span class="low-tag">Low</span>' : ''}</span>
+      <span class="inv-meta"><span class="stock" data-k="stock:${i.id}">${fmt(i.stock)} ${i.unit}${cover[i.id]?.reorder ? '<span class="low-tag">Low</span>' : ''}</span>
         <span class="cost">${peso(Number(i.cost || 0) * f)}/${perLabel}</span></span>
       <button type="button" class="inv-btn add" data-act="buy" aria-haspopup="dialog" aria-label="Add stock of ${esc(i.name)}">+</button>
       <button type="button" class="inv-btn edit" data-act="edit" aria-haspopup="dialog" aria-label="Edit count and price of ${esc(i.name)}"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg></button></li>`;
@@ -1364,15 +1460,28 @@ function drawFloor() {
   // tables with an open bill are tinted, with minutes since their first order
   const open = data ? Object.fromEntries(openBills(data.orders, data.recipes).map(b => [b.table_no, b])) : {};
   const mins = n => Math.max(0, Math.round((Date.now() - new Date(open[n].since)) / 60000));
-  const t = ({ n, x, y, round }) => `<g class="tbl${open[n] ? ' busy' : ''}" role="radio" tabindex="${(table ?? 1) === n ? 0 : -1}" aria-checked="${table === n}" aria-label="Table ${n}${open[n] ? `, open bill, ${mins(n)} minutes` : ', free'}" data-n="${n}">
+  const attrs = n => ({ class: `tbl${open[n] ? ' busy' : ''}`, tabindex: (table ?? 1) === n ? 0 : -1, 'aria-checked': table === n, 'aria-label': `Table ${n}${open[n] ? `, open bill, ${mins(n)} minutes` : ', free'}` });
+  const ring = ({ n, x, y }) => open[n] ? `<circle class="ring${mins(n) >= 60 ? ' late' : ''}" cx="${x}" cy="${y}" r="46" pathLength="100" stroke-dasharray="${Math.min(mins(n), 90) / 90 * 100} 100" transform="rotate(-90 ${x} ${y})"/>` : '';
+  const label = ({ n, x, y }) => `<text x="${x}" y="${open[n] ? y - 5 : y}">${n}</text>${open[n] ? `<text class="mins" x="${x}" y="${y + 10}">${mins(n)}m</text>` : ''}`;
+  // after the first draw, change the tables in place: rebuilding would snap their colour instead of fading it
+  const svg = document.querySelector('#floor svg');
+  if (svg) {
+    for (const tb of TABLES) {
+      const g = svg.querySelector(`.tbl[data-n="${tb.n}"]`);
+      for (const [a, v] of Object.entries(attrs(tb.n))) g.setAttribute(a, v);
+      g.querySelector('.ring-slot').innerHTML = ring(tb); g.querySelector('.label-slot').innerHTML = label(tb);
+    }
+    return;
+  }
+  const t = ({ n, x, y, round }) => `<g ${Object.entries(attrs(n)).map(([a, v]) => `${a}="${v}"`).join(' ')} role="radio" data-n="${n}">
     <rect x="${x - 40}" y="${y - 41}" width="80" height="82" fill="transparent"/>
-    ${open[n] ? `<circle class="ring${mins(n) >= 60 ? ' late' : ''}" cx="${x}" cy="${y}" r="46" pathLength="100" stroke-dasharray="${Math.min(mins(n), 90) / 90 * 100} 100" transform="rotate(-90 ${x} ${y})"/>` : ''}
+    <g class="ring-slot">${ring({ n, x, y })}</g>
     ${round
       ? `<circle class="chair" cx="${x}" cy="${y - 30}" r="8"/><circle class="chair" cx="${x}" cy="${y + 30}" r="8"/><circle class="top" cx="${x}" cy="${y}" r="21"/>`
       : `<circle class="chair" cx="${x - 14}" cy="${y - 30}" r="8"/><circle class="chair" cx="${x + 14}" cy="${y - 30}" r="8"/>
          <circle class="chair" cx="${x - 14}" cy="${y + 30}" r="8"/><circle class="chair" cx="${x + 14}" cy="${y + 30}" r="8"/>
          <rect class="top" x="${x - 30}" y="${y - 21}" width="60" height="42" rx="7"/>`}
-    <text x="${x}" y="${open[n] ? y - 5 : y}">${n}</text>${open[n] ? `<text class="mins" x="${x}" y="${y + 10}">${mins(n)}m</text>` : ''}</g>`;
+    <g class="label-slot">${label({ n, x, y })}</g></g>`;
   document.getElementById('floor').innerHTML = `<svg viewBox="0 0 520 320" role="radiogroup" aria-label="Choose a table">
     <rect class="room" x="6" y="6" width="508" height="308" rx="14"/>
     <rect class="kitchen" x="6" y="6" width="508" height="48" rx="14"/><rect class="kitchen" x="6" y="30" width="508" height="24"/>
@@ -1424,10 +1533,10 @@ function renderOrder() {
     return `<li><span class="line-name">${esc(r.name)}<span class="line-sub">${peso(r.price)}${perKg ? '/kg' : ''} · ${soldOut ? '<span class="soldout-tag">Sold out today</span>' : r.servings === 0 && n === 0 ? 'Out of stock' : `${r.servings} more available`}${n && note ? `<span class="note">Note: ${esc(note)}</span>` : ''}</span></span>
       <span class="editor">
         <button type="button" class="step" data-id="${r.id}" data-dir="-1" aria-label="Remove one ${esc(r.name)}" ${n ? '' : 'disabled'}>−</button>
-        <span class="qty ${n ? '' : 'zero'}" aria-label="${n} in order">${n}</span>
+        <span class="qty ${n ? '' : 'zero'}" data-k="qty:${r.id}" aria-label="${n} in order">${n}</span>
         <button type="button" class="step" data-id="${r.id}" data-dir="1" aria-label="Add one ${esc(r.name)}" ${r.servings && !soldOut ? '' : 'disabled'}>+</button>
         <button type="button" class="step note-btn${note ? ' has-note' : ''}" data-note-for="${r.id}" aria-haspopup="dialog" aria-label="${note ? 'Edit' : 'Add'} note for ${esc(r.name)}" ${n ? '' : 'disabled'}><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M5 4h14v12H9l-4 4V4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 9h6M9 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-      </span>${n && perKg ? `<span class="item-extra">
+      </span>${n && perKg ? `<span class="item-extra" data-k="extra:${r.id}" data-anim="enter">
         <input class="field weight" data-weight="${r.id}" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Total weight (kg)" aria-label="Total weight in kg for ${esc(r.name)}" value="${weights[r.id] ?? ''}">
       </span>` : ''}</li>`;
   };
@@ -1456,7 +1565,7 @@ function renderHistory() {
   const total = o => o.order_items.reduce((s, i) => s + i.qty * Number(i.price ?? prices[i.recipe_id] ?? 0), 0);
   document.getElementById('history-list').innerHTML = [...groups].map(([k, orders]) =>
     `<h2>${icon('history')}<span>${dayLabel(k)}</span><span>${orders.length} ${orders.length === 1 ? 'order' : 'orders'}</span></h2>
-      <ul class="list">${orders.map(o => `<li><span class="what"><strong>Table ${o.table_no}</strong><br>${o.order_items.map(i => `${i.qty}× ${esc(names[i.recipe_id] || i.recipe_id)}${i.note ? ` <span class="note">— ${esc(i.note)}</span>` : ''}`).join('<br>')}</span>
+      <ul class="list">${orders.map(o => `<li data-k="order:${o.id}" data-anim="enter"><span class="what"><strong>Table ${o.table_no}</strong><br>${o.order_items.map(i => `${i.qty}× ${esc(names[i.recipe_id] || i.recipe_id)}${i.note ? ` <span class="note">— ${esc(i.note)}</span>` : ''}`).join('<br>')}</span>
         <span class="when">${time(o.created_at)}<br>${peso(total(o))}<br>${o.paid_at ? '<span class="paid-tag">Paid</span>' : '<span class="open-tag">Open</span>'}</span></li>`).join('')}</ul>`).join('')
     || emptyHtml('No orders yet', 'Orders from the last 30 days show up here.', '<a class="btn" href="#order">Start an order</a>');
 }
@@ -1485,13 +1594,21 @@ menuEl.addEventListener('click', e => {
   stepBtn(btn.dataset.id, btn.dataset.dir)?.focus();
 });
 // hold + or − to keep adding or removing, about 6 a second; the button is redrawn each step, so look it up again
+// a + that can't add more shakes and says why
+function cantAdd(btn) {
+  const r = data.recipes.find(x => x.id === btn.dataset.id);
+  play(btn, 'shake'); navigator.vibrate?.([20, 40, 20]);
+  showToast(isSoldOut(r) ? `${r.name} is sold out today` : `No more ${r.name}: not enough stock for another`, true);
+}
 menuEl.addEventListener('pointerdown', e => {
   const btn = e.target.closest('.step[data-dir]');
+  if (btn?.disabled && btn.dataset.dir === '1') return cantAdd(btn);
   if (!btn || btn.disabled) return;
   const { id, dir } = btn.dataset;
   held = false; clearTimeout(holdTimer);
   holdTimer = setTimeout(function repeat() {
     const b = stepBtn(id, dir);
+    if (b?.disabled && dir === '1') return cantAdd(b);
     if (!b || b.disabled) return;
     held = true; bump(id, Number(dir));
     holdTimer = setTimeout(repeat, 160);
@@ -1569,7 +1686,8 @@ async function placeOrder(btn) {
   btn.disabled = finish.disabled = true; btn.textContent = 'Sending…';
   try {
     await api('rpc/place_order', { method: 'POST', body: JSON.stringify({ table_no: table, items }) });
-    readbackDlg.close();
+    await flyTo(readbackDlg, document.querySelector('.segmented a[href="#billing"]'));
+    readbackDlg.close(); readbackDlg.getAnimations().forEach(a => a.cancel());
     for (const o of [cart, notes, weights]) for (const k in o) delete o[k];
     const n = items.reduce((a, i) => a + i.qty, 0);
     done(`Sent · table ${table}, ${n} ${n === 1 ? 'item' : 'items'}`);
@@ -1591,14 +1709,14 @@ function renderBills() {
   const time = d => new Date(d).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   billsEl.innerHTML = bills.map(b => `<article class="bill" data-table="${b.table_no}" data-swipe-label="Take payment">
       <header><h3>Table ${b.table_no}</h3><span class="since">${b.orders} ${b.orders === 1 ? 'order' : 'orders'} · since ${time(b.since)}</span></header>
-      <ul class="list">${b.lines.map(l => `<li><span class="line-name">${l.qty}× ${esc(l.name)}${l.notes ? `<br><span class="note">${esc(l.notes.join('; '))}</span>` : ''}</span>
-        <span class="amt">${peso(l.qty * l.price)}</span>
+      <ul class="list">${b.lines.map(l => `<li data-k="line:${b.table_no}:${l.recipe_id}" data-anim="enter"><span class="line-name">${l.qty}× ${esc(l.name)}${l.notes ? `<br><span class="note">${esc(l.notes.join('; '))}</span>` : ''}</span>
+        <span class="amt" data-k="amt:${b.table_no}:${l.recipe_id}">${peso(l.qty * l.price)}</span>
         <button type="button" class="void" data-table="${b.table_no}" data-recipe="${l.recipe_id}" aria-label="Void one ${esc(l.name)}">−</button></li>`).join('')}</ul>
-      <footer><span>Total</span><strong>${peso(b.total)}</strong></footer>
+      <footer><span>Total</span><strong data-k="bill:${b.table_no}">${peso(b.total)}</strong></footer>
       <button type="button" class="btn pay" data-table="${b.table_no}">Take payment</button>
     </article>`).join('') || emptyHtml('All tables are settled', 'New orders show up here by table.', '<a class="btn" href="#order">Start an order</a>');
   const all = bills.reduce((s, b) => s + b.total, 0);
-  document.getElementById('bills-total').innerHTML = bills.length ? `<span>${bills.length} open ${bills.length === 1 ? 'table' : 'tables'}</span><strong>${peso(all)}</strong>` : '';
+  document.getElementById('bills-total').innerHTML = bills.length ? `<span>${bills.length} open ${bills.length === 1 ? 'table' : 'tables'}</span><strong data-k="bills-total">${peso(all)}</strong>` : '';
 }
 billsEl.addEventListener('click', async e => {
   const pay = e.target.closest('.pay');
@@ -1610,6 +1728,8 @@ billsEl.addEventListener('click', async e => {
   v.disabled = true;
   try {
     await api('rpc/void_item', { method: 'POST', body: JSON.stringify({ table_no, recipe_id, qty: 1 }) });
+    const li = v.closest('li');
+    if (/^1×/.test(li.querySelector('.line-name').textContent)) await collapse(li);
     showToast(`Removed 1 ${name} from table ${table_no}`, false, async () => {
       try { await api('rpc/place_order', { method: 'POST', body: JSON.stringify({ table_no, items: [{ recipe_id, qty: 1, note: '', weight: '' }] }) }); }
       catch { showToast(`Couldn't add ${name} back. Order it again from Order.`, true); }
@@ -1773,7 +1893,7 @@ function renderRecipes() {
     const lines = data.items.filter(it => it.recipe_id === r.id);
     const unused = data.ingredients.filter(i => !lines.some(l => l.ingredient_id === i.id));
     const cost = recipeCost(r.id, data.items, data.ingredients);
-    return `<details class="recipe" data-id="${r.id}" ${openRecipes.has(r.id) ? 'open' : ''}>
+    return `<details class="recipe" data-id="${r.id}" data-k="recipe:${r.id}" data-anim="enter" ${openRecipes.has(r.id) ? 'open' : ''}>
       <summary>${esc(r.name)}<span class="sub">${recipeSub(r)}</span></summary>
       <ul class="list">
         <li><label for="p-${r.id}">Menu price</label>
@@ -1954,7 +2074,9 @@ async function startSession(session) {
     loginEl.hidden = false; await sb.auth.signOut(); return;
   }
   userId = session.user.id; role = r;
-  loginEl.hidden = true;
+  staggerNext = !loginEl.hidden; // just signed in here, not a remembered session
+  if (staggerNext && !reduceMotion()) { loginEl.animate({ opacity: [1, 0] }, { duration: 250, fill: 'forwards' }); setTimeout(() => { loginEl.hidden = true; loginEl.getAnimations().forEach(a => a.cancel()); }, 250); }
+  else loginEl.hidden = true;
   document.getElementById('who').textContent = `${nameFromEmail(session.user.email)} · ${role === 'owner' ? 'Owner' : 'Staff'}`;
   status.hidden = role !== 'owner'; // staff don't need the "Updated 10:32" sync line
   document.getElementById('signout').hidden = false;
@@ -2059,13 +2181,14 @@ function calendarStrip(items) {
     const od = day(Math.floor(i.cover)), out = od.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
     const outShort = `${od.toLocaleDateString([], { weekday: 'short' })} ${od.getDate()}`;
     const cells = Array.from({ length: CAL_DAYS }, (_, k) => { const f = Math.max(0, Math.min(1, i.cover - k));
-      return f >= 1 ? '<i class="f"></i>' : f > 0 ? `<i class="p" style="--part:${f.toFixed(2)}"></i>` : '<i></i>'; }).join('');
+      return f >= 1 ? `<i class="f" style="--k:${k}"></i>` : f > 0 ? `<i class="p" style="--part:${f.toFixed(2)};--k:${k}"></i>` : '<i></i>'; }).join('');
     return `<div class="cal-row${i.reorder ? ' low' : ''}" role="listitem" aria-label="${esc(i.name)}: about ${days(i.cover)}${i.cover < CAL_DAYS ? `, runs out around ${out}` : ''}${i.reorder ? ', reorder now' : ''}">
       <span class="cal-name">${icon(ingIcon(i))}<span>${esc(i.name)}<small>${fmt(i.stock)} ${i.unit} · ~${fmt(i.perDay)}/day</small></span></span>
       <span class="cal-days" aria-hidden="true">${cells}</span>
       <span class="cal-left">${days(i.cover)}${i.reorder ? '<small>reorder</small>' : i.cover < CAL_DAYS ? `<small>till ${outShort}</small>` : ''}</span></div>`;
   };
-  return `<div class="cal" role="list"><div class="cal-row cal-head" aria-hidden="true"><span></span><span class="cal-days">${head}</span><span></span></div>${items.map(row).join('')}</div>`;
+  const fill = calFill; calFill = false;
+  return `<div class="cal${fill ? ' fill' : ''}" role="list"><div class="cal-row cal-head" aria-hidden="true"><span></span><span class="cal-days">${head}</span><span></span></div>${items.map(row).join('')}</div>`;
 }
 let lastExps = [];
 function renderReport(r, exps) {
@@ -2215,7 +2338,7 @@ document.getElementById('staff-add').addEventListener('submit', async e => {
 // dir: -1 = left, 1 = right. Mouse and keyboard keep using the buttons.
 function swipe(container, selector, dir, action) {
   let s = null;
-  const reset = () => { if (s) { s.el.style.transform = ''; s.el.classList.remove('swiping'); } s = null; };
+  const reset = () => { if (s) { s.el.style.transform = ''; s.el.classList.remove('swiping', 'armed'); } s = null; };
   container.addEventListener('pointerdown', e => {
     const el = e.target.closest(selector);
     if (e.pointerType === 'touch' && el && !e.target.closest('button, input, select')) s = { el, x: e.clientX, y: e.clientY, dx: 0 };
@@ -2224,7 +2347,12 @@ function swipe(container, selector, dir, action) {
     if (!s) return;
     s.dx = (e.clientX - s.x) * dir;
     if (!s.on && Math.abs(e.clientY - s.y) > Math.abs(e.clientX - s.x)) return reset(); // scrolling, not swiping
-    if (s.dx > 10) { s.on = true; s.el.classList.add('swiping'); s.el.style.transform = `translateX(${Math.min(s.dx, 128) * dir}px)`; }
+    if (s.dx > 10) {
+      s.on = true; s.el.classList.add('swiping');
+      const armed = s.dx > 90; // past this, letting go acts: snap to the end and turn green
+      if (armed !== !!s.armed) { s.armed = armed; s.el.classList.toggle('armed', armed); if (armed) navigator.vibrate?.(10); }
+      s.el.style.transform = `translateX(${(armed ? 128 : s.dx) * dir}px)`;
+    }
   });
   container.addEventListener('pointerup', () => { const go = s?.on && s.dx > 90 && s.el; reset(); if (go) action(go); });
   container.addEventListener('pointercancel', reset);
@@ -2256,13 +2384,20 @@ function renderPalette() {
   const q = palQ.value.trim().toLowerCase();
   palHits = palItems.filter(i => i.label.toLowerCase().includes(q)).slice(0, 8);
   palAt = Math.min(palAt, Math.max(0, palHits.length - 1));
+  const before = new Map([...palList.children].map(li => [li.textContent, li.getBoundingClientRect().top]));
   palList.innerHTML = palHits.map((i, k) => `<li role="option" id="pal-${k}" data-k="${k}" aria-selected="${k === palAt}">${icon(i.icon)}<span>${esc(i.label)}</span><span class="hint">${esc(i.hint)}</span></li>`).join('')
     || '<li aria-disabled="true"><span class="hint" style="margin:0">Nothing matches</span></li>';
   palQ.setAttribute('aria-activedescendant', palHits.length ? `pal-${palAt}` : '');
+  // results that stay slide up into place; new ones fade in
+  if (!reduceMotion()) for (const li of palList.children) {
+    const was = before.get(li.textContent), top = li.getBoundingClientRect().top;
+    if (was === undefined) li.animate({ opacity: [0, 1] }, 180);
+    else if (was !== top) li.animate({ transform: [`translateY(${was - top}px)`, 'none'] }, { duration: 200, easing: 'cubic-bezier(.2,.8,.2,1)' });
+  }
 }
 function openPalette() {
   if (!role || palette.open) return;
-  palItems = paletteItems(); palQ.value = ''; palAt = 0; renderPalette();
+  palItems = paletteItems(); palQ.value = ''; palAt = 0; palList.innerHTML = ''; renderPalette();
   palette.showModal(); palQ.focus();
 }
 function runPalette(k) { const it = palHits[k]; if (!it) return; palette.close(); it.run(); }
